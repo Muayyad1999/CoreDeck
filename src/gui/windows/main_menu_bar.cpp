@@ -10,6 +10,7 @@
 #include "main_menu_bar.h"
 #include "apk_analyzer.h"
 #include "apk_signer.h"
+#include "device_panel.h"
 #include "health_check.h"
 #include "jar_signer.h"
 #include "keytool.h"
@@ -137,6 +138,13 @@ namespace CoreDeck::Gui {
                 ImGui::Separator();
                 if (RoundedMenuItem(IconWithLabel(Icons::HARD_DRIVE, Platform::Tr("Storage Overview")).c_str())) {
                     context.UI.ShowStorageDialog = true;
+                }
+                ImGui::EndMenu();
+            }
+
+            if (RoundedBeginMenu(Platform::Tr("Research"))) {
+                if (RoundedMenuItem(IconWithLabel(Icons::MOBILE, Platform::Tr("Devices")).c_str(), nullptr, context.UI.ShowDevicePanel)) {
+                    context.UI.ShowDevicePanel = !context.UI.ShowDevicePanel;
                 }
                 ImGui::EndMenu();
             }

@@ -3681,3 +3681,65 @@ msgstr "Herunterladen"
 #: /Users/devmuaz/Development/projects/cpp-projects/CoreDeck/src/gui/windows/update.cpp:119
 msgid "Later"
 msgstr "Später"
+
+#: src/gui/windows/main_menu_bar.cpp
+msgid "Research"
+msgstr "Recherche"
+
+#: src/gui/windows/main_menu_bar.cpp
+msgid "Devices"
+msgstr "Geräte"
+
+#: src/gui/windows/device_panel.cpp
+msgid "No Android SDK detected. Set the SDK path in Preferences."
+msgstr "Kein Android-SDK erkannt. Legen Sie den SDK-Pfad in den Einstellungen fest."
+
+#: src/gui/windows/device_panel.cpp
+msgid "Connected devices"
+msgstr "Verbundene Geräte"
+
+#: src/gui/windows/device_panel.cpp
+msgid "No devices attached. Start an emulator or plug in a device."
+msgstr "Keine Geräte angeschlossen. Starten Sie einen Emulator oder schließen Sie ein Gerät an."
+
+#: src/gui/windows/device_panel.cpp
+msgid "Scanning for devices..."
+msgstr "Suche nach Geräten..."
+
+#: src/gui/windows/device_panel.cpp
+msgid "offline"
+msgstr "offline"
+
+#: src/gui/windows/device_panel.cpp
+msgid "Select a device to list its installed apps."
+msgstr "Wählen Sie ein Gerät, um dessen installierte Apps aufzulisten."
+
+#: src/gui/windows/device_panel.cpp
+msgid "Installed apps"
+msgstr "Installierte Apps"
+
+#: src/gui/windows/device_panel.cpp
+msgid "Filter apps"
+msgstr "Apps filtern"
+
+#: src/gui/windows/device_panel.cpp
+msgid "Show system / Google / Samsung packages"
+msgstr "System-/Google-/Samsung-Pakete anzeigen"
+
+#: src/gui/windows/device_panel.cpp
+msgid "{0} app"
+msgid_plural "{0} apps"
+msgstr[0] "{0} App"
+msgstr[1] "{0} Apps"
+
+#: src/gui/windows/device_panel.cpp
+msgid "No matching apps."
+msgstr "Keine passenden Apps."
+
+#: src/gui/windows/device_panel.cpp
+msgid "Loading packages..."
+msgstr "Apps werden geladen..."
+
+#: src/gui/windows/device_panel.cpp
+msgid "Click to copy the package name"
+msgstr "Klicken, um den Paketnamen zu kopieren"

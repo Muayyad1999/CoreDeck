@@ -1,3 +1,7 @@
+## Unreleased
+
+- Add a Devices window (Research, Devices) that lists the connected adb devices and, for the selected device, the third-party apps installed on it. System, Google, and Samsung packages are hidden by default, with an option to show them, and a filter box narrows the list. Click an app to copy its package name
+
 ## [v0.14.2](https://github.com/devmuaz/CoreDeck/releases/tag/v0.14.2) — 2026-10-30
 
 - Add a Preferences, General option to include beta releases when checking for updates. It is off by default. When it is on, a newer beta is offered, and Download opens that release on GitHub. A stable release still opens coredeck.dev

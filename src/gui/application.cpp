@@ -59,6 +59,7 @@
 #include "windows/main_menu_bar.h"
 #include "windows/onboarding.h"
 #include "windows/preferences.h"
+#include "windows/device_panel.h"
 #include "windows/storage.h"
 #include "windows/update.h"
 #include "app/version_check.h"
@@ -249,6 +250,7 @@ namespace CoreDeck::Gui {
         BuildApkSignerWindow(m_Context);
         BuildJarSignerWindow(m_Context);
         BuildStorageWindow(m_Context);
+        BuildDevicePanelWindow(m_Context);
 
         m_Context.Host.Manager.Update();
         m_ApplyNativeWindowTitle();

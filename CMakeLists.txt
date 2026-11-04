@@ -91,6 +91,7 @@ add_executable(${PROJECT_NAME}
     src/gui/windows/health_check.cpp
     src/gui/windows/install_image.cpp
     src/gui/windows/main_menu_bar.cpp
+    src/gui/windows/device_panel.cpp
     src/gui/windows/onboarding.cpp
     src/gui/windows/preferences.cpp
     src/gui/windows/preferences_android_sdk.cpp

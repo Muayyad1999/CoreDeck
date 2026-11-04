@@ -3565,3 +3565,64 @@ msgstr "下载"
 #: /Users/devmuaz/Development/projects/cpp-projects/CoreDeck/src/gui/windows/update.cpp:119
 msgid "Later"
 msgstr "稍后"
+
+#: src/gui/windows/main_menu_bar.cpp
+msgid "Research"
+msgstr "研究"
+
+#: src/gui/windows/main_menu_bar.cpp
+msgid "Devices"
+msgstr "设备"
+
+#: src/gui/windows/device_panel.cpp
+msgid "No Android SDK detected. Set the SDK path in Preferences."
+msgstr "未检测到 Android SDK。请在“偏好设置”中设置 SDK 路径。"
+
+#: src/gui/windows/device_panel.cpp
+msgid "Connected devices"
+msgstr "已连接的设备"
+
+#: src/gui/windows/device_panel.cpp
+msgid "No devices attached. Start an emulator or plug in a device."
+msgstr "没有已连接的设备。请启动模拟器或连接设备。"
+
+#: src/gui/windows/device_panel.cpp
+msgid "Scanning for devices..."
+msgstr "正在扫描设备..."
+
+#: src/gui/windows/device_panel.cpp
+msgid "offline"
+msgstr "离线"
+
+#: src/gui/windows/device_panel.cpp
+msgid "Select a device to list its installed apps."
+msgstr "选择一个设备以列出其已安装的应用。"
+
+#: src/gui/windows/device_panel.cpp
+msgid "Installed apps"
+msgstr "已安装的应用"
+
+#: src/gui/windows/device_panel.cpp
+msgid "Filter apps"
+msgstr "筛选应用"
+
+#: src/gui/windows/device_panel.cpp
+msgid "Show system / Google / Samsung packages"
+msgstr "显示系统 / Google / Samsung 软件包"
+
+#: src/gui/windows/device_panel.cpp
+msgid "{0} app"
+msgid_plural "{0} apps"
+msgstr[0] "{0} 个应用"
+
+#: src/gui/windows/device_panel.cpp
+msgid "No matching apps."
+msgstr "没有匹配的应用。"
+
+#: src/gui/windows/device_panel.cpp
+msgid "Loading packages..."
+msgstr "正在加载应用..."
+
+#: src/gui/windows/device_panel.cpp
+msgid "Click to copy the package name"
+msgstr "点击以复制软件包名称"

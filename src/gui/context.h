@@ -15,6 +15,7 @@
 
 #include "app/app_settings_types.h"
 #include "core/avd_manager.h"
+#include "core/adb.h"
 #include "core/emulator.h"
 #include "core/health_check.h"
 #include "core/jdk.h"
@@ -130,6 +131,12 @@ namespace CoreDeck::Gui {
             std::vector<int> FilteredIndices;
         } Catalog;
 
+        // Selection shared across the reverse-engineering windows (Phase 1+).
+        struct Target {
+            std::string Serial;  // selected adb device serial
+            std::string ApkPath; // selected/working APK path (used by later phases)
+        } Target;
+
         struct LogViewState {
             std::string Search;
             int ActiveMatchIndex = 0;
@@ -163,6 +170,7 @@ namespace CoreDeck::Gui {
             bool ReopenCreateAvdOnInstallClose = false;
             bool ShowPreferences = false;
             bool ShowStorageDialog = false;
+            bool ShowDevicePanel = false;
             WorkspacePage Workspace = WorkspacePage::Home;
             bool ShowWipeDataDialog = false;
             bool ShowHealthCheckDialog = false;
@@ -292,6 +300,22 @@ namespace CoreDeck::Gui {
             bool RecentLoaded = false;
             std::vector<std::string> PendingDrops;
         } ApkAnalyzerWork;
+
+        struct DevicePanelWork {
+            std::atomic<bool> DevicesBusy{false};
+            std::future<std::vector<Core::DeviceSummary>> DevicesFuture;
+            std::vector<Core::DeviceSummary> Devices;
+            bool DevicesLoaded = false;
+
+            std::atomic<bool> PackagesBusy{false};
+            std::future<std::vector<std::string>> PackagesFuture;
+            std::vector<std::string> Packages;
+            std::string PackagesSerial; // serial the current package list belongs to
+            bool PackagesLoaded = false;
+            bool IncludeVendor = false;
+
+            char PackageFilter[128] = {};
+        } DevicePanelWork;
 
         ApkSignerState ApkSignerWork;
         JarSignerState JarSignerWork;
