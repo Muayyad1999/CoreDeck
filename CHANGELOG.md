@@ -1,7 +1,8 @@
 ## Unreleased
 
 - Add a Devices window (Research, Devices) that lists the connected adb devices and, for the selected device, the third-party apps installed on it. System, Google, and Samsung packages are hidden by default, with an option to show them, and a filter box narrows the list. Click an app to copy its package name
-- Add a Root AVD window (Research, Root AVD) for rooting an emulator you own with Magisk. It resolves the newest Magisk release (stable or canary), downloads and caches it, and reports its ABIs; it also verifies whether a selected device already has root (`su` returns uid=0). Guided one-click rooting (the host-side ramdisk patch and cold boot) builds on this foundation and lands next
+- Add a Root AVD window (Research, Root AVD) for rooting an emulator you own with Magisk. It resolves the newest Magisk release (stable or canary), downloads and caches it, and reports its ABIs, and it verifies whether a selected device already has root (`su` returns uid=0)
+- Root AVD can now run the host-side root end to end: it patches the system image's ramdisk with Magisk (replacing init with magiskinit, adding the overlay.d payloads, and optionally stripping dm-verity), keeps a once-only pristine backup, cold-boots the patched image, and verifies `su`. A Restore button reverts to the backup. This step is experimental and modifies the system image, so it is meant for a disposable AVD you own. gzip and lz4 ramdisks are supported; xz and concatenated ramdisks are not yet
 
 ## [v0.14.2](https://github.com/devmuaz/CoreDeck/releases/tag/v0.14.2) — 2026-10-30
 

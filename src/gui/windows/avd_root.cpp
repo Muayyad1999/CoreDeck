@@ -77,6 +77,62 @@ namespace CoreDeck::Gui {
                 work.LastRootStatus = work.RootCheckFuture.get();
                 work.RootCheckBusy = false;
             }
+            if (work.RootBusy.load() && work.RootFuture.valid() &&
+                work.RootFuture.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
+                const bool ok = work.RootFuture.get();
+                work.RootBusy = false;
+                if (work.Progress) {
+                    std::lock_guard<std::mutex> lock(work.Progress->Mutex);
+                    work.RootOutcome = ok ? work.Progress->Detail : work.Progress->Error;
+                }
+            }
+            if (work.RestoreBusy.load() && work.RestoreFuture.valid() &&
+                work.RestoreFuture.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
+                auto [ok, error] = work.RestoreFuture.get();
+                work.RestoreBusy = false;
+                work.RestoreOutcome =
+                    ok ? std::string(Platform::Tr("Restored the system image from the pristine backup.")) : error;
+            }
+        }
+
+        void StartRoot(Context &context, const Core::AvdInfo &avd) {
+            auto &work = context.AvdRootWork;
+            if (work.RootBusy.load() || !work.HasResolved) {
+                return;
+            }
+            std::string error;
+            auto plan = Core::PlanRoot(context.Host.Sdk, avd, work.Resolved.LocalPath, error);
+            if (!plan) {
+                work.RootOutcome = error;
+                return;
+            }
+            plan->StripVerity = work.StripVerity;
+            work.RootBusy = true;
+            work.RootOutcome.clear();
+            work.Progress = std::make_shared<Core::RootProgress>();
+            const Core::SdkInfo sdk = context.Host.Sdk;
+            const Core::RootPlan planValue = *plan;
+            auto progress = work.Progress;
+            Core::EmulatorManager &manager = context.Host.Manager;
+            work.RootFuture = std::async(std::launch::async, [sdk, &manager, planValue, progress] {
+                return Core::RootAvd(sdk, manager, planValue, *progress);
+            });
+        }
+
+        void StartRestore(Context &context, const Core::AvdInfo &avd) {
+            auto &work = context.AvdRootWork;
+            if (work.RestoreBusy.load()) {
+                return;
+            }
+            work.RestoreBusy = true;
+            work.RestoreOutcome.clear();
+            const Core::SdkInfo sdk = context.Host.Sdk;
+            const Core::AvdInfo avdCopy = avd;
+            work.RestoreFuture = std::async(std::launch::async, [sdk, avdCopy] {
+                std::string error;
+                const bool ok = Core::RestoreAvd(sdk, avdCopy, error);
+                return std::make_pair(ok, error);
+            });
         }
 
         void MagiskSection(Context &context) {
@@ -169,9 +225,12 @@ namespace CoreDeck::Gui {
             }
         }
 
-        void PipelinePreview() {
+        void ExecuteSection(Context &context, const Core::AvdInfo *avd) {
+            auto &work = context.AvdRootWork;
             ImGui::TextDisabled("%s", Platform::Tr("Rooting pipeline"));
             ImGui::Spacing();
+
+            const Core::RootStage current = work.Progress ? work.Progress->Stage.load() : Core::RootStage::Idle;
             constexpr std::array<Core::RootStage, 8> STAGES = {
                 Core::RootStage::ResolveMagisk,
                 Core::RootStage::StartEmulator,
@@ -182,13 +241,70 @@ namespace CoreDeck::Gui {
                 Core::RootStage::GrantSu,
                 Core::RootStage::Verify
             };
-            for (const Core::RootStage stage: STAGES) {
-                ImGui::BulletText("%s", Core::RootStageLabel(stage));
+            const bool done = current == Core::RootStage::Done;
+            for (std::size_t i = 0; i < STAGES.size(); ++i) {
+                const bool reached = done || static_cast<int>(current) > static_cast<int>(STAGES[i]);
+                const bool active = !done && current == STAGES[i];
+                const ImVec4 color = HexColor(active ? Colors::ACCENT_INFO : (reached ? Colors::POSITIVE : Colors::TEXT_MUTED));
+                ImGui::TextColored(color, "%s %s", reached ? "\xE2\x9C\x93" : (active ? "\xE2\x80\xA2" : "\xE2\x97\x8B"), Core::RootStageLabel(STAGES[i]));
             }
-            ImGui::TextDisabled(
+
+            if (work.RootBusy.load() && work.Progress) {
+                ImGui::ProgressBar(work.Progress->Fraction.load(), ImVec2(-1.0F, 0.0F));
+                std::string detail;
+                {
+                    std::lock_guard<std::mutex> lock(work.Progress->Mutex);
+                    detail = work.Progress->Detail;
+                }
+                if (!detail.empty()) {
+                    ImGui::TextDisabled("%s", detail.c_str());
+                }
+            }
+
+            ImGui::Spacing();
+            ImGui::Checkbox(Platform::Tr("Strip dm-verity / forced encryption"), &work.StripVerity);
+            ImGui::TextColored(
+                HexColor(Colors::WARNING),
                 "%s",
-                Platform::Tr("Guided one-click rooting (host-side ramdisk patch + cold boot) arrives next.")
+                Platform::Tr("Experimental: this rewrites the AVD's system image. A pristine backup is kept; use a "
+                             "disposable AVD you own.")
             );
+
+            const bool rootBusy = work.RootBusy.load();
+            const bool restoreBusy = work.RestoreBusy.load();
+            const bool canRoot = avd != nullptr && work.HasResolved && !rootBusy && !restoreBusy;
+            if (PositiveButton(
+                    rootBusy ? Platform::Tr("Rooting...") : Platform::Tr("Root (experimental)"),
+                    canRoot,
+                    ImVec2(0, 0),
+                    rootBusy
+                )) {
+                StartRoot(context, *avd);
+            }
+            ImGui::SameLine();
+            const bool canRestore = avd != nullptr && !rootBusy && !restoreBusy;
+            if (NegativeButton(
+                    restoreBusy ? Platform::Tr("Restoring...") : Platform::Tr("Restore"),
+                    canRestore,
+                    ImVec2(0, 0),
+                    restoreBusy
+                )) {
+                StartRestore(context, *avd);
+            }
+
+            if (!work.HasResolved) {
+                ImGui::TextDisabled("%s", Platform::Tr("Fetch Magisk first to enable rooting."));
+            }
+            if (!work.RootOutcome.empty()) {
+                ImGui::TextColored(
+                    HexColor(current == Core::RootStage::Done ? Colors::POSITIVE : Colors::NEGATIVE),
+                    "%s",
+                    work.RootOutcome.c_str()
+                );
+            }
+            if (!work.RestoreOutcome.empty()) {
+                ImGui::TextDisabled("%s", work.RestoreOutcome.c_str());
+            }
         }
     }
 
@@ -232,7 +348,7 @@ namespace CoreDeck::Gui {
             ImGui::Separator();
             RootStatusSection(context);
             ImGui::Separator();
-            PipelinePreview();
+            ExecuteSection(context, avd);
         }
         ImGui::End();
     }

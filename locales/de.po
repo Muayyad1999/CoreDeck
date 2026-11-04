@@ -3847,3 +3847,35 @@ msgstr "Geführtes Ein-Klick-Rooting (Host-seitiger Ramdisk-Patch + Kaltstart) f
 #: src/gui/windows/avd_root.cpp
 msgid "Could not resolve Magisk."
 msgstr "Magisk konnte nicht aufgelöst werden."
+
+#: src/gui/windows/avd_root.cpp
+msgid "Strip dm-verity / forced encryption"
+msgstr "dm-verity / erzwungene Verschlüsselung entfernen"
+
+#: src/gui/windows/avd_root.cpp
+msgid "Experimental: this rewrites the AVD's system image. A pristine backup is kept; use a disposable AVD you own."
+msgstr "Experimentell: Dies überschreibt das System-Image des AVD. Eine unveränderte Sicherung wird aufbewahrt; verwenden Sie einen eigenen Wegwerf-AVD."
+
+#: src/gui/windows/avd_root.cpp
+msgid "Root (experimental)"
+msgstr "Rooten (experimentell)"
+
+#: src/gui/windows/avd_root.cpp
+msgid "Rooting..."
+msgstr "Wird gerootet..."
+
+#: src/gui/windows/avd_root.cpp
+msgid "Restore"
+msgstr "Wiederherstellen"
+
+#: src/gui/windows/avd_root.cpp
+msgid "Restoring..."
+msgstr "Wird wiederhergestellt..."
+
+#: src/gui/windows/avd_root.cpp
+msgid "Fetch Magisk first to enable rooting."
+msgstr "Rufen Sie zuerst Magisk ab, um das Rooten zu aktivieren."
+
+#: src/gui/windows/avd_root.cpp
+msgid "Restored the system image from the pristine backup."
+msgstr "System-Image aus der unveränderten Sicherung wiederhergestellt."

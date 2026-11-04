@@ -19,6 +19,7 @@
 #include "core/adb.h"
 #include "platform/http_download.h"
 #include "platform/paths.h"
+#include "platform/process.h"
 #include "platform/sha256.h"
 
 namespace CoreDeck::Core {
@@ -713,5 +714,570 @@ namespace CoreDeck::Core {
             default:
                 return "Idle";
         }
+    }
+
+    // ------------------------------------------------------------------ xz store //
+
+    std::vector<std::uint8_t> XzStoreCompress(const std::vector<std::uint8_t> &data) {
+        const auto crc = [](const std::uint8_t *p, std::size_t n) {
+            return static_cast<std::uint32_t>(mz_crc32(MZ_CRC32_INIT, p, n));
+        };
+        const auto putMultibyte = [](std::vector<std::uint8_t> &out, std::uint64_t v) {
+            while (v >= 0x80) {
+                out.push_back(static_cast<std::uint8_t>((v & 0x7F) | 0x80));
+                v >>= 7;
+            }
+            out.push_back(static_cast<std::uint8_t>(v));
+        };
+
+        std::vector<std::uint8_t> out;
+        const std::array<std::uint8_t, 6> magic = {0xFD, 0x37, 0x7A, 0x58, 0x5A, 0x00};
+        out.insert(out.end(), magic.begin(), magic.end());
+        const std::array<std::uint8_t, 2> flags = {0x00, 0x01}; // check = CRC32
+        out.insert(out.end(), flags.begin(), flags.end());
+        Put32LE(out, crc(flags.data(), flags.size()));
+
+        const std::size_t blockStart = out.size();
+        const std::array<std::uint8_t, 8> bh = {0x02, 0x00, 0x21, 0x01, 0x18, 0x00, 0x00, 0x00};
+        out.insert(out.end(), bh.begin(), bh.end());
+        Put32LE(out, crc(bh.data(), bh.size()));
+
+        std::size_t pos = 0;
+        bool first = true;
+        while (pos < data.size()) {
+            const std::size_t chunk = std::min<std::size_t>(65536, data.size() - pos);
+            out.push_back(first ? 0x01 : 0x02);
+            const std::uint16_t sizeField = static_cast<std::uint16_t>(chunk - 1);
+            out.push_back(static_cast<std::uint8_t>((sizeField >> 8) & 0xFF));
+            out.push_back(static_cast<std::uint8_t>(sizeField & 0xFF));
+            out.insert(out.end(), data.begin() + static_cast<std::ptrdiff_t>(pos), data.begin() + static_cast<std::ptrdiff_t>(pos + chunk));
+            pos += chunk;
+            first = false;
+        }
+        out.push_back(0x00); // LZMA2 end
+
+        const std::size_t unpadded = (out.size() - blockStart) + 4; // + check
+        while (((out.size() - blockStart) & 3U) != 0) {
+            out.push_back(0x00);
+        }
+        Put32LE(out, crc(data.data(), data.size()));
+
+        const std::size_t indexStart = out.size();
+        std::vector<std::uint8_t> idx;
+        idx.push_back(0x00);
+        putMultibyte(idx, 1);
+        putMultibyte(idx, unpadded);
+        putMultibyte(idx, data.size());
+        while ((idx.size() & 3U) != 0U) {
+            idx.push_back(0x00);
+        }
+        out.insert(out.end(), idx.begin(), idx.end());
+        Put32LE(out, crc(idx.data(), idx.size()));
+        const std::size_t indexSize = out.size() - indexStart;
+
+        std::vector<std::uint8_t> footerMid;
+        Put32LE(footerMid, static_cast<std::uint32_t>(indexSize / 4 - 1));
+        footerMid.push_back(flags[0]);
+        footerMid.push_back(flags[1]);
+        Put32LE(out, crc(footerMid.data(), footerMid.size()));
+        out.insert(out.end(), footerMid.begin(), footerMid.end());
+        out.push_back(0x59);
+        out.push_back(0x5A);
+        return out;
+    }
+
+    // ----------------------------------------------------------- Magisk files //
+
+    const std::vector<std::uint8_t> *MagiskFiles::Find(const std::string &name) const {
+        for (const auto &[key, bytes]: Files) {
+            if (key == name) {
+                return &bytes;
+            }
+        }
+        return nullptr;
+    }
+
+    std::optional<MagiskFiles> ExtractMagiskFiles(const std::vector<std::uint8_t> &apkBytes, const std::string &abi) {
+        mz_zip_archive zip = {};
+        if (mz_zip_reader_init_mem(&zip, apkBytes.data(), apkBytes.size(), 0) == MZ_FALSE) {
+            return std::nullopt;
+        }
+        MagiskFiles out;
+        const std::string libDir = "lib/" + abi + "/";
+        const mz_uint count = mz_zip_reader_get_num_files(&zip);
+        for (mz_uint i = 0; i < count; ++i) {
+            char nameBuf[512];
+            const mz_uint len = mz_zip_reader_get_filename(&zip, i, nameBuf, sizeof(nameBuf));
+            if (len == 0) {
+                continue;
+            }
+            const std::string name(nameBuf, len > 0 ? len - 1 : 0);
+
+            std::string key;
+            if (name.size() > libDir.size() && name.compare(0, libDir.size(), libDir) == 0) {
+                std::string base = name.substr(libDir.size()); // lib<X>.so
+                if (base.size() > 6 && base.compare(0, 3, "lib") == 0 && base.compare(base.size() - 3, 3, ".so") == 0) {
+                    key = base.substr(3, base.size() - 6); // strip lib / .so
+                }
+            } else if (name == "assets/stub.apk") {
+                key = "stub";
+            }
+            if (key.empty()) {
+                continue;
+            }
+            std::size_t outSize = 0;
+            void *data = mz_zip_reader_extract_to_heap(&zip, i, &outSize, 0);
+            if (data == nullptr) {
+                continue;
+            }
+            out.Files.emplace_back(
+                key,
+                std::vector<std::uint8_t>(static_cast<std::uint8_t *>(data), static_cast<std::uint8_t *>(data) + outSize)
+            );
+            mz_free(data);
+        }
+        mz_zip_reader_end(&zip);
+        if (!out.Has("magiskinit")) {
+            return std::nullopt;
+        }
+        return out;
+    }
+
+    // ----------------------------------------------------------- Magisk patch //
+
+    namespace {
+        const CpioEntry *FindEntry(const CpioArchive &archive, const std::string &name) {
+            for (const CpioEntry &e: archive) {
+                if (e.Name == name) {
+                    return &e;
+                }
+            }
+            return nullptr;
+        }
+
+        CpioEntry MakeFile(const std::string &name, std::uint32_t mode, std::vector<std::uint8_t> data) {
+            CpioEntry e;
+            e.Name = name;
+            e.Mode = mode;
+            e.Nlink = 1;
+            e.Data = std::move(data);
+            return e;
+        }
+
+        CpioEntry MakeDir(const std::string &name, std::uint32_t mode) {
+            CpioEntry e;
+            e.Name = name;
+            e.Mode = mode;
+            e.Nlink = 1;
+            return e;
+        }
+
+        std::vector<std::uint8_t> StripVerityFlags(const std::vector<std::uint8_t> &data) {
+            std::string text(data.begin(), data.end());
+            for (const char *token: {",verify", ",avb", ",forceencrypt", ",forcefdeorfbe", ",fileencryption"}) {
+                std::size_t at = 0;
+                while ((at = text.find(token, at)) != std::string::npos) {
+                    std::size_t end = at + std::strlen(token);
+                    while (end < text.size() && text[end] != ',' && text[end] != ' ' && text[end] != '\t' &&
+                           text[end] != '\n') {
+                        ++end; // consume an optional =value
+                    }
+                    text.erase(at, end - at);
+                }
+            }
+            return std::vector<std::uint8_t>(text.begin(), text.end());
+        }
+
+        void Canonicalize(CpioArchive &archive) {
+            std::sort(archive.begin(), archive.end(), [](const CpioEntry &a, const CpioEntry &b) { return a.Name < b.Name; });
+            std::uint32_t ino = 300000;
+            for (CpioEntry &e: archive) {
+                e.Ino = ino++;
+                e.Nlink = 1;
+                e.Mtime = 0;
+            }
+        }
+    }
+
+    bool IsRamdiskPatched(const CpioArchive &archive) {
+        for (const CpioEntry &e: archive) {
+            if (e.Name == ".backup" || e.Name == ".backup/init" || e.Name == "overlay.d/sbin/magisk.xz") {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    CpioArchive RevertMagiskPatch(const CpioArchive &patched) {
+        std::vector<std::string> rmlist;
+        if (const CpioEntry *rm = FindEntry(patched, ".backup/.rmlist")) {
+            std::string cur;
+            for (const std::uint8_t c: rm->Data) {
+                if (c == 0 || c == '\n') {
+                    if (!cur.empty()) {
+                        rmlist.push_back(cur);
+                    }
+                    cur.clear();
+                } else {
+                    cur.push_back(static_cast<char>(c));
+                }
+            }
+            if (!cur.empty()) {
+                rmlist.push_back(cur);
+            }
+        }
+        const CpioEntry *backupInit = FindEntry(patched, ".backup/init");
+
+        CpioArchive out;
+        for (const CpioEntry &e: patched) {
+            if (e.Name.rfind(".backup", 0) == 0 || e.Name.rfind("overlay.d", 0) == 0) {
+                continue;
+            }
+            if (std::find(rmlist.begin(), rmlist.end(), e.Name) != rmlist.end()) {
+                continue;
+            }
+            if (e.Name == "init" && backupInit != nullptr) {
+                out.push_back(MakeFile("init", backupInit->Mode, backupInit->Data));
+                continue;
+            }
+            out.push_back(e);
+        }
+        return out;
+    }
+
+    CpioArchive ApplyMagiskPatch(const CpioArchive &stock, const MagiskFiles &magisk, const bool stripVerity) {
+        CpioArchive work = IsRamdiskPatched(stock) ? RevertMagiskPatch(stock) : stock;
+
+        std::vector<std::string> rmlist;
+        const auto addEntry = [&](CpioEntry entry, bool recordRm) {
+            if (recordRm) {
+                rmlist.push_back(entry.Name);
+            }
+            for (CpioEntry &existing: work) {
+                if (existing.Name == entry.Name) {
+                    existing = std::move(entry);
+                    return;
+                }
+            }
+            work.push_back(std::move(entry));
+        };
+
+        // Back up and replace /init with magiskinit.
+        if (const CpioEntry *init = FindEntry(work, "init")) {
+            addEntry(MakeFile(".backup/init", init->Mode, init->Data), false);
+            if (const auto *magiskinit = magisk.Find("magiskinit")) {
+                for (CpioEntry &e: work) {
+                    if (e.Name == "init") {
+                        e.Data = *magiskinit;
+                        e.Mode = 0100750;
+                    }
+                }
+            }
+        }
+
+        // overlay.d payloads (xz-compressed).
+        addEntry(MakeDir("overlay.d", 0040750), true);
+        addEntry(MakeDir("overlay.d/sbin", 0040750), true);
+        const auto *magiskBin = magisk.Find("magisk64");
+        if (magiskBin == nullptr) {
+            magiskBin = magisk.Find("magisk32");
+        }
+        if (magiskBin != nullptr) {
+            addEntry(MakeFile("overlay.d/sbin/magisk.xz", 0100644, XzStoreCompress(*magiskBin)), true);
+        }
+        if (const auto *initld = magisk.Find("init-ld")) {
+            addEntry(MakeFile("overlay.d/sbin/init-ld.xz", 0100644, XzStoreCompress(*initld)), true);
+        }
+        if (const auto *stub = magisk.Find("stub")) {
+            addEntry(MakeFile("overlay.d/sbin/stub.xz", 0100644, XzStoreCompress(*stub)), true);
+        }
+
+        // Optionally strip verity / forceencrypt from fstab entries.
+        if (stripVerity) {
+            for (CpioEntry &e: work) {
+                if (e.Name.find("fstab") != std::string::npos && !e.IsDirectory()) {
+                    e.Data = StripVerityFlags(e.Data);
+                }
+            }
+        }
+
+        // .backup config + rmlist (NUL-separated, as magiskboot writes it).
+        addEntry(MakeDir(".backup", 0040750), false);
+        const std::string config =
+            std::string("KEEPVERITY=") + (stripVerity ? "false" : "true") + "\n" +
+            "KEEPFORCEENCRYPT=" + (stripVerity ? "false" : "true") + "\nRECOVERYMODE=false\n";
+        addEntry(MakeFile(".backup/.magisk", 0100644, std::vector<std::uint8_t>(config.begin(), config.end())), false);
+
+        std::vector<std::uint8_t> rmBytes;
+        for (const std::string &path: rmlist) {
+            rmBytes.insert(rmBytes.end(), path.begin(), path.end());
+            rmBytes.push_back(0);
+        }
+        addEntry(MakeFile(".backup/.rmlist", 0100644, rmBytes), false);
+
+        Canonicalize(work);
+        return work;
+    }
+
+    // ------------------------------------------------------- ramdisk file I/O //
+
+    namespace {
+        bool WriteFileBytesAtomic(const std::string &path, const std::vector<std::uint8_t> &bytes, std::string &error) {
+            const std::string tmp = path + ".tmp";
+            {
+                std::ofstream file(tmp, std::ios::binary | std::ios::trunc);
+                if (!file) {
+                    error = "Cannot open " + tmp + " for writing.";
+                    return false;
+                }
+                file.write(reinterpret_cast<const char *>(bytes.data()), static_cast<std::streamsize>(bytes.size()));
+                if (!file) {
+                    error = "Write failed for " + tmp + ".";
+                    return false;
+                }
+            }
+            std::error_code ec;
+            std::filesystem::rename(tmp, path, ec);
+            if (ec) {
+                error = "Atomic rename failed: " + ec.message();
+                return false;
+            }
+            return true;
+        }
+
+        bool LooksConcatenated(const std::vector<std::uint8_t> &cpio) {
+            constexpr std::string_view TRAILER = "TRAILER!!!";
+            const auto begin = cpio.begin();
+            const auto trailerIt = std::search(begin, cpio.end(), TRAILER.begin(), TRAILER.end());
+            if (trailerIt == cpio.end()) {
+                return false;
+            }
+            constexpr std::string_view MAGIC = "070701";
+            const auto afterTrailer = trailerIt + static_cast<std::ptrdiff_t>(TRAILER.size());
+            return std::search(afterTrailer, cpio.end(), MAGIC.begin(), MAGIC.end()) != cpio.end();
+        }
+    }
+
+    bool PatchRamdiskImageFile(
+        const std::string &ramdiskPath, const MagiskFiles &magisk, const bool stripVerity, std::string &error
+    ) {
+        const auto raw = ReadFileBytes(ramdiskPath);
+        if (!raw) {
+            error = "Cannot read ramdisk: " + ramdiskPath;
+            return false;
+        }
+        const RamdiskFormat format = DetectRamdiskFormat(*raw);
+
+        std::vector<std::uint8_t> cpio;
+        switch (format) {
+            case RamdiskFormat::Gzip: {
+                const auto inflated = GzipInflate(*raw);
+                if (!inflated) {
+                    error = "Failed to gunzip the ramdisk.";
+                    return false;
+                }
+                cpio = *inflated;
+                break;
+            }
+            case RamdiskFormat::Lz4Legacy: {
+                const auto decoded = Lz4LegacyDecompress(*raw);
+                if (!decoded) {
+                    error = "Failed to lz4-decompress the ramdisk.";
+                    return false;
+                }
+                cpio = *decoded;
+                break;
+            }
+            case RamdiskFormat::Raw:
+                cpio = *raw;
+                break;
+            case RamdiskFormat::Xz:
+                error = "xz-compressed ramdisks are not supported yet.";
+                return false;
+            case RamdiskFormat::Unknown:
+            default:
+                error = "Unrecognized ramdisk format.";
+                return false;
+        }
+
+        if (LooksConcatenated(cpio)) {
+            error = "Concatenated (generic+vendor) ramdisks are not supported yet.";
+            return false;
+        }
+
+        const auto archive = ParseCpioNewc(cpio);
+        if (!archive) {
+            error = "Failed to parse the ramdisk cpio.";
+            return false;
+        }
+
+        // Once-only pristine backup. Only create it from an unpatched image.
+        const std::string stockPath = ramdiskPath + ".stock";
+        if (!std::filesystem::exists(stockPath)) {
+            if (IsRamdiskPatched(*archive)) {
+                error = "Ramdisk is already patched and no pristine backup exists; restore the system image first.";
+                return false;
+            }
+            std::error_code ec;
+            std::filesystem::copy_file(ramdiskPath, stockPath, ec);
+            if (ec) {
+                error = "Could not create pristine backup: " + ec.message();
+                return false;
+            }
+        }
+
+        const CpioArchive patched = ApplyMagiskPatch(*archive, magisk, stripVerity);
+        const std::vector<std::uint8_t> reserialized = SerializeCpioNewc(patched);
+
+        std::vector<std::uint8_t> recompressed;
+        switch (format) {
+            case RamdiskFormat::Gzip:
+                recompressed = GzipDeflate(reserialized);
+                break;
+            case RamdiskFormat::Lz4Legacy:
+                recompressed = Lz4LegacyCompress(reserialized);
+                break;
+            case RamdiskFormat::Raw:
+            default:
+                recompressed = reserialized;
+                break;
+        }
+        return WriteFileBytesAtomic(ramdiskPath, recompressed, error);
+    }
+
+    bool RestoreRamdiskImageFile(const std::string &ramdiskPath, std::string &error) {
+        const std::string stockPath = ramdiskPath + ".stock";
+        const auto stock = ReadFileBytes(stockPath);
+        if (!stock) {
+            error = "No pristine backup found at " + stockPath;
+            return false;
+        }
+        return WriteFileBytesAtomic(ramdiskPath, *stock, error);
+    }
+
+    std::string FindSystemImageRamdisk(const AvdInfo &avd) {
+        if (avd.SystemImagePath.empty()) {
+            return "";
+        }
+        const std::filesystem::path candidate = std::filesystem::path(avd.SystemImagePath) / "ramdisk.img";
+        std::error_code ec;
+        return std::filesystem::exists(candidate, ec) ? candidate.string() : "";
+    }
+
+    // ------------------------------------------------------------ orchestration //
+
+    namespace {
+        Platform::CommandResult RunAdbRaw(const SdkInfo &sdk, const std::vector<std::string> &args) {
+            const std::string adb = ResolveAdbPath(sdk);
+            if (adb.empty()) {
+                return {};
+            }
+            return Platform::RunCommandArgsResult(adb, args, "", sdk.ToolEnv);
+        }
+
+        std::string WaitForEmulatorSerial(const SdkInfo &sdk, const int timeoutSeconds) {
+            for (int elapsed = 0; elapsed < timeoutSeconds; elapsed += 2) {
+                for (const AdbDevice &d: Devices(sdk)) {
+                    if (d.Online() && d.Serial.rfind("emulator-", 0) == 0) {
+                        return d.Serial;
+                    }
+                }
+                std::this_thread::sleep_for(std::chrono::seconds(2));
+            }
+            return "";
+        }
+    }
+
+    std::optional<RootPlan> PlanRoot(
+        const SdkInfo &sdk, const AvdInfo &avd, const std::string &magiskApkPath, std::string &error
+    ) {
+        (void) sdk;
+        RootPlan plan;
+        plan.Avd = avd;
+        plan.MagiskApkPath = magiskApkPath;
+        plan.Abi = avd.Abi;
+        if (plan.Abi.empty()) {
+            error = "The AVD does not report an ABI.";
+            return std::nullopt;
+        }
+        plan.RamdiskPath = FindSystemImageRamdisk(avd);
+        if (plan.RamdiskPath.empty()) {
+            error = "Could not find ramdisk.img for this AVD's system image.";
+            return std::nullopt;
+        }
+        return plan;
+    }
+
+    bool RootAvd(const SdkInfo &sdk, EmulatorManager &emulator, const RootPlan &plan, RootProgress &progress) {
+        progress.Set(RootStage::ResolveMagisk, 0.05F, "Reading Magisk");
+        const auto apk = ReadFileBytes(plan.MagiskApkPath);
+        if (!apk) {
+            progress.Fail("Cannot read the Magisk apk: " + plan.MagiskApkPath);
+            return false;
+        }
+        const auto magisk = ExtractMagiskFiles(*apk, plan.Abi);
+        if (!magisk) {
+            progress.Fail("Magisk apk has no binaries for ABI " + plan.Abi + ".");
+            return false;
+        }
+
+        progress.Set(RootStage::StartEmulator, 0.15F, "Starting emulator (writable-system)");
+        if (!emulator.IsRunning(plan.Avd.Name)) {
+            emulator.Launch(plan.Avd.Name, {"-writable-system", "-no-snapshot-save"});
+        }
+        const std::string serial = WaitForEmulatorSerial(sdk, 90);
+        if (serial.empty()) {
+            progress.Fail("The emulator did not come online.");
+            return false;
+        }
+
+        progress.Set(RootStage::ReadPreinit, 0.30F, "Reading mount table");
+        RunAdbRaw(sdk, {"-s", serial, "wait-for-device"});
+        (void) Shell(sdk, serial, {"cat", "/proc/mounts"}); // informational (preinit discovery, best-effort)
+
+        progress.Set(RootStage::WriteMagiskEnv, 0.40F, "Preparing Magisk environment");
+        RunAdbRaw(sdk, {"-s", serial, "root"}); // userdebug/AOSP images only; ignored otherwise
+        (void) Shell(sdk, serial, {"mkdir", "-p", "/data/adb/magisk"});
+
+        progress.Set(RootStage::PatchRamdisk, 0.60F, "Patching ramdisk");
+        emulator.Stop(plan.Avd.Name);
+        for (int i = 0; i < 15 && emulator.IsRunning(plan.Avd.Name); ++i) {
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+        }
+        std::string patchError;
+        if (!PatchRamdiskImageFile(plan.RamdiskPath, *magisk, plan.StripVerity, patchError)) {
+            progress.Fail("Ramdisk patch failed: " + patchError);
+            return false;
+        }
+
+        progress.Set(RootStage::ColdReboot, 0.80F, "Cold booting the patched image");
+        emulator.Launch(plan.Avd.Name, {"-no-snapshot-load", "-writable-system"});
+        const std::string rebooted = WaitForEmulatorSerial(sdk, 120);
+        if (rebooted.empty()) {
+            progress.Fail("The emulator did not come back after the cold reboot.");
+            return false;
+        }
+
+        progress.Set(RootStage::GrantSu, 0.90F, "Granting su");
+        RunAdbRaw(sdk, {"-s", rebooted, "wait-for-device"});
+        (void) ShellSu(sdk, rebooted, "id"); // first su may prompt magiskd to decide policy
+
+        progress.Set(RootStage::Verify, 0.95F, "Verifying root");
+        if (CheckRoot(sdk, rebooted) == RootStatus::Rooted) {
+            progress.Set(RootStage::Done, 1.0F, "Rooted: su returned uid=0");
+            return true;
+        }
+        progress.Fail("su did not return uid=0 after rooting. Try Restore and re-run, or validate the system image.");
+        return false;
+    }
+
+    bool RestoreAvd(const SdkInfo &sdk, const AvdInfo &avd, std::string &error) {
+        (void) sdk;
+        const std::string ramdisk = FindSystemImageRamdisk(avd);
+        if (ramdisk.empty()) {
+            error = "Could not find ramdisk.img for this AVD's system image.";
+            return false;
+        }
+        return RestoreRamdiskImageFile(ramdisk, error);
     }
 }

@@ -1,5 +1,7 @@
 #include <algorithm>
 #include <cstdint>
+#include <filesystem>
+#include <fstream>
 #include <string>
 #include <vector>
 
@@ -181,4 +183,178 @@ TEST_CASE("ParseRootId detects uid=0", "[avdroot]") {
     REQUIRE_FALSE(ParseRootId("uid=2000(shell) gid=2000(shell)"));
     REQUIRE_FALSE(ParseRootId("/system/bin/sh: su: not found"));
     REQUIRE_FALSE(ParseRootId(""));
+}
+
+namespace {
+    const CpioEntry *Find(const CpioArchive &a, const std::string &name) {
+        for (const CpioEntry &e: a) {
+            if (e.Name == name) {
+                return &e;
+            }
+        }
+        return nullptr;
+    }
+
+    std::vector<std::uint8_t> MakeFakeMagiskApk() {
+        mz_zip_archive zip = {};
+        REQUIRE(mz_zip_writer_init_heap(&zip, 0, 0) == MZ_TRUE);
+        struct E {
+            const char *name;
+            const char *data;
+        };
+        for (const E &e: {E{"lib/x86_64/libmagiskinit.so", "MAGISKINIT"}, E{"lib/x86_64/libmagisk64.so", "MAGISK64BIN"}, E{"lib/x86_64/libinit-ld.so", "INITLD"}, E{"lib/arm64-v8a/libmagiskinit.so", "ARMINIT"}, E{"assets/stub.apk", "STUBAPK"}}) {
+            REQUIRE(mz_zip_writer_add_mem(&zip, e.name, e.data, std::strlen(e.data), MZ_NO_COMPRESSION) == MZ_TRUE);
+        }
+        void *buf = nullptr;
+        std::size_t sz = 0;
+        REQUIRE(mz_zip_writer_finalize_heap_archive(&zip, &buf, &sz) == MZ_TRUE);
+        std::vector<std::uint8_t> out(static_cast<std::uint8_t *>(buf), static_cast<std::uint8_t *>(buf) + sz);
+        mz_zip_writer_end(&zip);
+        mz_free(buf);
+        return out;
+    }
+}
+
+TEST_CASE("XzStoreCompress emits a framed xz stream", "[avdroot]") {
+    const auto xz = XzStoreCompress(FromString("payload bytes for magisk"));
+    REQUIRE(xz.size() > 12);
+    // stream header magic
+    REQUIRE(xz[0] == 0xFD);
+    REQUIRE(xz[1] == 0x37);
+    REQUIRE(xz[2] == 0x7A);
+    REQUIRE(xz[3] == 0x58);
+    REQUIRE(xz[4] == 0x5A);
+    REQUIRE(xz[5] == 0x00);
+    // footer magic "YZ"
+    REQUIRE(xz[xz.size() - 2] == 0x59);
+    REQUIRE(xz[xz.size() - 1] == 0x5A);
+    REQUIRE(DetectRamdiskFormat(xz) == RamdiskFormat::Xz);
+}
+
+TEST_CASE("ExtractMagiskFiles pulls the per-ABI binaries", "[avdroot]") {
+    const auto apk = MakeFakeMagiskApk();
+    const auto files = ExtractMagiskFiles(apk, "x86_64");
+    REQUIRE(files.has_value());
+    REQUIRE(files->Has("magiskinit"));
+    REQUIRE(files->Has("magisk64"));
+    REQUIRE(files->Has("init-ld"));
+    REQUIRE(files->Has("stub"));
+    const auto *init = files->Find("magiskinit");
+    REQUIRE(init != nullptr);
+    REQUIRE(std::string(init->begin(), init->end()) == "MAGISKINIT");
+
+    // arm64 picks the arm magiskinit.
+    const auto arm = ExtractMagiskFiles(apk, "arm64-v8a");
+    REQUIRE(arm.has_value());
+    const auto *armInit = arm->Find("magiskinit");
+    REQUIRE(std::string(armInit->begin(), armInit->end()) == "ARMINIT");
+
+    // An ABI with no magiskinit yields nothing.
+    REQUIRE_FALSE(ExtractMagiskFiles(apk, "riscv64").has_value());
+}
+
+namespace {
+    CpioArchive StockRamdisk() {
+        CpioEntry dir;
+        dir.Name = "sbin";
+        dir.Mode = 0040755;
+        CpioEntry init;
+        init.Name = "init";
+        init.Mode = 0100755;
+        init.Data = FromString("STOCK_INIT_BINARY");
+        CpioEntry fstab;
+        fstab.Name = "fstab.ranchu";
+        fstab.Mode = 0100644;
+        fstab.Data = FromString("/dev/block/x /system ext4 ro,verify wait,avb\n");
+        return {dir, init, fstab};
+    }
+
+    MagiskFiles FakeMagiskFiles() {
+        MagiskFiles mf;
+        mf.Files = {{"magiskinit", FromString("MAGISKINIT")}, {"magisk64", FromString("MAGISK64BIN")}, {"init-ld", FromString("INITLD")}};
+        return mf;
+    }
+}
+
+TEST_CASE("ApplyMagiskPatch installs magiskinit, overlay payloads and backup", "[avdroot]") {
+    const auto patched = ApplyMagiskPatch(StockRamdisk(), FakeMagiskFiles(), /*stripVerity=*/true);
+
+    const CpioEntry *init = Find(patched, "init");
+    REQUIRE(init != nullptr);
+    REQUIRE(std::string(init->Data.begin(), init->Data.end()) == "MAGISKINIT");
+    REQUIRE(init->Mode == 0100750U);
+
+    const CpioEntry *backup = Find(patched, ".backup/init");
+    REQUIRE(backup != nullptr);
+    REQUIRE(std::string(backup->Data.begin(), backup->Data.end()) == "STOCK_INIT_BINARY");
+
+    const CpioEntry *magiskXz = Find(patched, "overlay.d/sbin/magisk.xz");
+    REQUIRE(magiskXz != nullptr);
+    REQUIRE(DetectRamdiskFormat(magiskXz->Data) == RamdiskFormat::Xz);
+    REQUIRE(Find(patched, "overlay.d/sbin/init-ld.xz") != nullptr);
+
+    const CpioEntry *rmlist = Find(patched, ".backup/.rmlist");
+    REQUIRE(rmlist != nullptr);
+    const std::string rm(rmlist->Data.begin(), rmlist->Data.end());
+    REQUIRE(rm.find("overlay.d/sbin/magisk.xz") != std::string::npos);
+
+    const CpioEntry *fstab = Find(patched, "fstab.ranchu");
+    REQUIRE(fstab != nullptr);
+    REQUIRE(std::string(fstab->Data.begin(), fstab->Data.end()).find("verify") == std::string::npos);
+
+    REQUIRE(IsRamdiskPatched(patched));
+    // Canonicalized: sorted by name, inodes from 300000.
+    REQUIRE(std::is_sorted(patched.begin(), patched.end(), [](const CpioEntry &a, const CpioEntry &b) { return a.Name < b.Name; }));
+    REQUIRE(patched.front().Ino == 300000U);
+}
+
+TEST_CASE("RevertMagiskPatch returns the ramdisk to stock", "[avdroot]") {
+    const auto stock = StockRamdisk();
+    const auto patched = ApplyMagiskPatch(stock, FakeMagiskFiles(), true);
+    const auto reverted = RevertMagiskPatch(patched);
+
+    REQUIRE_FALSE(IsRamdiskPatched(reverted));
+    REQUIRE(Find(reverted, "overlay.d/sbin/magisk.xz") == nullptr);
+    REQUIRE(Find(reverted, ".backup/init") == nullptr);
+    const CpioEntry *init = Find(reverted, "init");
+    REQUIRE(init != nullptr);
+    REQUIRE(std::string(init->Data.begin(), init->Data.end()) == "STOCK_INIT_BINARY");
+}
+
+TEST_CASE("PatchRamdiskImageFile round-trips a gzip ramdisk and restores", "[avdroot]") {
+    namespace fs = std::filesystem;
+    const fs::path dir = fs::temp_directory_path() / fs::path("coredeck_avdroot_test");
+    fs::create_directories(dir);
+    const std::string path = (dir / "ramdisk.img").string();
+    const std::string stockPath = path + ".stock";
+    fs::remove(stockPath);
+
+    const auto original = GzipDeflate(SerializeCpioNewc(StockRamdisk()));
+    {
+        std::ofstream f(path, std::ios::binary | std::ios::trunc);
+        f.write(reinterpret_cast<const char *>(original.data()), static_cast<std::streamsize>(original.size()));
+    }
+
+    std::string error;
+    REQUIRE(PatchRamdiskImageFile(path, FakeMagiskFiles(), true, error));
+    REQUIRE(error.empty());
+    REQUIRE(fs::exists(stockPath)); // pristine backup created
+
+    // Read back, inflate, parse: it is patched.
+    std::ifstream in(path, std::ios::binary);
+    const std::vector<std::uint8_t> patchedBytes((std::istreambuf_iterator<char>(in)), std::istreambuf_iterator<char>());
+    REQUIRE(DetectRamdiskFormat(patchedBytes) == RamdiskFormat::Gzip);
+    const auto inflated = GzipInflate(patchedBytes);
+    REQUIRE(inflated.has_value());
+    const auto archive = ParseCpioNewc(*inflated);
+    REQUIRE(archive.has_value());
+    REQUIRE(IsRamdiskPatched(*archive));
+
+    // Restore from pristine backup gives back the original bytes.
+    REQUIRE(RestoreRamdiskImageFile(path, error));
+    std::ifstream in2(path, std::ios::binary);
+    const std::vector<std::uint8_t> restored((std::istreambuf_iterator<char>(in2)), std::istreambuf_iterator<char>());
+    REQUIRE(restored == original);
+
+    fs::remove_all(dir);
 }

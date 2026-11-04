@@ -11,13 +11,17 @@
 #ifndef COREDECK_AVD_ROOT_H
 #define COREDECK_AVD_ROOT_H
 
+#include <atomic>
 #include <cstdint>
 #include <functional>
+#include <mutex>
 #include <optional>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "core/avd_manager.h"
+#include "core/emulator.h"
 #include "core/sdk.h"
 
 namespace CoreDeck::Core {
@@ -46,6 +50,10 @@ namespace CoreDeck::Core {
     // Android build system and magiskboot use for ramdisks.
     std::optional<std::vector<std::uint8_t>> Lz4LegacyDecompress(const std::vector<std::uint8_t> &data);
     std::vector<std::uint8_t> Lz4LegacyCompress(const std::vector<std::uint8_t> &data);
+
+    // Store-mode XZ (valid .xz via uncompressed LZMA2 chunks; no LZMA needed).
+    // Used for Magisk's overlay.d payloads; the output decompresses with any xz tool.
+    std::vector<std::uint8_t> XzStoreCompress(const std::vector<std::uint8_t> &data);
 
     // ----------------------------------------------------------------------- //
     // cpio (newc / "070701")
@@ -143,6 +151,53 @@ namespace CoreDeck::Core {
     );
 
     // ----------------------------------------------------------------------- //
+    // Magisk ramdisk patch (host-side; reproduces Magisk's boot_patch cpio ops)
+    // ----------------------------------------------------------------------- //
+    // Binaries pulled from the Magisk apk, keyed by canonical name
+    // (magiskinit, magisk32, magisk64, init-ld, stub, busybox).
+    struct MagiskFiles {
+        std::vector<std::pair<std::string, std::vector<std::uint8_t>>> Files;
+
+        const std::vector<std::uint8_t> *Find(const std::string &name) const;
+        bool Has(const std::string &name) const {
+            return Find(name) != nullptr;
+        }
+    };
+
+    // Extract the Magisk binaries for one ABI from the apk bytes (lib/<abi>/lib*.so,
+    // plus assets/stub.apk when present).
+    std::optional<MagiskFiles> ExtractMagiskFiles(const std::vector<std::uint8_t> &apkBytes, const std::string &abi);
+
+    // True when a ramdisk cpio already carries a Magisk patch (.backup dir present).
+    bool IsRamdiskPatched(const CpioArchive &archive);
+
+    // Reproduce Magisk's boot_patch on a stock ramdisk cpio: if already patched,
+    // revert to stock first; back up the stock /init to .backup/init; install
+    // magiskinit as /init (0750); add overlay.d/sbin/{magisk,stub,init-ld}.xz;
+    // record .backup/.magisk config and .backup/.rmlist; optionally strip verity /
+    // forceencrypt flags from fstab entries. Returns the patched archive.
+    // NOTE: modeled on magiskboot; needs an on-device boot test and a parity test
+    // against real magiskboot output before it is trusted as byte-compatible.
+    CpioArchive ApplyMagiskPatch(const CpioArchive &stock, const MagiskFiles &magisk, bool stripVerity);
+
+    // Undo ApplyMagiskPatch on an in-memory archive (restore .backup/init, drop
+    // every path listed in .backup/.rmlist and the .backup dir).
+    CpioArchive RevertMagiskPatch(const CpioArchive &patched);
+
+    // File-level: read ramdisk.img, decompress, patch, recompress in the original
+    // format, and write atomically, keeping a once-only pristine ".stock" backup.
+    // Concatenated (multi-archive) and xz ramdisks are rejected with a clear error.
+    bool PatchRamdiskImageFile(
+        const std::string &ramdiskPath, const MagiskFiles &magisk, bool stripVerity, std::string &error
+    );
+
+    // Restore ramdisk.img from the once-only pristine ".stock" backup.
+    bool RestoreRamdiskImageFile(const std::string &ramdiskPath, std::string &error);
+
+    // Locate the ramdisk.img of the AVD's system image (empty when not found).
+    std::string FindSystemImageRamdisk(const AvdInfo &avd);
+
+    // ----------------------------------------------------------------------- //
     // Root verification
     // ----------------------------------------------------------------------- //
     enum class RootStatus : std::uint8_t {
@@ -178,6 +233,50 @@ namespace CoreDeck::Core {
     };
 
     const char *RootStageLabel(RootStage stage);
+
+    // Live progress, owned by the GUI work-struct (shared_ptr), written by the
+    // worker thread. Non-copyable (atomics + mutex).
+    struct RootProgress {
+        std::atomic<RootStage> Stage{RootStage::Idle};
+        std::atomic<float> Fraction{0.0F};
+        std::mutex Mutex;
+        std::string Detail;
+        std::string Error;
+
+        void Set(RootStage stage, float fraction, const std::string &detail) {
+            Stage.store(stage);
+            Fraction.store(fraction);
+            std::lock_guard<std::mutex> lock(Mutex);
+            Detail = detail;
+        }
+        void Fail(const std::string &error) {
+            Stage.store(RootStage::Failed);
+            std::lock_guard<std::mutex> lock(Mutex);
+            Error = error;
+        }
+    };
+
+    struct RootPlan {
+        AvdInfo Avd;
+        std::string Serial; // a running device serial for this AVD
+        std::string MagiskApkPath; // resolved Magisk .apk
+        std::string Abi; // chosen ABI
+        std::string RamdiskPath; // system image ramdisk.img
+        bool StripVerity = true;
+    };
+
+    // Resolve the ABI and ramdisk path for the AVD. error set on failure.
+    std::optional<RootPlan> PlanRoot(
+        const SdkInfo &sdk, const AvdInfo &avd, const std::string &magiskApkPath, std::string &error
+    );
+
+    // Execute the host-side root end to end (patch ramdisk, cold reboot, verify su).
+    // EXPERIMENTAL: performs device-modifying steps; validate on a disposable AVD.
+    // A pristine ramdisk backup is taken before any write so RestoreAvd can recover.
+    bool RootAvd(const SdkInfo &sdk, EmulatorManager &emulator, const RootPlan &plan, RootProgress &progress);
+
+    // Restore an AVD to stock from the once-only ramdisk backup.
+    bool RestoreAvd(const SdkInfo &sdk, const AvdInfo &avd, std::string &error);
 }
 
 #endif // COREDECK_AVD_ROOT_H

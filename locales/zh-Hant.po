@@ -3729,3 +3729,35 @@ msgstr "引導式一鍵 Root(主機端 ramdisk 修補 + 冷啟動)即將推出�
 #: src/gui/windows/avd_root.cpp
 msgid "Could not resolve Magisk."
 msgstr "無法解析 Magisk。"
+
+#: src/gui/windows/avd_root.cpp
+msgid "Strip dm-verity / forced encryption"
+msgstr "移除 dm-verity / 強制加密"
+
+#: src/gui/windows/avd_root.cpp
+msgid "Experimental: this rewrites the AVD's system image. A pristine backup is kept; use a disposable AVD you own."
+msgstr "實驗性功能：這會重寫 AVD 的系統映像。會保留原始備份；請使用你自己的一次性 AVD。"
+
+#: src/gui/windows/avd_root.cpp
+msgid "Root (experimental)"
+msgstr "Root（實驗性）"
+
+#: src/gui/windows/avd_root.cpp
+msgid "Rooting..."
+msgstr "正在 Root..."
+
+#: src/gui/windows/avd_root.cpp
+msgid "Restore"
+msgstr "還原"
+
+#: src/gui/windows/avd_root.cpp
+msgid "Restoring..."
+msgstr "正在還原..."
+
+#: src/gui/windows/avd_root.cpp
+msgid "Fetch Magisk first to enable rooting."
+msgstr "請先取得 Magisk 以啟用 Root。"
+
+#: src/gui/windows/avd_root.cpp
+msgid "Restored the system image from the pristine backup."
+msgstr "已從原始備份還原系統映像。"

@@ -335,6 +335,16 @@ namespace CoreDeck::Gui {
             std::future<Core::RootStatus> RootCheckFuture;
             Core::RootStatus LastRootStatus = Core::RootStatus::Unknown;
             std::string RootCheckedSerial;
+
+            bool StripVerity = true;
+            std::atomic<bool> RootBusy{false};
+            std::shared_ptr<Core::RootProgress> Progress;
+            std::future<bool> RootFuture;
+            std::string RootOutcome;
+
+            std::atomic<bool> RestoreBusy{false};
+            std::future<std::pair<bool, std::string>> RestoreFuture;
+            std::string RestoreOutcome;
         } AvdRootWork;
 
         ApkSignerState ApkSignerWork;

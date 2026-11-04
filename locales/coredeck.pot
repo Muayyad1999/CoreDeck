@@ -3711,3 +3711,35 @@ msgstr ""
 #: src/gui/windows/avd_root.cpp
 msgid "Could not resolve Magisk."
 msgstr ""
+
+#: src/gui/windows/avd_root.cpp
+msgid "Strip dm-verity / forced encryption"
+msgstr ""
+
+#: src/gui/windows/avd_root.cpp
+msgid "Experimental: this rewrites the AVD's system image. A pristine backup is kept; use a disposable AVD you own."
+msgstr ""
+
+#: src/gui/windows/avd_root.cpp
+msgid "Root (experimental)"
+msgstr ""
+
+#: src/gui/windows/avd_root.cpp
+msgid "Rooting..."
+msgstr ""
+
+#: src/gui/windows/avd_root.cpp
+msgid "Restore"
+msgstr ""
+
+#: src/gui/windows/avd_root.cpp
+msgid "Restoring..."
+msgstr ""
+
+#: src/gui/windows/avd_root.cpp
+msgid "Fetch Magisk first to enable rooting."
+msgstr ""
+
+#: src/gui/windows/avd_root.cpp
+msgid "Restored the system image from the pristine backup."
+msgstr ""
