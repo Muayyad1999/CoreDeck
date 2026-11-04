@@ -3743,3 +3743,107 @@ msgstr "Apps werden geladen..."
 #: src/gui/windows/device_panel.cpp
 msgid "Click to copy the package name"
 msgstr "Klicken, um den Paketnamen zu kopieren"
+
+#: src/gui/windows/avd_root.cpp
+msgid "Root AVD"
+msgstr "AVD rooten"
+
+#: src/gui/windows/avd_root.cpp
+msgid "Target AVD"
+msgstr "Ziel-AVD"
+
+#: src/gui/windows/avd_root.cpp
+msgid "Select an AVD in the list to root."
+msgstr "Wählen Sie einen AVD aus der Liste zum Rooten."
+
+#: src/gui/windows/avd_root.cpp
+msgid "AVD"
+msgstr "AVD"
+
+#: src/gui/windows/avd_root.cpp
+msgid "This is a Google Play image. Prefer a Google APIs (AOSP) image for rooting."
+msgstr "Dies ist ein Google-Play-Image. Bevorzugen Sie zum Rooten ein Google-APIs-Image (AOSP)."
+
+#: src/gui/windows/avd_root.cpp
+msgid "Magisk"
+msgstr "Magisk"
+
+#: src/gui/windows/avd_root.cpp
+msgid "Include pre-release (canary) builds"
+msgstr "Vorabversionen (Canary) einbeziehen"
+
+#: src/gui/windows/avd_root.cpp
+msgid "Local Magisk APK (optional)"
+msgstr "Lokale Magisk-APK (optional)"
+
+#: src/gui/windows/avd_root.cpp
+msgid "Leave empty to fetch the newest release"
+msgstr "Leer lassen, um die neueste Version zu laden"
+
+#: src/gui/windows/avd_root.cpp
+msgid "Resolving..."
+msgstr "Wird aufgelöst..."
+
+#: src/gui/windows/avd_root.cpp
+msgid "Fetch Magisk"
+msgstr "Magisk abrufen"
+
+#: src/gui/windows/avd_root.cpp
+msgid "Release"
+msgstr "Version"
+
+#: src/gui/windows/avd_root.cpp
+msgid "Channel"
+msgstr "Kanal"
+
+#: src/gui/windows/avd_root.cpp
+msgid "pre-release"
+msgstr "Vorabversion"
+
+#: src/gui/windows/avd_root.cpp
+msgid "stable"
+msgstr "stabil"
+
+#: src/gui/windows/avd_root.cpp
+msgid "Size"
+msgstr "Größe"
+
+#: src/gui/windows/avd_root.cpp
+msgid "ABIs"
+msgstr "ABIs"
+
+#: src/gui/windows/avd_root.cpp
+msgid "Cached and verified. Ready for the patch step."
+msgstr "Zwischengespeichert und verifiziert. Bereit für den Patch-Schritt."
+
+#: src/gui/windows/avd_root.cpp
+msgid "Root status"
+msgstr "Root-Status"
+
+#: src/gui/windows/avd_root.cpp
+msgid "Select a device in the Devices window to verify root."
+msgstr "Wählen Sie im Geräte-Fenster ein Gerät, um den Root-Status zu prüfen."
+
+#: src/gui/windows/avd_root.cpp
+msgid "Verify Root"
+msgstr "Root prüfen"
+
+#: src/gui/windows/avd_root.cpp
+msgid "Rooted (su returned uid=0)"
+msgstr "Gerootet (su lieferte uid=0)"
+
+#: src/gui/windows/avd_root.cpp
+msgid "Not rooted"
+msgstr "Nicht gerootet"
+
+#: src/gui/windows/avd_root.cpp
+msgid "Rooting pipeline"
+msgstr "Rooting-Ablauf"
+
+#: src/gui/windows/avd_root.cpp
+msgid "Guided one-click rooting (host-side ramdisk patch + cold boot) arrives next."
+msgstr "Geführtes Ein-Klick-Rooting (Host-seitiger Ramdisk-Patch + Kaltstart) folgt als Nächstes."
+
+#: src/gui/windows/avd_root.cpp
+msgid "Could not resolve Magisk."
+msgstr "Magisk konnte nicht aufgelöst werden."

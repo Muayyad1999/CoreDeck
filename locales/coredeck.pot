@@ -3607,3 +3607,107 @@ msgstr ""
 #: src/gui/windows/device_panel.cpp
 msgid "Click to copy the package name"
 msgstr ""
+
+#: src/gui/windows/avd_root.cpp
+msgid "Root AVD"
+msgstr ""
+
+#: src/gui/windows/avd_root.cpp
+msgid "Target AVD"
+msgstr ""
+
+#: src/gui/windows/avd_root.cpp
+msgid "Select an AVD in the list to root."
+msgstr ""
+
+#: src/gui/windows/avd_root.cpp
+msgid "AVD"
+msgstr ""
+
+#: src/gui/windows/avd_root.cpp
+msgid "This is a Google Play image. Prefer a Google APIs (AOSP) image for rooting."
+msgstr ""
+
+#: src/gui/windows/avd_root.cpp
+msgid "Magisk"
+msgstr ""
+
+#: src/gui/windows/avd_root.cpp
+msgid "Include pre-release (canary) builds"
+msgstr ""
+
+#: src/gui/windows/avd_root.cpp
+msgid "Local Magisk APK (optional)"
+msgstr ""
+
+#: src/gui/windows/avd_root.cpp
+msgid "Leave empty to fetch the newest release"
+msgstr ""
+
+#: src/gui/windows/avd_root.cpp
+msgid "Resolving..."
+msgstr ""
+
+#: src/gui/windows/avd_root.cpp
+msgid "Fetch Magisk"
+msgstr ""
+
+#: src/gui/windows/avd_root.cpp
+msgid "Release"
+msgstr ""
+
+#: src/gui/windows/avd_root.cpp
+msgid "Channel"
+msgstr ""
+
+#: src/gui/windows/avd_root.cpp
+msgid "pre-release"
+msgstr ""
+
+#: src/gui/windows/avd_root.cpp
+msgid "stable"
+msgstr ""
+
+#: src/gui/windows/avd_root.cpp
+msgid "Size"
+msgstr ""
+
+#: src/gui/windows/avd_root.cpp
+msgid "ABIs"
+msgstr ""
+
+#: src/gui/windows/avd_root.cpp
+msgid "Cached and verified. Ready for the patch step."
+msgstr ""
+
+#: src/gui/windows/avd_root.cpp
+msgid "Root status"
+msgstr ""
+
+#: src/gui/windows/avd_root.cpp
+msgid "Select a device in the Devices window to verify root."
+msgstr ""
+
+#: src/gui/windows/avd_root.cpp
+msgid "Verify Root"
+msgstr ""
+
+#: src/gui/windows/avd_root.cpp
+msgid "Rooted (su returned uid=0)"
+msgstr ""
+
+#: src/gui/windows/avd_root.cpp
+msgid "Not rooted"
+msgstr ""
+
+#: src/gui/windows/avd_root.cpp
+msgid "Rooting pipeline"
+msgstr ""
+
+#: src/gui/windows/avd_root.cpp
+msgid "Guided one-click rooting (host-side ramdisk patch + cold boot) arrives next."
+msgstr ""
+
+#: src/gui/windows/avd_root.cpp
+msgid "Could not resolve Magisk."
+msgstr ""

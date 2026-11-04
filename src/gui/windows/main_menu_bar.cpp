@@ -10,6 +10,7 @@
 #include "main_menu_bar.h"
 #include "apk_analyzer.h"
 #include "apk_signer.h"
+#include "avd_root.h"
 #include "device_panel.h"
 #include "health_check.h"
 #include "jar_signer.h"
@@ -145,6 +146,9 @@ namespace CoreDeck::Gui {
             if (RoundedBeginMenu(Platform::Tr("Research"))) {
                 if (RoundedMenuItem(IconWithLabel(Icons::MOBILE, Platform::Tr("Devices")).c_str(), nullptr, context.UI.ShowDevicePanel)) {
                     context.UI.ShowDevicePanel = !context.UI.ShowDevicePanel;
+                }
+                if (RoundedMenuItem(IconWithLabel(Icons::HARD_DRIVE, Platform::Tr("Root AVD")).c_str(), nullptr, context.UI.ShowAvdRootDialog)) {
+                    context.UI.ShowAvdRootDialog = !context.UI.ShowAvdRootDialog;
                 }
                 ImGui::EndMenu();
             }

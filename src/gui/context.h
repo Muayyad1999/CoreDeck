@@ -9,13 +9,16 @@
 #include <cstdint>
 #include <future>
 #include <memory>
+#include <optional>
 #include <string>
 #include <unordered_map>
+#include <utility>
 #include <vector>
 
 #include "app/app_settings_types.h"
 #include "core/avd_manager.h"
 #include "core/adb.h"
+#include "core/avd_root.h"
 #include "core/emulator.h"
 #include "core/health_check.h"
 #include "core/jdk.h"
@@ -171,6 +174,7 @@ namespace CoreDeck::Gui {
             bool ShowPreferences = false;
             bool ShowStorageDialog = false;
             bool ShowDevicePanel = false;
+            bool ShowAvdRootDialog = false;
             WorkspacePage Workspace = WorkspacePage::Home;
             bool ShowWipeDataDialog = false;
             bool ShowHealthCheckDialog = false;
@@ -316,6 +320,22 @@ namespace CoreDeck::Gui {
 
             char PackageFilter[128] = {};
         } DevicePanelWork;
+
+        struct AvdRootWork {
+            bool IncludePrerelease = false;
+            char MagiskOverride[512] = {};
+
+            std::atomic<bool> ResolveBusy{false};
+            std::future<std::pair<std::optional<Core::ResolvedMagisk>, std::string>> ResolveFuture;
+            bool HasResolved = false;
+            Core::ResolvedMagisk Resolved;
+            std::string ResolveError;
+
+            std::atomic<bool> RootCheckBusy{false};
+            std::future<Core::RootStatus> RootCheckFuture;
+            Core::RootStatus LastRootStatus = Core::RootStatus::Unknown;
+            std::string RootCheckedSerial;
+        } AvdRootWork;
 
         ApkSignerState ApkSignerWork;
         JarSignerState JarSignerWork;

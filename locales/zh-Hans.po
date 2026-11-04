@@ -3626,3 +3626,107 @@ msgstr "正在加载应用..."
 #: src/gui/windows/device_panel.cpp
 msgid "Click to copy the package name"
 msgstr "点击以复制软件包名称"
+
+#: src/gui/windows/avd_root.cpp
+msgid "Root AVD"
+msgstr "Root AVD"
+
+#: src/gui/windows/avd_root.cpp
+msgid "Target AVD"
+msgstr "目标 AVD"
+
+#: src/gui/windows/avd_root.cpp
+msgid "Select an AVD in the list to root."
+msgstr "在列表中选择要 Root 的 AVD。"
+
+#: src/gui/windows/avd_root.cpp
+msgid "AVD"
+msgstr "AVD"
+
+#: src/gui/windows/avd_root.cpp
+msgid "This is a Google Play image. Prefer a Google APIs (AOSP) image for rooting."
+msgstr "这是 Google Play 映像。Root 时建议使用 Google APIs (AOSP) 映像。"
+
+#: src/gui/windows/avd_root.cpp
+msgid "Magisk"
+msgstr "Magisk"
+
+#: src/gui/windows/avd_root.cpp
+msgid "Include pre-release (canary) builds"
+msgstr "包含预发布 (canary) 版本"
+
+#: src/gui/windows/avd_root.cpp
+msgid "Local Magisk APK (optional)"
+msgstr "本地 Magisk APK (可选)"
+
+#: src/gui/windows/avd_root.cpp
+msgid "Leave empty to fetch the newest release"
+msgstr "留空以获取最新版本"
+
+#: src/gui/windows/avd_root.cpp
+msgid "Resolving..."
+msgstr "正在解析..."
+
+#: src/gui/windows/avd_root.cpp
+msgid "Fetch Magisk"
+msgstr "获取 Magisk"
+
+#: src/gui/windows/avd_root.cpp
+msgid "Release"
+msgstr "版本"
+
+#: src/gui/windows/avd_root.cpp
+msgid "Channel"
+msgstr "通道"
+
+#: src/gui/windows/avd_root.cpp
+msgid "pre-release"
+msgstr "预发布"
+
+#: src/gui/windows/avd_root.cpp
+msgid "stable"
+msgstr "稳定版"
+
+#: src/gui/windows/avd_root.cpp
+msgid "Size"
+msgstr "大小"
+
+#: src/gui/windows/avd_root.cpp
+msgid "ABIs"
+msgstr "ABI"
+
+#: src/gui/windows/avd_root.cpp
+msgid "Cached and verified. Ready for the patch step."
+msgstr "已缓存并校验。可以进行修补步骤。"
+
+#: src/gui/windows/avd_root.cpp
+msgid "Root status"
+msgstr "Root 状态"
+
+#: src/gui/windows/avd_root.cpp
+msgid "Select a device in the Devices window to verify root."
+msgstr "在“设备”窗口中选择设备以验证 Root。"
+
+#: src/gui/windows/avd_root.cpp
+msgid "Verify Root"
+msgstr "验证 Root"
+
+#: src/gui/windows/avd_root.cpp
+msgid "Rooted (su returned uid=0)"
+msgstr "已 Root (su 返回 uid=0)"
+
+#: src/gui/windows/avd_root.cpp
+msgid "Not rooted"
+msgstr "未 Root"
+
+#: src/gui/windows/avd_root.cpp
+msgid "Rooting pipeline"
+msgstr "Root 流程"
+
+#: src/gui/windows/avd_root.cpp
+msgid "Guided one-click rooting (host-side ramdisk patch + cold boot) arrives next."
+msgstr "引导式一键 Root(主机侧 ramdisk 修补 + 冷启动)即将推出。"
+
+#: src/gui/windows/avd_root.cpp
+msgid "Could not resolve Magisk."
+msgstr "无法解析 Magisk。"
