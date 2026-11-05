@@ -4001,3 +4001,7 @@ msgstr "執行中"
 #: src/gui/windows/frida_hook.cpp
 msgid "Requires frida-server + host frida tools."
 msgstr "需要 frida-server + 主機的 frida 工具。"
+
+#: src/gui/windows/frida_hook.cpp
+msgid "Bypass scripts (authorized testing only)"
+msgstr "繞過指令稿 (僅限授權測試)"

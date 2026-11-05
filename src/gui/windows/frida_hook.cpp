@@ -109,11 +109,38 @@ namespace CoreDeck::Gui {
             ImGui::Checkbox(Platform::Tr("Attach (don't spawn)"), &work.Attach);
 
             ImGui::Separator();
-            ImGui::TextDisabled("%s", Platform::Tr("Scripts"));
-            for (std::size_t i = 0; i < scripts.size(); ++i) {
+            const auto scriptCheckbox = [&](std::size_t i) {
                 bool selected = i < work.ScriptSelected.size() && work.ScriptSelected[i];
                 if (ImGui::Checkbox(scripts[i].Name.c_str(), &selected)) {
                     work.ScriptSelected[i] = selected;
+                }
+            };
+
+            ImGui::TextDisabled("%s", Platform::Tr("Scripts"));
+            for (std::size_t i = 0; i < scripts.size(); ++i) {
+                if (scripts[i].Category == "dev") {
+                    scriptCheckbox(i);
+                }
+            }
+
+            bool hasSensitive = false;
+            for (const auto &script: scripts) {
+                if (script.Category == "sensitive") {
+                    hasSensitive = true;
+                    break;
+                }
+            }
+            if (hasSensitive) {
+                ImGui::Spacing();
+                ImGui::TextColored(
+                    HexColor(Colors::WARNING),
+                    "%s",
+                    Platform::Tr("Bypass scripts (authorized testing only)")
+                );
+                for (std::size_t i = 0; i < scripts.size(); ++i) {
+                    if (scripts[i].Category == "sensitive") {
+                        scriptCheckbox(i);
+                    }
                 }
             }
 

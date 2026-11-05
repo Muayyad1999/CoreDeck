@@ -3983,3 +3983,7 @@ msgstr ""
 #: src/gui/windows/frida_hook.cpp
 msgid "Requires frida-server + host frida tools."
 msgstr ""
+
+#: src/gui/windows/frida_hook.cpp
+msgid "Bypass scripts (authorized testing only)"
+msgstr ""

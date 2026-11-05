@@ -49,13 +49,18 @@ TEST_CASE("BuildFridaHookArgs builds spawn and attach argv", "[frida]") {
     REQUIRE(attach == std::vector<std::string>{"-D", "emulator-5554", "-n", "com.example.app", "-l", "/tmp/a.js"});
 }
 
-TEST_CASE("BundledFridaScripts are non-empty dev scripts", "[frida]") {
+TEST_CASE("BundledFridaScripts include dev and sensitive scripts", "[frida]") {
     const auto scripts = BundledFridaScripts();
-    REQUIRE(scripts.size() >= 4);
+    REQUIRE(scripts.size() >= 6);
+    int dev = 0;
+    int sensitive = 0;
     for (const auto &script: scripts) {
         REQUIRE_FALSE(script.Name.empty());
         REQUIRE_FALSE(script.Filename.empty());
         REQUIRE_FALSE(script.Content.empty());
-        REQUIRE(script.Category == "dev");
+        REQUIRE((script.Category == "dev" || script.Category == "sensitive"));
+        if (script.Category == "dev") { ++dev; } else { ++sensitive; }
     }
+    REQUIRE(dev >= 4);
+    REQUIRE(sensitive >= 2);
 }

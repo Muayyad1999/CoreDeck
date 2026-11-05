@@ -4119,3 +4119,7 @@ msgstr "läuft"
 #: src/gui/windows/frida_hook.cpp
 msgid "Requires frida-server + host frida tools."
 msgstr "Erfordert frida-server + die Host-frida-Tools."
+
+#: src/gui/windows/frida_hook.cpp
+msgid "Bypass scripts (authorized testing only)"
+msgstr "Bypass-Skripte (nur für autorisierte Tests)"
