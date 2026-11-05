@@ -3825,3 +3825,63 @@ msgstr "已從系統存放區移除。"
 #: src/gui/windows/cert.cpp
 msgid "Installed as {0} in the system store."
 msgstr "已作為 {0} 安裝到系統存放區。"
+
+#: src/gui/windows/proxy.cpp
+msgid "Proxy"
+msgstr "代理"
+
+#: src/gui/windows/proxy.cpp
+msgid "Route this emulator's traffic to your proxy (Burp/Fiddler)."
+msgstr "將此模擬器的流量路由到你的代理 (Burp/Fiddler)。"
+
+#: src/gui/windows/proxy.cpp
+msgid "Proxy target (host:port, or just a port)"
+msgstr "代理目標 (主機:連接埠，或僅連接埠)"
+
+#: src/gui/windows/proxy.cpp
+msgid "e.g. 10.0.2.2:8080 or 8080"
+msgstr "例如 10.0.2.2:8080 或 8080"
+
+#: src/gui/windows/proxy.cpp
+msgid "Transparent redirect (iptables DNAT 80/443, needs root)"
+msgstr "透明重新導向 (iptables DNAT 80/443，需要 root)"
+
+#: src/gui/windows/proxy.cpp
+msgid "Apply"
+msgstr "套用"
+
+#: src/gui/windows/proxy.cpp
+msgid "Applying..."
+msgstr "正在套用..."
+
+#: src/gui/windows/proxy.cpp
+msgid "Clear"
+msgstr "清除"
+
+#: src/gui/windows/proxy.cpp
+msgid "Clearing..."
+msgstr "正在清除..."
+
+#: src/gui/windows/proxy.cpp
+msgid "Refresh status"
+msgstr "重新整理狀態"
+
+#: src/gui/windows/proxy.cpp
+msgid "Done. Restart the app so it picks up the change."
+msgstr "完成。請重新啟動應用程式以使變更生效。"
+
+#: src/gui/windows/proxy.cpp
+msgid "Global proxy"
+msgstr "全域代理"
+
+#: src/gui/windows/proxy.cpp
+msgid "(unset)"
+msgstr "(未設定)"
+
+#: src/gui/windows/proxy.cpp
+msgid "Transparent rules"
+msgstr "透明規則"
+
+#: src/gui/windows/proxy.cpp
+msgid "none"
+msgstr "無"

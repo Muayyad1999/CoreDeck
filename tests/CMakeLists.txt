@@ -4,6 +4,7 @@ add_executable(coredeck_tests
         test_adb.cpp
         test_avd_root.cpp
         test_cert.cpp
+        test_proxy.cpp
         test_utilities.cpp
         test_paths.cpp
         test_log_buffer.cpp

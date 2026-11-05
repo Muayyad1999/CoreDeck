@@ -62,6 +62,7 @@
 #include "windows/device_panel.h"
 #include "windows/avd_root.h"
 #include "windows/cert.h"
+#include "windows/proxy.h"
 #include "windows/storage.h"
 #include "windows/update.h"
 #include "app/version_check.h"
@@ -255,6 +256,7 @@ namespace CoreDeck::Gui {
         BuildDevicePanelWindow(m_Context);
         BuildAvdRootWindow(m_Context);
         BuildCertWindow(m_Context);
+        BuildProxyWindow(m_Context);
 
         m_Context.Host.Manager.Update();
         m_ApplyNativeWindowTitle();

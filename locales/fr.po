@@ -3959,3 +3959,63 @@ msgstr "Supprimé du magasin système."
 #: src/gui/windows/cert.cpp
 msgid "Installed as {0} in the system store."
 msgstr "Installé sous {0} dans le magasin système."
+
+#: src/gui/windows/proxy.cpp
+msgid "Proxy"
+msgstr "Proxy"
+
+#: src/gui/windows/proxy.cpp
+msgid "Route this emulator's traffic to your proxy (Burp/Fiddler)."
+msgstr "Dirigez le trafic de cet émulateur vers votre proxy (Burp/Fiddler)."
+
+#: src/gui/windows/proxy.cpp
+msgid "Proxy target (host:port, or just a port)"
+msgstr "Cible du proxy (hôte:port, ou juste un port)"
+
+#: src/gui/windows/proxy.cpp
+msgid "e.g. 10.0.2.2:8080 or 8080"
+msgstr "p. ex. 10.0.2.2:8080 ou 8080"
+
+#: src/gui/windows/proxy.cpp
+msgid "Transparent redirect (iptables DNAT 80/443, needs root)"
+msgstr "Redirection transparente (iptables DNAT 80/443, nécessite root)"
+
+#: src/gui/windows/proxy.cpp
+msgid "Apply"
+msgstr "Appliquer"
+
+#: src/gui/windows/proxy.cpp
+msgid "Applying..."
+msgstr "Application..."
+
+#: src/gui/windows/proxy.cpp
+msgid "Clear"
+msgstr "Effacer"
+
+#: src/gui/windows/proxy.cpp
+msgid "Clearing..."
+msgstr "Effacement..."
+
+#: src/gui/windows/proxy.cpp
+msgid "Refresh status"
+msgstr "Actualiser l'état"
+
+#: src/gui/windows/proxy.cpp
+msgid "Done. Restart the app so it picks up the change."
+msgstr "Terminé. Redémarrez l'application pour qu'elle prenne en compte le changement."
+
+#: src/gui/windows/proxy.cpp
+msgid "Global proxy"
+msgstr "Proxy global"
+
+#: src/gui/windows/proxy.cpp
+msgid "(unset)"
+msgstr "(non défini)"
+
+#: src/gui/windows/proxy.cpp
+msgid "Transparent rules"
+msgstr "Règles transparentes"
+
+#: src/gui/windows/proxy.cpp
+msgid "none"
+msgstr "aucune"

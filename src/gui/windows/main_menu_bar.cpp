@@ -13,6 +13,7 @@
 #include "avd_root.h"
 #include "cert.h"
 #include "device_panel.h"
+#include "proxy.h"
 #include "health_check.h"
 #include "jar_signer.h"
 #include "keytool.h"
@@ -153,6 +154,9 @@ namespace CoreDeck::Gui {
                 }
                 if (RoundedMenuItem(IconWithLabel(Icons::KEY, Platform::Tr("CA Trust")).c_str(), nullptr, context.UI.ShowCertDialog)) {
                     context.UI.ShowCertDialog = !context.UI.ShowCertDialog;
+                }
+                if (RoundedMenuItem(IconWithLabel(Icons::SLIDERS, Platform::Tr("Proxy")).c_str(), nullptr, context.UI.ShowProxyDialog)) {
+                    context.UI.ShowProxyDialog = !context.UI.ShowProxyDialog;
                 }
                 ImGui::EndMenu();
             }

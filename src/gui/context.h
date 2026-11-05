@@ -20,6 +20,7 @@
 #include "core/adb.h"
 #include "core/avd_root.h"
 #include "core/cert.h"
+#include "core/proxy.h"
 #include "core/emulator.h"
 #include "core/health_check.h"
 #include "core/jdk.h"
@@ -177,6 +178,7 @@ namespace CoreDeck::Gui {
             bool ShowDevicePanel = false;
             bool ShowAvdRootDialog = false;
             bool ShowCertDialog = false;
+            bool ShowProxyDialog = false;
             WorkspacePage Workspace = WorkspacePage::Home;
             bool ShowWipeDataDialog = false;
             bool ShowHealthCheckDialog = false;
@@ -364,6 +366,21 @@ namespace CoreDeck::Gui {
             std::future<std::pair<bool, std::string>> RemoveFuture;
             std::string RemoveOutcome;
         } CertWork;
+
+        struct ProxyWork {
+            char Target[128] = {};
+            bool Transparent = false;
+
+            std::atomic<bool> Busy{false};
+            std::future<std::pair<bool, std::string>> Future;
+            std::string Outcome;
+            bool OutcomeOk = false;
+
+            std::atomic<bool> StatusBusy{false};
+            std::future<Core::ProxyStatus> StatusFuture;
+            Core::ProxyStatus Status;
+            bool HasStatus = false;
+        } ProxyWork;
 
         ApkSignerState ApkSignerWork;
         JarSignerState JarSignerWork;
