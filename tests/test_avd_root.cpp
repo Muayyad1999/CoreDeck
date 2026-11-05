@@ -341,9 +341,13 @@ TEST_CASE("PatchRamdiskImageFile round-trips a gzip ramdisk and restores", "[avd
     REQUIRE(error.empty());
     REQUIRE(fs::exists(stockPath)); // pristine backup created
 
-    // Read back, inflate, parse: it is patched.
-    std::ifstream in(path, std::ios::binary);
-    const std::vector<std::uint8_t> patchedBytes((std::istreambuf_iterator<char>(in)), std::istreambuf_iterator<char>());
+    // Read back, inflate, parse: it is patched. Scope the handle so it is closed
+    // before the restore below (Windows cannot rename over an open file).
+    std::vector<std::uint8_t> patchedBytes;
+    {
+        std::ifstream in(path, std::ios::binary);
+        patchedBytes.assign((std::istreambuf_iterator<char>(in)), std::istreambuf_iterator<char>());
+    }
     REQUIRE(DetectRamdiskFormat(patchedBytes) == RamdiskFormat::Gzip);
     const auto inflated = GzipInflate(patchedBytes);
     REQUIRE(inflated.has_value());
@@ -353,9 +357,13 @@ TEST_CASE("PatchRamdiskImageFile round-trips a gzip ramdisk and restores", "[avd
 
     // Restore from pristine backup gives back the original bytes.
     REQUIRE(RestoreRamdiskImageFile(path, error));
-    std::ifstream in2(path, std::ios::binary);
-    const std::vector<std::uint8_t> restored((std::istreambuf_iterator<char>(in2)), std::istreambuf_iterator<char>());
+    std::vector<std::uint8_t> restored;
+    {
+        std::ifstream in2(path, std::ios::binary);
+        restored.assign((std::istreambuf_iterator<char>(in2)), std::istreambuf_iterator<char>());
+    }
     REQUIRE(restored == original);
 
-    fs::remove_all(dir);
+    std::error_code cleanupEc;
+    fs::remove_all(dir, cleanupEc);
 }
