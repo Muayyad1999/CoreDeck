@@ -177,7 +177,7 @@ namespace CoreDeck::Gui {
             // ---- method ---------------------------------------------------- //
             ImGui::TextDisabled("%s", Platform::Tr("Pinning bypass"));
             const char *methods[] = {
-                Platform::Tr("Auto (Flutter -> libflutter patch, native -> apk-mitm)"),
+                Platform::Tr("Auto (best method, falls back if a tool is missing)"),
                 Platform::Tr("Flutter: static libflutter TLS patch"),
                 Platform::Tr("Native: apk-mitm (strip pinning + trust user CAs)"),
                 Platform::Tr("Frida gadget (objection, no root)"),

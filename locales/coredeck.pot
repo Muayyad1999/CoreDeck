@@ -4292,3 +4292,6 @@ msgstr ""
 
 msgid "Add network-security-config (trust user CAs)"
 msgstr ""
+
+msgid "Auto (best method, falls back if a tool is missing)"
+msgstr ""

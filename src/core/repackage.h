@@ -108,8 +108,14 @@ namespace CoreDeck::Core {
         const std::string &apkPath, const std::string &abi, bool addNsc
     );
 
-    // Resolve Auto to a concrete method given the detected app type.
+    // Resolve Auto to its first concrete method given the detected app type
+    // (the head of AutoMethodChain).
     PinningMethod ChooseMethod(PinningMethod requested, bool isFlutter);
+
+    // The ordered fallback chain Auto walks until one method succeeds:
+    //   Flutter -> { FlutterStatic, Reflutter, Gadget }
+    //   native  -> { ApkMitm, Gadget }
+    std::vector<PinningMethod> AutoMethodChain(bool isFlutter);
 
     const char *PinningMethodLabel(PinningMethod method);
 

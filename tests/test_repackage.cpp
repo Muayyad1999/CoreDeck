@@ -55,6 +55,15 @@ TEST_CASE("ChooseMethod resolves Auto by app type and passes others through", "[
     REQUIRE(ChooseMethod(PinningMethod::None, true) == PinningMethod::None);
 }
 
+TEST_CASE("AutoMethodChain lists the fallback order per app type", "[repackage]") {
+    REQUIRE(AutoMethodChain(true) == std::vector<PinningMethod>{PinningMethod::FlutterStatic, PinningMethod::Reflutter, PinningMethod::Gadget});
+    REQUIRE(AutoMethodChain(false) == std::vector<PinningMethod>{PinningMethod::ApkMitm, PinningMethod::Gadget});
+
+    // ChooseMethod returns the head of the chain for Auto.
+    REQUIRE(ChooseMethod(PinningMethod::Auto, true) == AutoMethodChain(true).front());
+    REQUIRE(ChooseMethod(PinningMethod::Auto, false) == AutoMethodChain(false).front());
+}
+
 TEST_CASE("PinningMethodLabel is stable", "[repackage]") {
     REQUIRE(std::string(PinningMethodLabel(PinningMethod::ApkMitm)) == "apk-mitm");
     REQUIRE(std::string(PinningMethodLabel(PinningMethod::FlutterStatic)) == "flutter-static");

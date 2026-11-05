@@ -4444,3 +4444,6 @@ msgstr "reFlutter (trafic Flutter -> votre proxy :8083)"
 
 msgid "Add network-security-config (trust user CAs)"
 msgstr "Ajouter network-security-config (faire confiance aux CA utilisateur)"
+
+msgid "Auto (best method, falls back if a tool is missing)"
+msgstr "Auto (meilleure méthode, bascule si un outil manque)"

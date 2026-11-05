@@ -156,11 +156,18 @@ namespace CoreDeck::Core {
         return args;
     }
 
+    std::vector<PinningMethod> AutoMethodChain(const bool isFlutter) {
+        if (isFlutter) {
+            return {PinningMethod::FlutterStatic, PinningMethod::Reflutter, PinningMethod::Gadget};
+        }
+        return {PinningMethod::ApkMitm, PinningMethod::Gadget};
+    }
+
     PinningMethod ChooseMethod(const PinningMethod requested, const bool isFlutter) {
         if (requested != PinningMethod::Auto) {
             return requested;
         }
-        return isFlutter ? PinningMethod::FlutterStatic : PinningMethod::ApkMitm;
+        return AutoMethodChain(isFlutter).front();
     }
 
     const char *PinningMethodLabel(const PinningMethod method) {
@@ -275,6 +282,131 @@ namespace CoreDeck::Core {
             }
             return outApk;
         }
+
+        struct PatchAttempt {
+            bool Ok = false;
+            bool ToolMissing = false;
+            std::string OutApk;
+            bool AlreadySigned = false; // tool already zipaligned + signed its output
+            std::string Detail;
+        };
+
+        // Run a single concrete patch method against the merged APK. Never throws;
+        // a missing tool or a tool failure comes back as Ok == false (ToolMissing
+        // distinguishes the two), so the caller can fall back to the next method.
+        PatchAttempt ApplyOnePatch(
+            const PinningMethod method,
+            const SdkInfo &sdk,
+            const RepackageOptions &options,
+            const std::string &mergedApk,
+            const std::shared_ptr<RepackageProgress> &progress
+        ) {
+            namespace fs = std::filesystem;
+            std::error_code ec;
+            PatchAttempt attempt;
+
+            if (method == PinningMethod::FlutterStatic) {
+                const std::string out = StemNoApk(mergedApk) + "-flutterpatched.apk";
+                Log(progress, "static libflutter TLS patch ...");
+                const FlutterPatchResult fp = PatchFlutterTls(mergedApk, out);
+                if (!fp.Ok) {
+                    attempt.Detail = "flutter static: " + fp.Message;
+                    return attempt;
+                }
+                attempt.Ok = true;
+                attempt.OutApk = fp.OutPath;
+                attempt.Detail = "libflutter patched @ off " + std::to_string(fp.Offset);
+                return attempt;
+            }
+
+            if (method == PinningMethod::ApkMitm) {
+                const std::vector<std::string> runner = ResolveApkMitm();
+                if (runner.empty()) {
+                    attempt.ToolMissing = true;
+                    attempt.Detail = "apk-mitm not found (npm install -g apk-mitm, or npx).";
+                    return attempt;
+                }
+                std::vector<std::string> args(runner.begin() + 1, runner.end());
+                args.push_back(mergedApk);
+                Log(progress, "apk-mitm ...");
+                const Platform::CommandResult r = Platform::RunCommandArgsResult(runner.front(), args);
+                const std::string out = ApkMitmOutputPath(mergedApk);
+                if (!r.Started) {
+                    attempt.Detail = "could not run apk-mitm.";
+                    return attempt;
+                }
+                if (r.ExitCode != 0 || !fs::exists(out, ec)) {
+                    attempt.Detail = "apk-mitm failed: " + r.Output;
+                    return attempt;
+                }
+                attempt.Ok = true;
+                attempt.OutApk = out;
+                attempt.AlreadySigned = true;
+                attempt.Detail = out;
+                return attempt;
+            }
+
+            if (method == PinningMethod::Gadget) {
+                const auto objection = ResolveExecutable({"objection"});
+                if (!objection.has_value()) {
+                    attempt.ToolMissing = true;
+                    attempt.Detail = "objection not found (pip install objection; needs apktool on PATH).";
+                    return attempt;
+                }
+                std::string abi = "arm64-v8a";
+                if (!options.Serial.empty()) {
+                    const std::string detected = GetDeviceProp(sdk, options.Serial, "ro.product.cpu.abi");
+                    if (!detected.empty()) {
+                        abi = detected;
+                    }
+                }
+                Log(progress, "objection patchapk (gadget, abi " + abi + ") ...");
+                const Platform::CommandResult r =
+                    Platform::RunCommandArgsResult(*objection, ObjectionPatchArgs(mergedApk, abi, options.AddNsc));
+                const std::string out = ObjectionOutputPath(mergedApk);
+                if (!r.Started) {
+                    attempt.Detail = "could not run objection.";
+                    return attempt;
+                }
+                if (r.ExitCode != 0 || !fs::exists(out, ec)) {
+                    attempt.Detail = "objection failed: " + r.Output;
+                    return attempt;
+                }
+                attempt.Ok = true;
+                attempt.OutApk = out;
+                attempt.AlreadySigned = true;
+                attempt.Detail = out;
+                return attempt;
+            }
+
+            if (method == PinningMethod::Reflutter) {
+                const auto reflutter = ResolveExecutable({"reflutter"});
+                if (!reflutter.has_value()) {
+                    attempt.ToolMissing = true;
+                    attempt.Detail = "reflutter not found (pip install reflutter).";
+                    return attempt;
+                }
+                Log(progress, "reFlutter (set the device proxy to <your-ip>:8083 afterwards) ...");
+                const Platform::CommandResult r = Platform::RunCommandArgsResult(*reflutter, {mergedApk});
+                const std::string out =
+                    FindNewestReApk({fs::path(mergedApk).parent_path().string(), fs::current_path(ec).string()});
+                if (!r.Started) {
+                    attempt.Detail = "could not run reflutter.";
+                    return attempt;
+                }
+                if (r.ExitCode != 0 || out.empty()) {
+                    attempt.Detail = "reFlutter produced no *.RE.apk: " + r.Output;
+                    return attempt;
+                }
+                attempt.Ok = true;
+                attempt.OutApk = out; // unsigned -> signed by the caller
+                attempt.Detail = out;
+                return attempt;
+            }
+
+            attempt.Detail = "unknown method";
+            return attempt;
+        }
     }
 
     RepackageResult RunRepackage(
@@ -384,92 +516,44 @@ namespace CoreDeck::Core {
         result.IsFlutter = isFlutter;
         Log(progress, std::string("app type: ") + (isFlutter ? "Flutter" : "native"));
 
-        const PinningMethod method = ChooseMethod(options.Method, isFlutter);
-        result.MethodUsed = PinningMethodLabel(method);
-
         std::string patchedApk = mergedApk;
-        bool alreadySigned = false; // apk-mitm re-signs its own output
+        bool alreadySigned = false; // some tools zipalign + sign their own output
 
-        if (method == PinningMethod::None) {
+        if (options.Method == PinningMethod::None) {
+            result.MethodUsed = "none";
             pass("Patch", "skipped (no pinning change)");
-        } else if (method == PinningMethod::FlutterStatic) {
-            const std::string out = StemNoApk(mergedApk) + "-flutterpatched.apk";
-            Log(progress, "static libflutter TLS patch ...");
-            const FlutterPatchResult fp = PatchFlutterTls(mergedApk, out);
-            if (!fp.Ok) {
-                return fail("Patch", "Flutter static patch failed: " + fp.Message);
-            }
-            patchedApk = fp.OutPath;
-            pass("Patch", "libflutter patched @ off " + std::to_string(fp.Offset));
-        } else if (method == PinningMethod::ApkMitm) {
-            const std::vector<std::string> runner = ResolveApkMitm();
-            if (runner.empty()) {
-                return fail(
-                    "Patch",
-                    "apk-mitm not found. Install Node.js and `npm install -g apk-mitm` (or have npx available)."
-                );
-            }
-            std::vector<std::string> args(runner.begin() + 1, runner.end());
-            args.push_back(mergedApk);
-            Log(progress, "apk-mitm ...");
-            const Platform::CommandResult mitm = Platform::RunCommandArgsResult(runner.front(), args);
-            if (!mitm.Started) {
-                return fail("Patch", "Could not run apk-mitm.");
-            }
-            const std::string out = ApkMitmOutputPath(mergedApk);
-            if (mitm.ExitCode != 0 || !fs::exists(out, ec)) {
-                return fail("Patch", "apk-mitm failed: " + mitm.Output);
-            }
-            patchedApk = out;
-            alreadySigned = true; // apk-mitm zipaligns + signs with its own debug key
-            pass("Patch", out);
-        } else if (method == PinningMethod::Gadget) {
-            const auto objection = ResolveExecutable({"objection"});
-            if (!objection.has_value()) {
-                return fail(
-                    "Patch",
-                    "objection not found. Install it with `pip install objection` (it needs apktool on PATH too)."
-                );
-            }
-            std::string abi = "arm64-v8a";
-            if (!options.Serial.empty()) {
-                const std::string detected = GetDeviceProp(sdk, options.Serial, "ro.product.cpu.abi");
-                if (!detected.empty()) {
-                    abi = detected;
+        } else {
+            // A concrete method runs once; Auto walks the fallback chain until one
+            // method succeeds.
+            const std::vector<PinningMethod> chain =
+                options.Method == PinningMethod::Auto ? AutoMethodChain(isFlutter)
+                                                      : std::vector<PinningMethod>{options.Method};
+
+            PatchAttempt done;
+            std::string tried;
+            for (const PinningMethod m: chain) {
+                const PatchAttempt attempt = ApplyOnePatch(m, sdk, options, mergedApk, progress);
+                if (attempt.Ok) {
+                    done = attempt;
+                    result.MethodUsed = PinningMethodLabel(m);
+                    break;
+                }
+                if (!tried.empty()) {
+                    tried += "; ";
+                }
+                tried += std::string(PinningMethodLabel(m)) + ": " + attempt.Detail;
+                if (chain.size() > 1) {
+                    Log(progress, std::string("fallback: ") + PinningMethodLabel(m) + " did not apply (" + attempt.Detail + ")");
                 }
             }
-            Log(progress, "objection patchapk (gadget, abi " + abi + ") ...");
-            const Platform::CommandResult inject =
-                Platform::RunCommandArgsResult(*objection, ObjectionPatchArgs(mergedApk, abi, options.AddNsc));
-            if (!inject.Started) {
-                return fail("Patch", "Could not run objection.");
+
+            if (!done.Ok) {
+                result.MethodUsed = options.Method == PinningMethod::Auto ? "auto" : PinningMethodLabel(options.Method);
+                return fail("Patch", tried.empty() ? "patch failed" : tried);
             }
-            const std::string out = ObjectionOutputPath(mergedApk);
-            if (inject.ExitCode != 0 || !fs::exists(out, ec)) {
-                return fail("Patch", "objection patchapk failed: " + inject.Output);
-            }
-            patchedApk = out;
-            alreadySigned = true; // objection zipaligns + signs its output
-            pass("Patch", out);
-        } else { // Reflutter
-            const auto reflutter = ResolveExecutable({"reflutter"});
-            if (!reflutter.has_value()) {
-                return fail(
-                    "Patch",
-                    "reflutter not found. Install it with `pip install reflutter`."
-                );
-            }
-            Log(progress, "reFlutter (set the device proxy to <your-ip>:8083 afterwards) ...");
-            const Platform::CommandResult re = Platform::RunCommandArgsResult(*reflutter, {mergedApk});
-            if (!re.Started) {
-                return fail("Patch", "Could not run reflutter.");
-            }
-            const std::string out = FindNewestReApk({fs::path(mergedApk).parent_path().string(), fs::current_path(ec).string()});
-            if (re.ExitCode != 0 || out.empty()) {
-                return fail("Patch", "reFlutter produced no *.RE.apk: " + re.Output);
-            }
-            patchedApk = out; // reFlutter output is unsigned -> signed below
-            pass("Patch", out);
+            patchedApk = done.OutApk;
+            alreadySigned = done.AlreadySigned;
+            pass("Patch", result.MethodUsed + " -> " + done.Detail);
         }
 
         result.FinalApk = patchedApk;

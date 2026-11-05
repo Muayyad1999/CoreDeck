@@ -4311,3 +4311,6 @@ msgstr "reFlutter（Flutter 流量 -> 你的代理 :8083）"
 
 msgid "Add network-security-config (trust user CAs)"
 msgstr "添加 network-security-config（信任用户 CA）"
+
+msgid "Auto (best method, falls back if a tool is missing)"
+msgstr "自动（最佳方法，缺少工具时自动回退）"
