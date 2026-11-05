@@ -232,10 +232,10 @@ namespace CoreDeck::Core {
             summary.Serial = device.Serial;
             summary.State = device.State;
             if (device.Online()) {
-                summary.Model = GetProp(sdk, device.Serial, "ro.product.model");
-                summary.Release = GetProp(sdk, device.Serial, "ro.build.version.release");
-                summary.Sdk = GetProp(sdk, device.Serial, "ro.build.version.sdk");
-                summary.Abi = GetProp(sdk, device.Serial, "ro.product.cpu.abi");
+                summary.Model = GetDeviceProp(sdk, device.Serial, "ro.product.model");
+                summary.Release = GetDeviceProp(sdk, device.Serial, "ro.build.version.release");
+                summary.Sdk = GetDeviceProp(sdk, device.Serial, "ro.build.version.sdk");
+                summary.Abi = GetDeviceProp(sdk, device.Serial, "ro.product.cpu.abi");
             }
             summaries.push_back(std::move(summary));
         }
@@ -290,7 +290,7 @@ namespace CoreDeck::Core {
         return RunAdb(sdk, WithSerial(serial, {"forward", local, remote}));
     }
 
-    std::string GetProp(const SdkInfo &sdk, const std::string &serial, const std::string &name) {
+    std::string GetDeviceProp(const SdkInfo &sdk, const std::string &serial, const std::string &name) {
         const AdbResult result = Shell(sdk, serial, {"getprop", name});
         if (!result.Ok()) {
             return "";

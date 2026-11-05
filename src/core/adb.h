@@ -106,7 +106,7 @@ namespace CoreDeck::Core {
 
     AdbResult Forward(const SdkInfo &sdk, const std::string &serial, const std::string &local, const std::string &remote);
 
-    std::string GetProp(const SdkInfo &sdk, const std::string &serial, const std::string &name);
+    std::string GetDeviceProp(const SdkInfo &sdk, const std::string &serial, const std::string &name);
 
     // Convenience: resolve the user-installed packages on a device end to end.
     std::vector<std::string> ListUserPackages(const SdkInfo &sdk, const std::string &serial, bool includeVendor = false);
