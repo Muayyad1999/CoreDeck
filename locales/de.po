@@ -4187,3 +4187,43 @@ msgstr "Flutter-TLS patchen"
 #: src/gui/windows/flutter.cpp
 msgid "Patched APK"
 msgstr "Gepatchte APK"
+
+#: src/gui/windows/hardening.cpp
+msgid "Hardening"
+msgstr "Härtung"
+
+#: src/gui/windows/hardening.cpp
+msgid "Scan an app's smali for root/emulator/tamper/integrity/frida/debugger checks. For apps you are authorized to test."
+msgstr "Durchsuchen Sie das Smali einer App nach Root-/Emulator-/Manipulations-/Integritäts-/frida-/Debugger-Prüfungen. Für Apps, die Sie testen dürfen."
+
+#: src/gui/windows/hardening.cpp
+msgid "Path to an .apk"
+msgstr "Pfad zu einer .apk"
+
+#: src/gui/windows/hardening.cpp
+msgid "apktool (on PATH, or a path)"
+msgstr "apktool (im PATH oder ein Pfad)"
+
+#: src/gui/windows/hardening.cpp
+msgid "Scanning..."
+msgstr "Wird gescannt..."
+
+#: src/gui/windows/hardening.cpp
+msgid "Scan"
+msgstr "Scannen"
+
+#: src/gui/windows/hardening.cpp
+msgid "Neutralize (authorized testing only): comments out self-kill invokes (System.exit / killProcess / halt / finishAffinity) and rebuilds."
+msgstr "Neutralisieren (nur für autorisierte Tests): kommentiert die Selbst-Beenden-Aufrufe (System.exit / killProcess / halt / finishAffinity) aus und baut neu."
+
+#: src/gui/windows/hardening.cpp
+msgid "Rebuilding..."
+msgstr "Wird neu gebaut..."
+
+#: src/gui/windows/hardening.cpp
+msgid "Neutralize self-kill + rebuild"
+msgstr "Selbst-Beenden neutralisieren + neu bauen"
+
+#: src/gui/windows/hardening.cpp
+msgid "Rebuilt APK"
+msgstr "Neu gebaute APK"

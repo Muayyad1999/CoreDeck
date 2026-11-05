@@ -23,6 +23,7 @@
 #include "core/proxy.h"
 #include "core/frida.h"
 #include "core/flutter.h"
+#include "core/checks.h"
 #include "core/emulator.h"
 #include "core/health_check.h"
 #include "core/jdk.h"
@@ -184,6 +185,7 @@ namespace CoreDeck::Gui {
             bool ShowFridaDialog = false;
             bool ShowFridaHookDialog = false;
             bool ShowFlutterDialog = false;
+            bool ShowHardeningDialog = false;
             WorkspacePage Workspace = WorkspacePage::Home;
             bool ShowWipeDataDialog = false;
             bool ShowHealthCheckDialog = false;
@@ -434,6 +436,22 @@ namespace CoreDeck::Gui {
             bool HasTlsResult = false;
             Core::FlutterPatchResult TlsResult;
         } FlutterWork;
+
+        struct HardeningWork {
+            char ApkPath[1024] = {};
+            char ApktoolPath[1024] = {};
+            bool ApktoolInit = false;
+
+            std::atomic<bool> ScanBusy{false};
+            std::future<Core::ScanResult> ScanFuture;
+            bool HasScan = false;
+            Core::ScanResult Scan;
+
+            std::atomic<bool> NeutBusy{false};
+            std::future<Core::NeutralizeResult> NeutFuture;
+            bool HasNeut = false;
+            Core::NeutralizeResult Neut;
+        } HardeningWork;
 
         ApkSignerState ApkSignerWork;
         JarSignerState JarSignerWork;

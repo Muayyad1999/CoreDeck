@@ -4070,3 +4070,43 @@ msgstr "修补 Flutter TLS"
 #: src/gui/windows/flutter.cpp
 msgid "Patched APK"
 msgstr "已修补的 APK"
+
+#: src/gui/windows/hardening.cpp
+msgid "Hardening"
+msgstr "加固检测"
+
+#: src/gui/windows/hardening.cpp
+msgid "Scan an app's smali for root/emulator/tamper/integrity/frida/debugger checks. For apps you are authorized to test."
+msgstr "扫描应用的 smali 以查找 root/模拟器/篡改/完整性/frida/调试器检测。适用于你有权测试的应用。"
+
+#: src/gui/windows/hardening.cpp
+msgid "Path to an .apk"
+msgstr "指向 .apk 的路径"
+
+#: src/gui/windows/hardening.cpp
+msgid "apktool (on PATH, or a path)"
+msgstr "apktool (在 PATH 中，或路径)"
+
+#: src/gui/windows/hardening.cpp
+msgid "Scanning..."
+msgstr "正在扫描..."
+
+#: src/gui/windows/hardening.cpp
+msgid "Scan"
+msgstr "扫描"
+
+#: src/gui/windows/hardening.cpp
+msgid "Neutralize (authorized testing only): comments out self-kill invokes (System.exit / killProcess / halt / finishAffinity) and rebuilds."
+msgstr "中和 (仅限授权测试)：注释掉自终止调用 (System.exit / killProcess / halt / finishAffinity) 并重新构建。"
+
+#: src/gui/windows/hardening.cpp
+msgid "Rebuilding..."
+msgstr "正在重新构建..."
+
+#: src/gui/windows/hardening.cpp
+msgid "Neutralize self-kill + rebuild"
+msgstr "中和自终止 + 重新构建"
+
+#: src/gui/windows/hardening.cpp
+msgid "Rebuilt APK"
+msgstr "重新构建的 APK"

@@ -4051,3 +4051,43 @@ msgstr ""
 #: src/gui/windows/flutter.cpp
 msgid "Patched APK"
 msgstr ""
+
+#: src/gui/windows/hardening.cpp
+msgid "Hardening"
+msgstr ""
+
+#: src/gui/windows/hardening.cpp
+msgid "Scan an app's smali for root/emulator/tamper/integrity/frida/debugger checks. For apps you are authorized to test."
+msgstr ""
+
+#: src/gui/windows/hardening.cpp
+msgid "Path to an .apk"
+msgstr ""
+
+#: src/gui/windows/hardening.cpp
+msgid "apktool (on PATH, or a path)"
+msgstr ""
+
+#: src/gui/windows/hardening.cpp
+msgid "Scanning..."
+msgstr ""
+
+#: src/gui/windows/hardening.cpp
+msgid "Scan"
+msgstr ""
+
+#: src/gui/windows/hardening.cpp
+msgid "Neutralize (authorized testing only): comments out self-kill invokes (System.exit / killProcess / halt / finishAffinity) and rebuilds."
+msgstr ""
+
+#: src/gui/windows/hardening.cpp
+msgid "Rebuilding..."
+msgstr ""
+
+#: src/gui/windows/hardening.cpp
+msgid "Neutralize self-kill + rebuild"
+msgstr ""
+
+#: src/gui/windows/hardening.cpp
+msgid "Rebuilt APK"
+msgstr ""

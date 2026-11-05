@@ -4203,3 +4203,43 @@ msgstr "Patcher le TLS Flutter"
 #: src/gui/windows/flutter.cpp
 msgid "Patched APK"
 msgstr "APK patché"
+
+#: src/gui/windows/hardening.cpp
+msgid "Hardening"
+msgstr "Durcissement"
+
+#: src/gui/windows/hardening.cpp
+msgid "Scan an app's smali for root/emulator/tamper/integrity/frida/debugger checks. For apps you are authorized to test."
+msgstr "Analysez le smali d'une application pour détecter les vérifications root/émulateur/altération/intégrité/frida/débogueur. Pour les applications que vous êtes autorisé à tester."
+
+#: src/gui/windows/hardening.cpp
+msgid "Path to an .apk"
+msgstr "Chemin vers un .apk"
+
+#: src/gui/windows/hardening.cpp
+msgid "apktool (on PATH, or a path)"
+msgstr "apktool (dans le PATH, ou un chemin)"
+
+#: src/gui/windows/hardening.cpp
+msgid "Scanning..."
+msgstr "Analyse..."
+
+#: src/gui/windows/hardening.cpp
+msgid "Scan"
+msgstr "Analyser"
+
+#: src/gui/windows/hardening.cpp
+msgid "Neutralize (authorized testing only): comments out self-kill invokes (System.exit / killProcess / halt / finishAffinity) and rebuilds."
+msgstr "Neutraliser (tests autorisés uniquement) : commente les appels d'auto-arrêt (System.exit / killProcess / halt / finishAffinity) et reconstruit."
+
+#: src/gui/windows/hardening.cpp
+msgid "Rebuilding..."
+msgstr "Reconstruction..."
+
+#: src/gui/windows/hardening.cpp
+msgid "Neutralize self-kill + rebuild"
+msgstr "Neutraliser l'auto-arrêt + reconstruire"
+
+#: src/gui/windows/hardening.cpp
+msgid "Rebuilt APK"
+msgstr "APK reconstruit"
