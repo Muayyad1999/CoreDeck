@@ -10,6 +10,7 @@ add_executable(coredeck_tests
         test_checks.cpp
         test_appdata.cpp
         test_mitm.cpp
+        test_tools.cpp
         test_proxy.cpp
         test_utilities.cpp
         test_paths.cpp

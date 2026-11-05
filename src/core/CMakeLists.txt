@@ -24,6 +24,7 @@ add_library(coredeck_core STATIC
     sdk_manager.cpp
     skin.cpp
     system_image.cpp
+    tools.cpp
 )
 
 target_include_directories(coredeck_core PUBLIC ${CMAKE_SOURCE_DIR}/src)

@@ -4333,3 +4333,24 @@ msgstr "MITM prêt. Observez les requêtes dans votre proxy."
 
 msgid "Stopped at a failing step."
 msgstr "Arrêté à une étape en échec."
+
+msgid "RE Tools"
+msgstr "Outils RE"
+
+msgid "External tools the Research features can use, and how to get the missing ones. Nothing is installed for you."
+msgstr "Outils externes que les fonctions Recherche peuvent utiliser, et comment obtenir ceux qui manquent. Rien n'est installé à votre place."
+
+msgid "Re-check"
+msgstr "Revérifier"
+
+msgid "{0} of {1} found"
+msgstr "{0} sur {1} trouvés"
+
+msgid "(required)"
+msgstr "(requis)"
+
+msgid "Path"
+msgstr "Chemin"
+
+msgid "How to install"
+msgstr "Comment installer"

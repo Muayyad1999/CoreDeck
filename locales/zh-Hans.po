@@ -4200,3 +4200,24 @@ msgstr "MITM 就绪。在你的代理中查看请求。"
 
 msgid "Stopped at a failing step."
 msgstr "在失败的步骤处停止。"
+
+msgid "RE Tools"
+msgstr "逆向工具"
+
+msgid "External tools the Research features can use, and how to get the missing ones. Nothing is installed for you."
+msgstr "Research 功能可使用的外部工具，以及如何获取缺失的工具。不会为你自动安装任何内容。"
+
+msgid "Re-check"
+msgstr "重新检查"
+
+msgid "{0} of {1} found"
+msgstr "已找到 {0}/{1}"
+
+msgid "(required)"
+msgstr "（必需）"
+
+msgid "Path"
+msgstr "路径"
+
+msgid "How to install"
+msgstr "安装方法"

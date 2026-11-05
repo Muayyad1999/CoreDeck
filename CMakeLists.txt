@@ -101,6 +101,7 @@ add_executable(${PROJECT_NAME}
     src/gui/windows/hardening.cpp
     src/gui/windows/appdata.cpp
     src/gui/windows/mitm.cpp
+    src/gui/windows/retools.cpp
     src/gui/windows/onboarding.cpp
     src/gui/windows/preferences.cpp
     src/gui/windows/preferences_android_sdk.cpp

@@ -4181,3 +4181,24 @@ msgstr ""
 
 msgid "Stopped at a failing step."
 msgstr ""
+
+msgid "RE Tools"
+msgstr ""
+
+msgid "External tools the Research features can use, and how to get the missing ones. Nothing is installed for you."
+msgstr ""
+
+msgid "Re-check"
+msgstr ""
+
+msgid "{0} of {1} found"
+msgstr ""
+
+msgid "(required)"
+msgstr ""
+
+msgid "Path"
+msgstr ""
+
+msgid "How to install"
+msgstr ""

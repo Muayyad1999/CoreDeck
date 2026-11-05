@@ -26,6 +26,7 @@
 #include "core/flutter.h"
 #include "core/checks.h"
 #include "core/mitm.h"
+#include "core/tools.h"
 #include "core/emulator.h"
 #include "core/health_check.h"
 #include "core/jdk.h"
@@ -190,6 +191,7 @@ namespace CoreDeck::Gui {
             bool ShowHardeningDialog = false;
             bool ShowAppDataDialog = false;
             bool ShowMitmDialog = false;
+            bool ShowReToolsDialog = false;
             WorkspacePage Workspace = WorkspacePage::Home;
             bool ShowWipeDataDialog = false;
             bool ShowHealthCheckDialog = false;
@@ -499,6 +501,14 @@ namespace CoreDeck::Gui {
             std::string InstalledCertName; // remembered for teardown
             std::string ValidationError;
         } MitmWork;
+
+        struct ReToolsWork {
+            std::atomic<bool> Busy{false};
+            std::future<std::vector<Core::ReToolStatus>> Future;
+            std::vector<Core::ReToolStatus> Statuses;
+            bool Loaded = false;
+            bool Requested = false; // detection kicked off once on first open
+        } ReToolsWork;
 
         ApkSignerState ApkSignerWork;
         JarSignerState JarSignerWork;
