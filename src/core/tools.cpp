@@ -222,13 +222,27 @@ namespace CoreDeck::Core {
             {
                 "objection",
                 "objection",
-                "Gadget inject on an UNROOTED device (run externally)",
+                "Repackage (Frida gadget inject, no root)",
                 {"objection"},
                 ReToolSource::Path,
                 true,
                 {
                     "objection patches an APK with the Frida gadget - no root needed.",
-                    "Install: pip install objection  (also pulls in frida). Verify: objection version",
+                    "Install: pip install objection  (also pulls in frida; needs apktool on PATH).",
+                    "Verify: objection version",
+                },
+            },
+            {
+                "reflutter",
+                "reFlutter",
+                "Repackage (Flutter traffic interception)",
+                {"reflutter"},
+                ReToolSource::Path,
+                true,
+                {
+                    "reFlutter rebuilds a Flutter APK so its HTTPS can be intercepted.",
+                    "Install: pip install reflutter",
+                    "It asks for your proxy IP; the app's traffic then goes to it on :8083.",
                 },
             },
             {

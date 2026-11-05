@@ -4283,3 +4283,12 @@ msgstr ""
 
 msgid "Final APK"
 msgstr ""
+
+msgid "Frida gadget (objection, no root)"
+msgstr ""
+
+msgid "reFlutter (Flutter traffic -> your proxy :8083)"
+msgstr ""
+
+msgid "Add network-security-config (trust user CAs)"
+msgstr ""

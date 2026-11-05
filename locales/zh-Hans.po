@@ -4302,3 +4302,12 @@ msgstr "应用：{0}   方法：{1}"
 
 msgid "Final APK"
 msgstr "最终 APK"
+
+msgid "Frida gadget (objection, no root)"
+msgstr "Frida gadget（objection，免 root）"
+
+msgid "reFlutter (Flutter traffic -> your proxy :8083)"
+msgstr "reFlutter（Flutter 流量 -> 你的代理 :8083）"
+
+msgid "Add network-security-config (trust user CAs)"
+msgstr "添加 network-security-config（信任用户 CA）"

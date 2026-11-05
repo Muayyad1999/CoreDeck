@@ -36,17 +36,30 @@ TEST_CASE("ApkMitmOutputPath mirrors apk-mitm's naming", "[repackage]") {
     REQUIRE(ApkMitmOutputPath("/tmp/App.APK") == "/tmp/App-patched.apk");
 }
 
+TEST_CASE("ObjectionOutputPath mirrors objection's naming", "[repackage]") {
+    REQUIRE(ObjectionOutputPath("/tmp/com.example-merged.apk") == "/tmp/com.example-merged.objection.apk");
+}
+
+TEST_CASE("ObjectionPatchArgs builds the gadget-inject argv", "[repackage]") {
+    REQUIRE(ObjectionPatchArgs("/tmp/app.apk", "arm64-v8a", true) == std::vector<std::string>{"patchapk", "-s", "/tmp/app.apk", "-a", "arm64-v8a", "-N"});
+    REQUIRE(ObjectionPatchArgs("/tmp/app.apk", "x86_64", false) == std::vector<std::string>{"patchapk", "-s", "/tmp/app.apk", "-a", "x86_64"});
+}
+
 TEST_CASE("ChooseMethod resolves Auto by app type and passes others through", "[repackage]") {
     REQUIRE(ChooseMethod(PinningMethod::Auto, true) == PinningMethod::FlutterStatic);
     REQUIRE(ChooseMethod(PinningMethod::Auto, false) == PinningMethod::ApkMitm);
     REQUIRE(ChooseMethod(PinningMethod::ApkMitm, true) == PinningMethod::ApkMitm);
     REQUIRE(ChooseMethod(PinningMethod::FlutterStatic, false) == PinningMethod::FlutterStatic);
+    REQUIRE(ChooseMethod(PinningMethod::Gadget, true) == PinningMethod::Gadget);
+    REQUIRE(ChooseMethod(PinningMethod::Reflutter, false) == PinningMethod::Reflutter);
     REQUIRE(ChooseMethod(PinningMethod::None, true) == PinningMethod::None);
 }
 
 TEST_CASE("PinningMethodLabel is stable", "[repackage]") {
     REQUIRE(std::string(PinningMethodLabel(PinningMethod::ApkMitm)) == "apk-mitm");
     REQUIRE(std::string(PinningMethodLabel(PinningMethod::FlutterStatic)) == "flutter-static");
+    REQUIRE(std::string(PinningMethodLabel(PinningMethod::Gadget)) == "gadget");
+    REQUIRE(std::string(PinningMethodLabel(PinningMethod::Reflutter)) == "reflutter");
     REQUIRE(std::string(PinningMethodLabel(PinningMethod::None)) == "none");
 }
 

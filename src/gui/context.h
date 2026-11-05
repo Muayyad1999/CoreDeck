@@ -509,7 +509,8 @@ namespace CoreDeck::Gui {
             char Package[256] = {};
             char InputPath[1024] = {};
             char ApkEditorJar[1024] = {};
-            int Method = 0; // 0 auto, 1 flutter static, 2 apk-mitm, 3 none
+            int Method = 0; // 0 auto, 1 flutter static, 2 apk-mitm, 3 gadget, 4 reflutter, 5 none
+            bool AddNsc = true;
             bool Sign = true;
             bool Install = false;
             bool Grant = true;

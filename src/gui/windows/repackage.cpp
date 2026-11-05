@@ -28,6 +28,10 @@ namespace CoreDeck::Gui {
                 case 2:
                     return Core::PinningMethod::ApkMitm;
                 case 3:
+                    return Core::PinningMethod::Gadget;
+                case 4:
+                    return Core::PinningMethod::Reflutter;
+                case 5:
                     return Core::PinningMethod::None;
                 default:
                     return Core::PinningMethod::Auto;
@@ -42,6 +46,7 @@ namespace CoreDeck::Gui {
 
             Core::RepackageOptions opts;
             opts.Method = MethodFromIndex(work.Method);
+            opts.AddNsc = work.AddNsc;
             opts.Sign = work.Sign;
             opts.Install = work.Install;
             opts.Grant = work.Grant;
@@ -175,10 +180,16 @@ namespace CoreDeck::Gui {
                 Platform::Tr("Auto (Flutter -> libflutter patch, native -> apk-mitm)"),
                 Platform::Tr("Flutter: static libflutter TLS patch"),
                 Platform::Tr("Native: apk-mitm (strip pinning + trust user CAs)"),
+                Platform::Tr("Frida gadget (objection, no root)"),
+                Platform::Tr("reFlutter (Flutter traffic -> your proxy :8083)"),
                 Platform::Tr("None (merge + sign only)"),
             };
             ImGui::SetNextItemWidth(Em(30.0F));
             ImGui::Combo("##repack_method", &work.Method, methods, IM_ARRAYSIZE(methods));
+
+            if (work.Method == 3) { // Frida gadget
+                ImGui::Checkbox(Platform::Tr("Add network-security-config (trust user CAs)"), &work.AddNsc);
+            }
 
             ImGui::Checkbox(Platform::Tr("Sign the result (managed debug keystore)"), &work.Sign);
             ImGui::Checkbox(Platform::Tr("Install onto the selected device when done"), &work.Install);

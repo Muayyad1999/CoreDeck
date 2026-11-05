@@ -55,6 +55,41 @@ namespace CoreDeck::Core {
             }
         }
 
+        // reFlutter writes a "<name>.RE.apk"; apkkit globs the input's dir and the
+        // cwd. Return the most recently written match, or empty.
+        std::string FindNewestReApk(const std::vector<std::string> &dirs) {
+            namespace fs = std::filesystem;
+            std::error_code ec;
+            std::string best;
+            fs::file_time_type bestTime{};
+            for (const std::string &dir: dirs) {
+                if (dir.empty() || !fs::is_directory(dir, ec)) {
+                    continue;
+                }
+                for (fs::directory_iterator it(dir, ec), end; it != end; it.increment(ec)) {
+                    if (ec || !it->is_regular_file(ec)) {
+                        continue;
+                    }
+                    const std::string name = it->path().filename().string();
+                    if (name.size() < 7) {
+                        continue;
+                    }
+                    std::string lower;
+                    for (const char c: name) {
+                        lower.push_back(static_cast<char>(std::tolower(static_cast<unsigned char>(c))));
+                    }
+                    if (lower.size() >= 7 && lower.compare(lower.size() - 7, 7, ".re.apk") == 0) {
+                        const fs::file_time_type t = fs::last_write_time(it->path(), ec);
+                        if (best.empty() || t > bestTime) {
+                            best = it->path().string();
+                            bestTime = t;
+                        }
+                    }
+                }
+            }
+            return best;
+        }
+
         std::string StemNoApk(const std::string &path) {
             namespace fs = std::filesystem;
             fs::path p(path);
@@ -107,6 +142,20 @@ namespace CoreDeck::Core {
         return StemNoApk(inputApk) + "-patched.apk";
     }
 
+    std::string ObjectionOutputPath(const std::string &inputApk) {
+        return StemNoApk(inputApk) + ".objection.apk";
+    }
+
+    std::vector<std::string> ObjectionPatchArgs(
+        const std::string &apkPath, const std::string &abi, const bool addNsc
+    ) {
+        std::vector<std::string> args = {"patchapk", "-s", apkPath, "-a", abi};
+        if (addNsc) {
+            args.push_back("-N"); // network-security-config trusting user CAs
+        }
+        return args;
+    }
+
     PinningMethod ChooseMethod(const PinningMethod requested, const bool isFlutter) {
         if (requested != PinningMethod::Auto) {
             return requested;
@@ -122,6 +171,10 @@ namespace CoreDeck::Core {
                 return "flutter-static";
             case PinningMethod::ApkMitm:
                 return "apk-mitm";
+            case PinningMethod::Gadget:
+                return "gadget";
+            case PinningMethod::Reflutter:
+                return "reflutter";
             case PinningMethod::None:
                 return "none";
         }
@@ -348,7 +401,7 @@ namespace CoreDeck::Core {
             }
             patchedApk = fp.OutPath;
             pass("Patch", "libflutter patched @ off " + std::to_string(fp.Offset));
-        } else { // ApkMitm
+        } else if (method == PinningMethod::ApkMitm) {
             const std::vector<std::string> runner = ResolveApkMitm();
             if (runner.empty()) {
                 return fail(
@@ -369,6 +422,53 @@ namespace CoreDeck::Core {
             }
             patchedApk = out;
             alreadySigned = true; // apk-mitm zipaligns + signs with its own debug key
+            pass("Patch", out);
+        } else if (method == PinningMethod::Gadget) {
+            const auto objection = ResolveExecutable({"objection"});
+            if (!objection.has_value()) {
+                return fail(
+                    "Patch",
+                    "objection not found. Install it with `pip install objection` (it needs apktool on PATH too)."
+                );
+            }
+            std::string abi = "arm64-v8a";
+            if (!options.Serial.empty()) {
+                const std::string detected = GetDeviceProp(sdk, options.Serial, "ro.product.cpu.abi");
+                if (!detected.empty()) {
+                    abi = detected;
+                }
+            }
+            Log(progress, "objection patchapk (gadget, abi " + abi + ") ...");
+            const Platform::CommandResult inject =
+                Platform::RunCommandArgsResult(*objection, ObjectionPatchArgs(mergedApk, abi, options.AddNsc));
+            if (!inject.Started) {
+                return fail("Patch", "Could not run objection.");
+            }
+            const std::string out = ObjectionOutputPath(mergedApk);
+            if (inject.ExitCode != 0 || !fs::exists(out, ec)) {
+                return fail("Patch", "objection patchapk failed: " + inject.Output);
+            }
+            patchedApk = out;
+            alreadySigned = true; // objection zipaligns + signs its output
+            pass("Patch", out);
+        } else { // Reflutter
+            const auto reflutter = ResolveExecutable({"reflutter"});
+            if (!reflutter.has_value()) {
+                return fail(
+                    "Patch",
+                    "reflutter not found. Install it with `pip install reflutter`."
+                );
+            }
+            Log(progress, "reFlutter (set the device proxy to <your-ip>:8083 afterwards) ...");
+            const Platform::CommandResult re = Platform::RunCommandArgsResult(*reflutter, {mergedApk});
+            if (!re.Started) {
+                return fail("Patch", "Could not run reflutter.");
+            }
+            const std::string out = FindNewestReApk({fs::path(mergedApk).parent_path().string(), fs::current_path(ec).string()});
+            if (re.ExitCode != 0 || out.empty()) {
+                return fail("Patch", "reFlutter produced no *.RE.apk: " + re.Output);
+            }
+            patchedApk = out; // reFlutter output is unsigned -> signed below
             pass("Patch", out);
         }
 

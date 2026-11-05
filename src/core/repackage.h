@@ -24,6 +24,8 @@ namespace CoreDeck::Core {
         Auto, // Flutter -> libflutter static patch; native -> apk-mitm
         FlutterStatic, // libflutter.so TLS patch only
         ApkMitm, // apk-mitm (native static pinning strip + user-CA trust)
+        Gadget, // objection patchapk (inject the Frida gadget, no root)
+        Reflutter, // reFlutter (Flutter traffic interception)
         None, // merge + sign only, no pinning change
     };
 
@@ -41,6 +43,7 @@ namespace CoreDeck::Core {
         std::string WorkDir; // where intermediates/outputs are written
         PinningMethod Method = PinningMethod::Auto;
         std::string ApkEditorJar; // override; else env / guesses
+        bool AddNsc = true; // gadget: add a network-security-config trusting user CAs
         bool Sign = true; // sign the result with a managed debug keystore
         bool Install = false;
         bool Grant = true;
@@ -96,6 +99,14 @@ namespace CoreDeck::Core {
 
     // apk-mitm writes "<base>-patched.apk" beside its input.
     std::string ApkMitmOutputPath(const std::string &inputApk);
+
+    // objection writes "<base>.objection.apk" beside its input (already signed).
+    std::string ObjectionOutputPath(const std::string &inputApk);
+
+    // argv for objection's gadget inject: `patchapk -s <apk> -a <abi> [-N]`.
+    std::vector<std::string> ObjectionPatchArgs(
+        const std::string &apkPath, const std::string &abi, bool addNsc
+    );
 
     // Resolve Auto to a concrete method given the detected app type.
     PinningMethod ChooseMethod(PinningMethod requested, bool isFlutter);
