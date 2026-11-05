@@ -7,6 +7,7 @@ add_library(coredeck_core STATIC
     cert.cpp
     xz.cpp
     frida.cpp
+    flutter.cpp
     proxy.cpp
     emulator.cpp
     emulator_console.cpp

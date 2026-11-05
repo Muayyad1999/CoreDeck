@@ -65,6 +65,7 @@
 #include "windows/proxy.h"
 #include "windows/frida.h"
 #include "windows/frida_hook.h"
+#include "windows/flutter.h"
 #include "windows/storage.h"
 #include "windows/update.h"
 #include "app/version_check.h"
@@ -261,6 +262,7 @@ namespace CoreDeck::Gui {
         BuildProxyWindow(m_Context);
         BuildFridaWindow(m_Context);
         BuildFridaHookWindow(m_Context);
+        BuildFlutterWindow(m_Context);
 
         m_Context.Host.Manager.Update();
         m_ApplyNativeWindowTitle();

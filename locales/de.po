@@ -4123,3 +4123,47 @@ msgstr "Erfordert frida-server + die Host-frida-Tools."
 #: src/gui/windows/frida_hook.cpp
 msgid "Bypass scripts (authorized testing only)"
 msgstr "Bypass-Skripte (nur für autorisierte Tests)"
+
+#: src/gui/windows/flutter.cpp
+msgid "Flutter"
+msgstr "Flutter"
+
+#: src/gui/windows/flutter.cpp
+msgid "Dump a Flutter app's Dart names and disassembly with Blutter (arm64). For apps you are authorized to analyse."
+msgstr "Extrahieren Sie die Dart-Namen und das Disassembly einer Flutter-App mit Blutter (arm64). Für Apps, die Sie analysieren dürfen."
+
+#: src/gui/windows/flutter.cpp
+msgid "Path to a Flutter .apk"
+msgstr "Pfad zu einer Flutter-.apk"
+
+#: src/gui/windows/flutter.cpp
+msgid "Blutter (blutter.py)"
+msgstr "Blutter (blutter.py)"
+
+#: src/gui/windows/flutter.cpp
+msgid "Path to blutter.py"
+msgstr "Pfad zu blutter.py"
+
+#: src/gui/windows/flutter.cpp
+msgid "Open blutter.py"
+msgstr "blutter.py öffnen"
+
+#: src/gui/windows/flutter.cpp
+msgid "Python"
+msgstr "Python"
+
+#: src/gui/windows/flutter.cpp
+msgid "--no-analysis (faster, avoids some crashes)"
+msgstr "--no-analysis (schneller, vermeidet einige Abstürze)"
+
+#: src/gui/windows/flutter.cpp
+msgid "Run Blutter"
+msgstr "Blutter ausführen"
+
+#: src/gui/windows/flutter.cpp
+msgid "The first run can take minutes (it may build a matching Dart VM)."
+msgstr "Der erste Lauf kann Minuten dauern (er baut ggf. eine passende Dart-VM)."
+
+#: src/gui/windows/flutter.cpp
+msgid "Output"
+msgstr "Ausgabe"

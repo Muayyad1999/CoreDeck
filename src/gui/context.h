@@ -22,6 +22,7 @@
 #include "core/cert.h"
 #include "core/proxy.h"
 #include "core/frida.h"
+#include "core/flutter.h"
 #include "core/emulator.h"
 #include "core/health_check.h"
 #include "core/jdk.h"
@@ -182,6 +183,7 @@ namespace CoreDeck::Gui {
             bool ShowProxyDialog = false;
             bool ShowFridaDialog = false;
             bool ShowFridaHookDialog = false;
+            bool ShowFlutterDialog = false;
             WorkspacePage Workspace = WorkspacePage::Home;
             bool ShowWipeDataDialog = false;
             bool ShowHealthCheckDialog = false;
@@ -416,6 +418,17 @@ namespace CoreDeck::Gui {
             Core::FridaHookSession Session;
             std::string Error;
         } FridaHookWork;
+
+        struct FlutterWork {
+            char ApkPath[1024] = {};
+            char BlutterPath[1024] = {};
+            bool BlutterInit = false;
+            bool NoAnalysis = true;
+            std::atomic<bool> Busy{false};
+            std::future<Core::BlutterRun> Future;
+            bool HasResult = false;
+            Core::BlutterRun Result;
+        } FlutterWork;
 
         ApkSignerState ApkSignerWork;
         JarSignerState JarSignerWork;

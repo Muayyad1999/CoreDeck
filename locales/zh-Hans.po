@@ -4006,3 +4006,47 @@ msgstr "需要 frida-server + 主机的 frida 工具。"
 #: src/gui/windows/frida_hook.cpp
 msgid "Bypass scripts (authorized testing only)"
 msgstr "绕过脚本 (仅限授权测试)"
+
+#: src/gui/windows/flutter.cpp
+msgid "Flutter"
+msgstr "Flutter"
+
+#: src/gui/windows/flutter.cpp
+msgid "Dump a Flutter app's Dart names and disassembly with Blutter (arm64). For apps you are authorized to analyse."
+msgstr "使用 Blutter (arm64) 转储 Flutter 应用的 Dart 名称和反汇编。适用于你有权分析的应用。"
+
+#: src/gui/windows/flutter.cpp
+msgid "Path to a Flutter .apk"
+msgstr "指向 Flutter .apk 的路径"
+
+#: src/gui/windows/flutter.cpp
+msgid "Blutter (blutter.py)"
+msgstr "Blutter (blutter.py)"
+
+#: src/gui/windows/flutter.cpp
+msgid "Path to blutter.py"
+msgstr "指向 blutter.py 的路径"
+
+#: src/gui/windows/flutter.cpp
+msgid "Open blutter.py"
+msgstr "打开 blutter.py"
+
+#: src/gui/windows/flutter.cpp
+msgid "Python"
+msgstr "Python"
+
+#: src/gui/windows/flutter.cpp
+msgid "--no-analysis (faster, avoids some crashes)"
+msgstr "--no-analysis (更快，避免某些崩溃)"
+
+#: src/gui/windows/flutter.cpp
+msgid "Run Blutter"
+msgstr "运行 Blutter"
+
+#: src/gui/windows/flutter.cpp
+msgid "The first run can take minutes (it may build a matching Dart VM)."
+msgstr "首次运行可能需要几分钟 (它可能会构建匹配的 Dart VM)。"
+
+#: src/gui/windows/flutter.cpp
+msgid "Output"
+msgstr "输出"

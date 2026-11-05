@@ -3987,3 +3987,47 @@ msgstr ""
 #: src/gui/windows/frida_hook.cpp
 msgid "Bypass scripts (authorized testing only)"
 msgstr ""
+
+#: src/gui/windows/flutter.cpp
+msgid "Flutter"
+msgstr ""
+
+#: src/gui/windows/flutter.cpp
+msgid "Dump a Flutter app's Dart names and disassembly with Blutter (arm64). For apps you are authorized to analyse."
+msgstr ""
+
+#: src/gui/windows/flutter.cpp
+msgid "Path to a Flutter .apk"
+msgstr ""
+
+#: src/gui/windows/flutter.cpp
+msgid "Blutter (blutter.py)"
+msgstr ""
+
+#: src/gui/windows/flutter.cpp
+msgid "Path to blutter.py"
+msgstr ""
+
+#: src/gui/windows/flutter.cpp
+msgid "Open blutter.py"
+msgstr ""
+
+#: src/gui/windows/flutter.cpp
+msgid "Python"
+msgstr ""
+
+#: src/gui/windows/flutter.cpp
+msgid "--no-analysis (faster, avoids some crashes)"
+msgstr ""
+
+#: src/gui/windows/flutter.cpp
+msgid "Run Blutter"
+msgstr ""
+
+#: src/gui/windows/flutter.cpp
+msgid "The first run can take minutes (it may build a matching Dart VM)."
+msgstr ""
+
+#: src/gui/windows/flutter.cpp
+msgid "Output"
+msgstr ""

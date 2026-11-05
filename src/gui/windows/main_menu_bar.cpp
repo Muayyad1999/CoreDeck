@@ -15,6 +15,7 @@
 #include "device_panel.h"
 #include "frida.h"
 #include "frida_hook.h"
+#include "flutter.h"
 #include "proxy.h"
 #include "health_check.h"
 #include "jar_signer.h"
@@ -165,6 +166,9 @@ namespace CoreDeck::Gui {
                 }
                 if (RoundedMenuItem(IconWithLabel(Icons::FILE_LINES, Platform::Tr("Frida Hook")).c_str(), nullptr, context.UI.ShowFridaHookDialog)) {
                     context.UI.ShowFridaHookDialog = !context.UI.ShowFridaHookDialog;
+                }
+                if (RoundedMenuItem(IconWithLabel(Icons::MOBILE, Platform::Tr("Flutter")).c_str(), nullptr, context.UI.ShowFlutterDialog)) {
+                    context.UI.ShowFlutterDialog = !context.UI.ShowFlutterDialog;
                 }
                 ImGui::EndMenu();
             }
