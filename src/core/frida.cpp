@@ -2,12 +2,18 @@
 // Created by CoreDeck RE toolbench on 05/11/2026.
 //
 
+#include <array>
+#include <atomic>
 #include <cctype>
+#include <cerrno>
+#include <chrono>
 #include <filesystem>
 #include <fstream>
+#include <memory>
 #include <optional>
 #include <sstream>
 #include <string>
+#include <thread>
 #include <vector>
 
 #include "core/frida.h"
@@ -16,6 +22,12 @@
 #include "platform/http_download.h"
 #include "platform/paths.h"
 #include "platform/process.h"
+
+#ifdef _WIN32
+#include <io.h>
+#else
+#include <unistd.h>
+#endif
 
 namespace CoreDeck::Core {
     namespace {
@@ -232,5 +244,212 @@ namespace CoreDeck::Core {
             return {};
         }
         return ParseFridaPs(result.Output);
+    }
+
+    // --------------------------------------------------------------- hook runner //
+
+    namespace {
+        void RunHookReader(
+            const int outputFd,
+            const std::shared_ptr<Platform::LogBuffer> &log,
+            const std::shared_ptr<std::atomic<bool>> &stopFlag
+        ) {
+            std::array<char, 1024> buf{};
+            std::string partial;
+            const auto flushLines = [&](const char *data, const std::size_t n) {
+                partial.append(data, n);
+                std::size_t pos = 0;
+                while ((pos = partial.find('\n')) != std::string::npos) {
+                    if (const auto line = partial.substr(0, pos); !line.empty()) {
+                        log->Push(line);
+                    }
+                    partial.erase(0, pos + 1);
+                }
+            };
+
+            while (!stopFlag->load()) {
+#ifdef _WIN32
+                const auto handle = reinterpret_cast<HANDLE>(_get_osfhandle(outputFd));
+                DWORD nRead = 0;
+                if (ReadFile(handle, buf.data(), static_cast<DWORD>(buf.size()), &nRead, nullptr)) {
+                    if (nRead > 0) {
+                        flushLines(buf.data(), nRead);
+                    } else {
+                        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+                    }
+                } else {
+                    const DWORD err = GetLastError();
+                    if (err == ERROR_BROKEN_PIPE || err == ERROR_HANDLE_EOF) {
+                        break;
+                    }
+                    if (err == ERROR_NO_DATA) {
+                        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+                    } else {
+                        break;
+                    }
+                }
+#else
+                if (const ssize_t n = read(outputFd, buf.data(), buf.size()); n > 0) {
+                    flushLines(buf.data(), static_cast<std::size_t>(n));
+                } else if (n == 0) {
+                    break;
+                } else if (errno == EAGAIN || errno == EWOULDBLOCK || errno == EINTR) {
+                    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+                } else {
+                    break;
+                }
+#endif
+            }
+
+            if (!partial.empty()) {
+                log->Push(partial);
+            }
+#ifdef _WIN32
+            _close(outputFd);
+#else
+            close(outputFd);
+#endif
+        }
+    }
+
+    std::vector<FridaScript> BundledFridaScripts() {
+        return {
+            {"Method trace", "dev", "trace.js", "// Generic method tracer. Set TARGET to the class you want to trace.\n"
+                                                "var TARGET = \"java.net.URL\";\n"
+                                                "Java.perform(function () {\n"
+                                                "    try {\n"
+                                                "        var C = Java.use(TARGET);\n"
+                                                "        C.class.getDeclaredMethods().forEach(function (m) {\n"
+                                                "            var name = m.getName();\n"
+                                                "            C[name].overloads.forEach(function (ov) {\n"
+                                                "                ov.implementation = function () {\n"
+                                                "                    console.log('[trace] ' + TARGET + '.' + name + '(' + "
+                                                "Array.prototype.join.call(arguments, ', ') + ')');\n"
+                                                "                    return ov.apply(this, arguments);\n"
+                                                "                };\n"
+                                                "            });\n"
+                                                "        });\n"
+                                                "        console.log('[trace] hooked ' + TARGET);\n"
+                                                "    } catch (e) { console.log('[trace] error: ' + e); }\n"
+                                                "});\n"},
+            {"SQLite queries", "dev", "sqlite.js", "Java.perform(function () {\n"
+                                                   "    var DB = Java.use('android.database.sqlite.SQLiteDatabase');\n"
+                                                   "    DB.execSQL.overload('java.lang.String').implementation = function (sql) {\n"
+                                                   "        console.log('[sqlite] execSQL: ' + sql);\n"
+                                                   "        return this.execSQL(sql);\n"
+                                                   "    };\n"
+                                                   "    DB.rawQuery.overload('java.lang.String', '[Ljava.lang.String;').implementation = "
+                                                   "function (sql, a) {\n"
+                                                   "        console.log('[sqlite] rawQuery: ' + sql);\n"
+                                                   "        return this.rawQuery(sql, a);\n"
+                                                   "    };\n"
+                                                   "    console.log('[sqlite] hooked SQLiteDatabase');\n"
+                                                   "});\n"},
+            {"Crypto (Cipher)", "dev", "crypto.js", "Java.perform(function () {\n"
+                                                    "    var Cipher = Java.use('javax.crypto.Cipher');\n"
+                                                    "    Cipher.doFinal.overload('[B').implementation = function (data) {\n"
+                                                    "        console.log('[crypto] ' + this.getAlgorithm() + ' doFinal, ' + data.length + ' bytes');\n"
+                                                    "        return this.doFinal(data);\n"
+                                                    "    };\n"
+                                                    "    console.log('[crypto] hooked javax.crypto.Cipher.doFinal');\n"
+                                                    "});\n"},
+            {"WebView", "dev", "webview.js", "Java.perform(function () {\n"
+                                             "    var WV = Java.use('android.webkit.WebView');\n"
+                                             "    WV.loadUrl.overload('java.lang.String').implementation = function (url) {\n"
+                                             "        console.log('[webview] loadUrl: ' + url);\n"
+                                             "        return this.loadUrl(url);\n"
+                                             "    };\n"
+                                             "    try {\n"
+                                             "        WV.evaluateJavascript.overload('java.lang.String', 'android.webkit.ValueCallback')"
+                                             ".implementation = function (js, cb) {\n"
+                                             "            console.log('[webview] evaluateJavascript: ' + js);\n"
+                                             "            return this.evaluateJavascript(js, cb);\n"
+                                             "        };\n"
+                                             "    } catch (e) {}\n"
+                                             "    console.log('[webview] hooked WebView');\n"
+                                             "});\n"},
+        };
+    }
+
+    bool SaveFridaScript(
+        const std::string &dir, const std::string &filename, const std::string &content, std::string &error
+    ) {
+        std::error_code ec;
+        std::filesystem::create_directories(dir, ec);
+        const std::string path = Platform::JoinPaths({dir, filename});
+        std::ofstream out(path, std::ios::binary | std::ios::trunc);
+        if (!out) {
+            error = "Could not write " + path;
+            return false;
+        }
+        out.write(content.data(), static_cast<std::streamsize>(content.size()));
+        return true;
+    }
+
+    std::vector<std::string> BuildFridaHookArgs(
+        const std::string &serial, const std::string &package, const std::vector<std::string> &scriptPaths, const bool attach
+    ) {
+        std::vector<std::string> args;
+        args.emplace_back("-D");
+        args.push_back(serial);
+        args.emplace_back(attach ? "-n" : "-f");
+        args.push_back(package);
+        for (const std::string &script: scriptPaths) {
+            args.emplace_back("-l");
+            args.push_back(script);
+        }
+        return args;
+    }
+
+    bool StartFridaHook(
+        const std::string &serial,
+        const std::string &package,
+        const std::vector<std::string> &scriptPaths,
+        const bool attach,
+        FridaHookSession &session,
+        std::string &error
+    ) {
+        if (package.empty()) {
+            error = "Enter a target package.";
+            return false;
+        }
+        if (scriptPaths.empty()) {
+            error = "Select at least one script.";
+            return false;
+        }
+        int outputFd = -1;
+        const ProcessId pid =
+            Platform::SpawnProcessWithPipe("frida", BuildFridaHookArgs(serial, package, scriptPaths, attach), outputFd);
+#ifdef _WIN32
+        if (pid == 0) {
+#else
+        if (pid <= 0) {
+#endif
+            error = "Could not start frida. Install the host frida tools (pip install frida-tools).";
+            return false;
+        }
+        session.Log = std::make_shared<Platform::LogBuffer>();
+        session.StopFlag = std::make_shared<std::atomic<bool>>(false);
+        session.Pid = pid;
+        session.Running = true;
+        session.Reader = std::thread(RunHookReader, outputFd, session.Log, session.StopFlag);
+        return true;
+    }
+
+    FridaHookSession::~FridaHookSession() {
+        StopFridaHook(*this);
+    }
+
+    void StopFridaHook(FridaHookSession &session) {
+        if (session.StopFlag) {
+            session.StopFlag->store(true);
+        }
+        if (session.Running.load()) {
+            Platform::TerminateProcessTree(session.Pid);
+        }
+        if (session.Reader.joinable()) {
+            session.Reader.join();
+        }
+        session.Running = false;
     }
 }

@@ -3946,3 +3946,59 @@ msgstr "筛选进程"
 #: src/gui/windows/frida.cpp
 msgid "Enter a frida version (or install frida on the host)."
 msgstr "请输入 frida 版本 (或在主机上安装 frida)。"
+
+#: src/gui/windows/frida_hook.cpp
+msgid "Frida Hook"
+msgstr "Frida 挂钩"
+
+#: src/gui/windows/frida_hook.cpp
+msgid "Attach frida scripts to an app on a device running frida-server."
+msgstr "将 frida 脚本附加到运行 frida-server 的设备上的应用。"
+
+#: src/gui/windows/frida_hook.cpp
+msgid "Target package"
+msgstr "目标软件包"
+
+#: src/gui/windows/frida_hook.cpp
+msgid "Attach (don't spawn)"
+msgstr "附加 (不启动)"
+
+#: src/gui/windows/frida_hook.cpp
+msgid "Scripts"
+msgstr "脚本"
+
+#: src/gui/windows/frida_hook.cpp
+msgid "Path to your own .js"
+msgstr "指向你自己的 .js 的路径"
+
+#: src/gui/windows/frida_hook.cpp
+msgid "Add"
+msgstr "添加"
+
+#: src/gui/windows/frida_hook.cpp
+msgid "Open frida script"
+msgstr "打开 frida 脚本"
+
+#: src/gui/windows/frida_hook.cpp
+msgid "Save scripts to folder..."
+msgstr "将脚本保存到文件夹..."
+
+#: src/gui/windows/frida_hook.cpp
+msgid "Choose a folder"
+msgstr "选择文件夹"
+
+#: src/gui/windows/frida_hook.cpp
+msgid "Saved."
+msgstr "已保存。"
+
+#: src/gui/windows/frida_hook.cpp
+msgid "Run"
+msgstr "运行"
+
+#: src/gui/windows/frida_hook.cpp
+msgid "running"
+msgstr "运行中"
+
+#: src/gui/windows/frida_hook.cpp
+msgid "Requires frida-server + host frida tools."
+msgstr "需要 frida-server + 主机的 frida 工具。"

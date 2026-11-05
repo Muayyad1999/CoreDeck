@@ -1,4 +1,5 @@
 #include <string>
+#include <vector>
 
 #include <catch2/catch_test_macros.hpp>
 
@@ -39,4 +40,22 @@ TEST_CASE("ParseFridaPs reads pid/name rows and drops the header", "[frida]") {
     REQUIRE(rows.at(0).Name == "com.example.app");
     REQUIRE(rows.at(1).Pid == 567);
     REQUIRE(rows.at(1).Name == "system_server");
+}
+
+TEST_CASE("BuildFridaHookArgs builds spawn and attach argv", "[frida]") {
+    const auto spawn = BuildFridaHookArgs("emulator-5554", "com.example.app", {"/tmp/a.js", "/tmp/b.js"}, false);
+    REQUIRE(spawn == std::vector<std::string>{"-D", "emulator-5554", "-f", "com.example.app", "-l", "/tmp/a.js", "-l", "/tmp/b.js"});
+    const auto attach = BuildFridaHookArgs("emulator-5554", "com.example.app", {"/tmp/a.js"}, true);
+    REQUIRE(attach == std::vector<std::string>{"-D", "emulator-5554", "-n", "com.example.app", "-l", "/tmp/a.js"});
+}
+
+TEST_CASE("BundledFridaScripts are non-empty dev scripts", "[frida]") {
+    const auto scripts = BundledFridaScripts();
+    REQUIRE(scripts.size() >= 4);
+    for (const auto &script: scripts) {
+        REQUIRE_FALSE(script.Name.empty());
+        REQUIRE_FALSE(script.Filename.empty());
+        REQUIRE_FALSE(script.Content.empty());
+        REQUIRE(script.Category == "dev");
+    }
 }

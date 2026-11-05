@@ -14,6 +14,7 @@
 #include "cert.h"
 #include "device_panel.h"
 #include "frida.h"
+#include "frida_hook.h"
 #include "proxy.h"
 #include "health_check.h"
 #include "jar_signer.h"
@@ -161,6 +162,9 @@ namespace CoreDeck::Gui {
                 }
                 if (RoundedMenuItem(IconWithLabel(Icons::TERMINAL, Platform::Tr("Frida")).c_str(), nullptr, context.UI.ShowFridaDialog)) {
                     context.UI.ShowFridaDialog = !context.UI.ShowFridaDialog;
+                }
+                if (RoundedMenuItem(IconWithLabel(Icons::FILE_LINES, Platform::Tr("Frida Hook")).c_str(), nullptr, context.UI.ShowFridaHookDialog)) {
+                    context.UI.ShowFridaHookDialog = !context.UI.ShowFridaHookDialog;
                 }
                 ImGui::EndMenu();
             }

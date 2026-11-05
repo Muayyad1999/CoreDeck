@@ -4063,3 +4063,59 @@ msgstr "Prozesse filtern"
 #: src/gui/windows/frida.cpp
 msgid "Enter a frida version (or install frida on the host)."
 msgstr "Geben Sie eine frida-Version ein (oder installieren Sie frida auf dem Host)."
+
+#: src/gui/windows/frida_hook.cpp
+msgid "Frida Hook"
+msgstr "Frida-Hook"
+
+#: src/gui/windows/frida_hook.cpp
+msgid "Attach frida scripts to an app on a device running frida-server."
+msgstr "Hängen Sie frida-Skripte an eine App auf einem Gerät mit laufendem frida-server an."
+
+#: src/gui/windows/frida_hook.cpp
+msgid "Target package"
+msgstr "Ziel-Paket"
+
+#: src/gui/windows/frida_hook.cpp
+msgid "Attach (don't spawn)"
+msgstr "Anhängen (nicht starten)"
+
+#: src/gui/windows/frida_hook.cpp
+msgid "Scripts"
+msgstr "Skripte"
+
+#: src/gui/windows/frida_hook.cpp
+msgid "Path to your own .js"
+msgstr "Pfad zu Ihrem eigenen .js"
+
+#: src/gui/windows/frida_hook.cpp
+msgid "Add"
+msgstr "Hinzufügen"
+
+#: src/gui/windows/frida_hook.cpp
+msgid "Open frida script"
+msgstr "frida-Skript öffnen"
+
+#: src/gui/windows/frida_hook.cpp
+msgid "Save scripts to folder..."
+msgstr "Skripte in Ordner speichern..."
+
+#: src/gui/windows/frida_hook.cpp
+msgid "Choose a folder"
+msgstr "Ordner wählen"
+
+#: src/gui/windows/frida_hook.cpp
+msgid "Saved."
+msgstr "Gespeichert."
+
+#: src/gui/windows/frida_hook.cpp
+msgid "Run"
+msgstr "Ausführen"
+
+#: src/gui/windows/frida_hook.cpp
+msgid "running"
+msgstr "läuft"
+
+#: src/gui/windows/frida_hook.cpp
+msgid "Requires frida-server + host frida tools."
+msgstr "Erfordert frida-server + die Host-frida-Tools."

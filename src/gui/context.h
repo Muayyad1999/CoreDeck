@@ -181,6 +181,7 @@ namespace CoreDeck::Gui {
             bool ShowCertDialog = false;
             bool ShowProxyDialog = false;
             bool ShowFridaDialog = false;
+            bool ShowFridaHookDialog = false;
             WorkspacePage Workspace = WorkspacePage::Home;
             bool ShowWipeDataDialog = false;
             bool ShowHealthCheckDialog = false;
@@ -404,6 +405,17 @@ namespace CoreDeck::Gui {
             std::string PsError;
             char PsFilter[128] = {};
         } FridaWork;
+
+        struct FridaHookWork {
+            char Package[256] = {};
+            bool Attach = false;
+            std::vector<bool> ScriptSelected;
+            bool ScriptsInit = false;
+            char UserScriptPath[1024] = {};
+            std::vector<std::string> UserScripts;
+            Core::FridaHookSession Session;
+            std::string Error;
+        } FridaHookWork;
 
         ApkSignerState ApkSignerWork;
         JarSignerState JarSignerWork;

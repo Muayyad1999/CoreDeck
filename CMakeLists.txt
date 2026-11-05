@@ -96,6 +96,7 @@ add_executable(${PROJECT_NAME}
     src/gui/windows/cert.cpp
     src/gui/windows/proxy.cpp
     src/gui/windows/frida.cpp
+    src/gui/windows/frida_hook.cpp
     src/gui/windows/onboarding.cpp
     src/gui/windows/preferences.cpp
     src/gui/windows/preferences_android_sdk.cpp

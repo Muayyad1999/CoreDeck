@@ -3927,3 +3927,59 @@ msgstr ""
 #: src/gui/windows/frida.cpp
 msgid "Enter a frida version (or install frida on the host)."
 msgstr ""
+
+#: src/gui/windows/frida_hook.cpp
+msgid "Frida Hook"
+msgstr ""
+
+#: src/gui/windows/frida_hook.cpp
+msgid "Attach frida scripts to an app on a device running frida-server."
+msgstr ""
+
+#: src/gui/windows/frida_hook.cpp
+msgid "Target package"
+msgstr ""
+
+#: src/gui/windows/frida_hook.cpp
+msgid "Attach (don't spawn)"
+msgstr ""
+
+#: src/gui/windows/frida_hook.cpp
+msgid "Scripts"
+msgstr ""
+
+#: src/gui/windows/frida_hook.cpp
+msgid "Path to your own .js"
+msgstr ""
+
+#: src/gui/windows/frida_hook.cpp
+msgid "Add"
+msgstr ""
+
+#: src/gui/windows/frida_hook.cpp
+msgid "Open frida script"
+msgstr ""
+
+#: src/gui/windows/frida_hook.cpp
+msgid "Save scripts to folder..."
+msgstr ""
+
+#: src/gui/windows/frida_hook.cpp
+msgid "Choose a folder"
+msgstr ""
+
+#: src/gui/windows/frida_hook.cpp
+msgid "Saved."
+msgstr ""
+
+#: src/gui/windows/frida_hook.cpp
+msgid "Run"
+msgstr ""
+
+#: src/gui/windows/frida_hook.cpp
+msgid "running"
+msgstr ""
+
+#: src/gui/windows/frida_hook.cpp
+msgid "Requires frida-server + host frida tools."
+msgstr ""
