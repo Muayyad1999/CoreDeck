@@ -3867,3 +3867,63 @@ msgstr ""
 #: src/gui/windows/proxy.cpp
 msgid "none"
 msgstr ""
+
+#: src/gui/windows/frida.cpp
+msgid "Frida"
+msgstr ""
+
+#: src/gui/windows/frida.cpp
+msgid "Download, push and run frida-server on a rooted emulator, and list its processes."
+msgstr ""
+
+#: src/gui/windows/frida.cpp
+msgid "Host frida"
+msgstr ""
+
+#: src/gui/windows/frida.cpp
+msgid "not found (pip install frida-tools)"
+msgstr ""
+
+#: src/gui/windows/frida.cpp
+msgid "frida-server version"
+msgstr ""
+
+#: src/gui/windows/frida.cpp
+msgid "Leave empty to match the host frida"
+msgstr ""
+
+#: src/gui/windows/frida.cpp
+msgid "Port (0 = device mode)"
+msgstr ""
+
+#: src/gui/windows/frida.cpp
+msgid "Stealth (random name + port)"
+msgstr ""
+
+#: src/gui/windows/frida.cpp
+msgid "Working..."
+msgstr ""
+
+#: src/gui/windows/frida.cpp
+msgid "Start frida-server"
+msgstr ""
+
+#: src/gui/windows/frida.cpp
+msgid "Requires a rooted AVD (su) and the host frida tools."
+msgstr ""
+
+#: src/gui/windows/frida.cpp
+msgid "Listing..."
+msgstr ""
+
+#: src/gui/windows/frida.cpp
+msgid "List processes"
+msgstr ""
+
+#: src/gui/windows/frida.cpp
+msgid "Filter processes"
+msgstr ""
+
+#: src/gui/windows/frida.cpp
+msgid "Enter a frida version (or install frida on the host)."
+msgstr ""

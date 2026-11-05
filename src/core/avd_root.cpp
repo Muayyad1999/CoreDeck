@@ -17,6 +17,7 @@
 
 #include "core/avd_root.h"
 #include "core/adb.h"
+#include "core/xz.h"
 #include "platform/http_download.h"
 #include "platform/paths.h"
 #include "platform/process.h"
@@ -1091,9 +1092,15 @@ namespace CoreDeck::Core {
             case RamdiskFormat::Raw:
                 cpio = *raw;
                 break;
-            case RamdiskFormat::Xz:
-                error = "xz-compressed ramdisks are not supported yet.";
-                return false;
+            case RamdiskFormat::Xz: {
+                const auto decoded = XzDecompress(*raw);
+                if (!decoded) {
+                    error = "Failed to xz-decompress the ramdisk.";
+                    return false;
+                }
+                cpio = *decoded;
+                break;
+            }
             case RamdiskFormat::Unknown:
             default:
                 error = "Unrecognized ramdisk format.";
@@ -1136,6 +1143,9 @@ namespace CoreDeck::Core {
                 break;
             case RamdiskFormat::Lz4Legacy:
                 recompressed = Lz4LegacyCompress(reserialized);
+                break;
+            case RamdiskFormat::Xz:
+                recompressed = XzStoreCompress(reserialized);
                 break;
             case RamdiskFormat::Raw:
             default:

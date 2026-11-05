@@ -4003,3 +4003,63 @@ msgstr "Transparente Regeln"
 #: src/gui/windows/proxy.cpp
 msgid "none"
 msgstr "keine"
+
+#: src/gui/windows/frida.cpp
+msgid "Frida"
+msgstr "Frida"
+
+#: src/gui/windows/frida.cpp
+msgid "Download, push and run frida-server on a rooted emulator, and list its processes."
+msgstr "Laden Sie frida-server herunter, übertragen und starten Sie es auf einem gerooteten Emulator und listen Sie dessen Prozesse auf."
+
+#: src/gui/windows/frida.cpp
+msgid "Host frida"
+msgstr "Host-frida"
+
+#: src/gui/windows/frida.cpp
+msgid "not found (pip install frida-tools)"
+msgstr "nicht gefunden (pip install frida-tools)"
+
+#: src/gui/windows/frida.cpp
+msgid "frida-server version"
+msgstr "frida-server-Version"
+
+#: src/gui/windows/frida.cpp
+msgid "Leave empty to match the host frida"
+msgstr "Leer lassen, um dem Host-frida zu entsprechen"
+
+#: src/gui/windows/frida.cpp
+msgid "Port (0 = device mode)"
+msgstr "Port (0 = Gerätemodus)"
+
+#: src/gui/windows/frida.cpp
+msgid "Stealth (random name + port)"
+msgstr "Tarnung (zufälliger Name + Port)"
+
+#: src/gui/windows/frida.cpp
+msgid "Working..."
+msgstr "Wird ausgeführt..."
+
+#: src/gui/windows/frida.cpp
+msgid "Start frida-server"
+msgstr "frida-server starten"
+
+#: src/gui/windows/frida.cpp
+msgid "Requires a rooted AVD (su) and the host frida tools."
+msgstr "Erfordert einen gerooteten AVD (su) und die Host-frida-Tools."
+
+#: src/gui/windows/frida.cpp
+msgid "Listing..."
+msgstr "Wird aufgelistet..."
+
+#: src/gui/windows/frida.cpp
+msgid "List processes"
+msgstr "Prozesse auflisten"
+
+#: src/gui/windows/frida.cpp
+msgid "Filter processes"
+msgstr "Prozesse filtern"
+
+#: src/gui/windows/frida.cpp
+msgid "Enter a frida version (or install frida on the host)."
+msgstr "Geben Sie eine frida-Version ein (oder installieren Sie frida auf dem Host)."

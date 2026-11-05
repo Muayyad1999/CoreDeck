@@ -3886,3 +3886,63 @@ msgstr "透明规则"
 #: src/gui/windows/proxy.cpp
 msgid "none"
 msgstr "无"
+
+#: src/gui/windows/frida.cpp
+msgid "Frida"
+msgstr "Frida"
+
+#: src/gui/windows/frida.cpp
+msgid "Download, push and run frida-server on a rooted emulator, and list its processes."
+msgstr "在已 Root 的模拟器上下载、推送并运行 frida-server，并列出其进程。"
+
+#: src/gui/windows/frida.cpp
+msgid "Host frida"
+msgstr "主机 frida"
+
+#: src/gui/windows/frida.cpp
+msgid "not found (pip install frida-tools)"
+msgstr "未找到 (pip install frida-tools)"
+
+#: src/gui/windows/frida.cpp
+msgid "frida-server version"
+msgstr "frida-server 版本"
+
+#: src/gui/windows/frida.cpp
+msgid "Leave empty to match the host frida"
+msgstr "留空以匹配主机的 frida"
+
+#: src/gui/windows/frida.cpp
+msgid "Port (0 = device mode)"
+msgstr "端口 (0 = 设备模式)"
+
+#: src/gui/windows/frida.cpp
+msgid "Stealth (random name + port)"
+msgstr "隐身 (随机名称 + 端口)"
+
+#: src/gui/windows/frida.cpp
+msgid "Working..."
+msgstr "正在处理..."
+
+#: src/gui/windows/frida.cpp
+msgid "Start frida-server"
+msgstr "启动 frida-server"
+
+#: src/gui/windows/frida.cpp
+msgid "Requires a rooted AVD (su) and the host frida tools."
+msgstr "需要已 Root 的 AVD (su) 和主机的 frida 工具。"
+
+#: src/gui/windows/frida.cpp
+msgid "Listing..."
+msgstr "正在列出..."
+
+#: src/gui/windows/frida.cpp
+msgid "List processes"
+msgstr "列出进程"
+
+#: src/gui/windows/frida.cpp
+msgid "Filter processes"
+msgstr "筛选进程"
+
+#: src/gui/windows/frida.cpp
+msgid "Enter a frida version (or install frida on the host)."
+msgstr "请输入 frida 版本 (或在主机上安装 frida)。"

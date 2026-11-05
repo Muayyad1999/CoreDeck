@@ -13,6 +13,7 @@
 #include "avd_root.h"
 #include "cert.h"
 #include "device_panel.h"
+#include "frida.h"
 #include "proxy.h"
 #include "health_check.h"
 #include "jar_signer.h"
@@ -157,6 +158,9 @@ namespace CoreDeck::Gui {
                 }
                 if (RoundedMenuItem(IconWithLabel(Icons::SLIDERS, Platform::Tr("Proxy")).c_str(), nullptr, context.UI.ShowProxyDialog)) {
                     context.UI.ShowProxyDialog = !context.UI.ShowProxyDialog;
+                }
+                if (RoundedMenuItem(IconWithLabel(Icons::TERMINAL, Platform::Tr("Frida")).c_str(), nullptr, context.UI.ShowFridaDialog)) {
+                    context.UI.ShowFridaDialog = !context.UI.ShowFridaDialog;
                 }
                 ImGui::EndMenu();
             }

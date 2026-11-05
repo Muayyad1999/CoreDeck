@@ -63,6 +63,7 @@
 #include "windows/avd_root.h"
 #include "windows/cert.h"
 #include "windows/proxy.h"
+#include "windows/frida.h"
 #include "windows/storage.h"
 #include "windows/update.h"
 #include "app/version_check.h"
@@ -257,6 +258,7 @@ namespace CoreDeck::Gui {
         BuildAvdRootWindow(m_Context);
         BuildCertWindow(m_Context);
         BuildProxyWindow(m_Context);
+        BuildFridaWindow(m_Context);
 
         m_Context.Host.Manager.Update();
         m_ApplyNativeWindowTitle();

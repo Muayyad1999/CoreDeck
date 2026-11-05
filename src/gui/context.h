@@ -21,6 +21,7 @@
 #include "core/avd_root.h"
 #include "core/cert.h"
 #include "core/proxy.h"
+#include "core/frida.h"
 #include "core/emulator.h"
 #include "core/health_check.h"
 #include "core/jdk.h"
@@ -179,6 +180,7 @@ namespace CoreDeck::Gui {
             bool ShowAvdRootDialog = false;
             bool ShowCertDialog = false;
             bool ShowProxyDialog = false;
+            bool ShowFridaDialog = false;
             WorkspacePage Workspace = WorkspacePage::Home;
             bool ShowWipeDataDialog = false;
             bool ShowHealthCheckDialog = false;
@@ -381,6 +383,27 @@ namespace CoreDeck::Gui {
             Core::ProxyStatus Status;
             bool HasStatus = false;
         } ProxyWork;
+
+        struct FridaWork {
+            char Version[64] = {};
+            int Port = 0;
+            bool Stealth = false;
+            char DevName[64] = "frida-server";
+            std::string HostVersion;
+            bool HostChecked = false;
+
+            std::atomic<bool> Busy{false};
+            std::future<std::pair<bool, std::string>> Future;
+            std::string Outcome;
+            bool OutcomeOk = false;
+
+            std::atomic<bool> PsBusy{false};
+            std::future<std::pair<std::vector<Core::FridaProcess>, std::string>> PsFuture;
+            std::vector<Core::FridaProcess> Processes;
+            bool HasProcesses = false;
+            std::string PsError;
+            char PsFilter[128] = {};
+        } FridaWork;
 
         ApkSignerState ApkSignerWork;
         JarSignerState JarSignerWork;

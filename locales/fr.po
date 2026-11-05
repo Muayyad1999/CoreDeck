@@ -4019,3 +4019,63 @@ msgstr "Règles transparentes"
 #: src/gui/windows/proxy.cpp
 msgid "none"
 msgstr "aucune"
+
+#: src/gui/windows/frida.cpp
+msgid "Frida"
+msgstr "Frida"
+
+#: src/gui/windows/frida.cpp
+msgid "Download, push and run frida-server on a rooted emulator, and list its processes."
+msgstr "Téléchargez, poussez et exécutez frida-server sur un émulateur rooté, et listez ses processus."
+
+#: src/gui/windows/frida.cpp
+msgid "Host frida"
+msgstr "frida de l'hôte"
+
+#: src/gui/windows/frida.cpp
+msgid "not found (pip install frida-tools)"
+msgstr "introuvable (pip install frida-tools)"
+
+#: src/gui/windows/frida.cpp
+msgid "frida-server version"
+msgstr "Version de frida-server"
+
+#: src/gui/windows/frida.cpp
+msgid "Leave empty to match the host frida"
+msgstr "Laissez vide pour correspondre au frida de l'hôte"
+
+#: src/gui/windows/frida.cpp
+msgid "Port (0 = device mode)"
+msgstr "Port (0 = mode périphérique)"
+
+#: src/gui/windows/frida.cpp
+msgid "Stealth (random name + port)"
+msgstr "Furtif (nom + port aléatoires)"
+
+#: src/gui/windows/frida.cpp
+msgid "Working..."
+msgstr "Traitement..."
+
+#: src/gui/windows/frida.cpp
+msgid "Start frida-server"
+msgstr "Démarrer frida-server"
+
+#: src/gui/windows/frida.cpp
+msgid "Requires a rooted AVD (su) and the host frida tools."
+msgstr "Nécessite un AVD rooté (su) et les outils frida de l'hôte."
+
+#: src/gui/windows/frida.cpp
+msgid "Listing..."
+msgstr "Listage..."
+
+#: src/gui/windows/frida.cpp
+msgid "List processes"
+msgstr "Lister les processus"
+
+#: src/gui/windows/frida.cpp
+msgid "Filter processes"
+msgstr "Filtrer les processus"
+
+#: src/gui/windows/frida.cpp
+msgid "Enter a frida version (or install frida on the host)."
+msgstr "Saisissez une version de frida (ou installez frida sur l'hôte)."
