@@ -11,6 +11,7 @@
 #include "apk_analyzer.h"
 #include "apk_signer.h"
 #include "avd_root.h"
+#include "cert.h"
 #include "device_panel.h"
 #include "health_check.h"
 #include "jar_signer.h"
@@ -149,6 +150,9 @@ namespace CoreDeck::Gui {
                 }
                 if (RoundedMenuItem(IconWithLabel(Icons::HARD_DRIVE, Platform::Tr("Root AVD")).c_str(), nullptr, context.UI.ShowAvdRootDialog)) {
                     context.UI.ShowAvdRootDialog = !context.UI.ShowAvdRootDialog;
+                }
+                if (RoundedMenuItem(IconWithLabel(Icons::KEY, Platform::Tr("CA Trust")).c_str(), nullptr, context.UI.ShowCertDialog)) {
+                    context.UI.ShowCertDialog = !context.UI.ShowCertDialog;
                 }
                 ImGui::EndMenu();
             }

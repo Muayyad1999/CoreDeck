@@ -3762,3 +3762,67 @@ msgstr "请先获取 Magisk 以启用 Root。"
 #: src/gui/windows/avd_root.cpp
 msgid "Restored the system image from the pristine backup."
 msgstr "已从原始备份还原系统映像。"
+
+#: src/gui/windows/cert.cpp
+msgid "CA Trust"
+msgstr "CA 信任"
+
+#: src/gui/windows/cert.cpp
+msgid "Install a CA into an emulator you control so its apps trust your proxy (Burp/Fiddler)."
+msgstr "将 CA 安装到你控制的模拟器中，使其应用信任你的代理 (Burp/Fiddler)。"
+
+#: src/gui/windows/cert.cpp
+msgid "Certificate (PEM or DER)"
+msgstr "证书 (PEM 或 DER)"
+
+#: src/gui/windows/cert.cpp
+msgid "Path to a .pem / .der / .crt CA file"
+msgstr "指向 .pem / .der / .crt CA 文件的路径"
+
+#: src/gui/windows/cert.cpp
+msgid "Open certificate"
+msgstr "打开证书"
+
+#: src/gui/windows/cert.cpp
+msgid "Certificates"
+msgstr "证书"
+
+#: src/gui/windows/cert.cpp
+msgid "Store filename"
+msgstr "存储区文件名"
+
+#: src/gui/windows/cert.cpp
+msgid "Not a valid PEM or DER certificate."
+msgstr "不是有效的 PEM 或 DER 证书。"
+
+#: src/gui/windows/cert.cpp
+msgid "Target device"
+msgstr "目标设备"
+
+#: src/gui/windows/cert.cpp
+msgid "Select a device in the Devices window."
+msgstr "在“设备”窗口中选择设备。"
+
+#: src/gui/windows/cert.cpp
+msgid "Install to system store"
+msgstr "安装到系统存储区"
+
+#: src/gui/windows/cert.cpp
+msgid "Remove"
+msgstr "移除"
+
+#: src/gui/windows/cert.cpp
+msgid "Requires a rooted AVD (su). Reboot so the store is re-read."
+msgstr "需要已 Root 的 AVD (su)。请重启以重新读取存储区。"
+
+#: src/gui/windows/cert.cpp
+msgid "On Android 14+ a plain copy may not stick; use the AlwaysTrustUserCerts Magisk module if apps still reject it."
+msgstr "在 Android 14+ 上，直接复制可能无法保留；如果应用仍然拒绝，请使用 AlwaysTrustUserCerts Magisk 模块。"
+
+#: src/gui/windows/cert.cpp
+msgid "Removed from the system store."
+msgstr "已从系统存储区移除。"
+
+#: src/gui/windows/cert.cpp
+msgid "Installed as {0} in the system store."
+msgstr "已作为 {0} 安装到系统存储区。"

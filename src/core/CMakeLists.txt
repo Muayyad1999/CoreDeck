@@ -4,6 +4,7 @@ add_library(coredeck_core STATIC
     apk_signer.cpp
     avd_manager.cpp
     avd_root.cpp
+    cert.cpp
     emulator.cpp
     emulator_console.cpp
     health_check.cpp

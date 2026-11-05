@@ -19,6 +19,7 @@
 #include "core/avd_manager.h"
 #include "core/adb.h"
 #include "core/avd_root.h"
+#include "core/cert.h"
 #include "core/emulator.h"
 #include "core/health_check.h"
 #include "core/jdk.h"
@@ -175,6 +176,7 @@ namespace CoreDeck::Gui {
             bool ShowStorageDialog = false;
             bool ShowDevicePanel = false;
             bool ShowAvdRootDialog = false;
+            bool ShowCertDialog = false;
             WorkspacePage Workspace = WorkspacePage::Home;
             bool ShowWipeDataDialog = false;
             bool ShowHealthCheckDialog = false;
@@ -346,6 +348,22 @@ namespace CoreDeck::Gui {
             std::future<std::pair<bool, std::string>> RestoreFuture;
             std::string RestoreOutcome;
         } AvdRootWork;
+
+        struct CertWork {
+            char CertPath[1024] = {};
+            Core::CaCertInfo Info;
+            bool HasInfo = false;
+            std::string Inspected; // path last inspected
+
+            std::atomic<bool> InstallBusy{false};
+            std::future<std::pair<std::optional<std::string>, std::string>> InstallFuture;
+            std::string InstallOutcome;
+            bool InstallOk = false;
+
+            std::atomic<bool> RemoveBusy{false};
+            std::future<std::pair<bool, std::string>> RemoveFuture;
+            std::string RemoveOutcome;
+        } CertWork;
 
         ApkSignerState ApkSignerWork;
         JarSignerState JarSignerWork;
