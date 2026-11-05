@@ -4091,3 +4091,51 @@ msgstr ""
 #: src/gui/windows/hardening.cpp
 msgid "Rebuilt APK"
 msgstr ""
+
+msgid "App Data"
+msgstr ""
+
+msgid "Browse a package's private /data/data on your rooted AVD - for an app you installed to test. Needs su."
+msgstr ""
+
+msgid "Package"
+msgstr ""
+
+msgid "e.g. com.example.app"
+msgstr ""
+
+msgid "Open"
+msgstr ""
+
+msgid ".. (up)"
+msgstr ""
+
+msgid "pull"
+msgstr ""
+
+msgid "Save file"
+msgstr ""
+
+msgid "All files"
+msgstr ""
+
+msgid "Nothing listed. Needs a rooted AVD (su), and the app's data dir must exist."
+msgstr ""
+
+msgid "Pulled."
+msgstr ""
+
+msgid "Search (your own pattern, extended regex, case-insensitive)"
+msgstr ""
+
+msgid "grep -E pattern"
+msgstr ""
+
+msgid "Searching..."
+msgstr ""
+
+msgid "No matches."
+msgstr ""
+
+msgid "Search"
+msgstr ""

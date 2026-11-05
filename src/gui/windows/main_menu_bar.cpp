@@ -174,6 +174,9 @@ namespace CoreDeck::Gui {
                 if (RoundedMenuItem(IconWithLabel(Icons::WARNING_TRIANGLE, Platform::Tr("Hardening")).c_str(), nullptr, context.UI.ShowHardeningDialog)) {
                     context.UI.ShowHardeningDialog = !context.UI.ShowHardeningDialog;
                 }
+                if (RoundedMenuItem(IconWithLabel(Icons::FILE_LINES, Platform::Tr("App Data")).c_str(), nullptr, context.UI.ShowAppDataDialog)) {
+                    context.UI.ShowAppDataDialog = !context.UI.ShowAppDataDialog;
+                }
                 ImGui::EndMenu();
             }
 

@@ -8,6 +8,7 @@ add_executable(coredeck_tests
         test_frida.cpp
         test_flutter.cpp
         test_checks.cpp
+        test_appdata.cpp
         test_proxy.cpp
         test_utilities.cpp
         test_paths.cpp

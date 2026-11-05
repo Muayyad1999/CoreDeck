@@ -18,6 +18,7 @@
 #include "app/app_settings_types.h"
 #include "core/avd_manager.h"
 #include "core/adb.h"
+#include "core/appdata.h"
 #include "core/avd_root.h"
 #include "core/cert.h"
 #include "core/proxy.h"
@@ -186,6 +187,7 @@ namespace CoreDeck::Gui {
             bool ShowFridaHookDialog = false;
             bool ShowFlutterDialog = false;
             bool ShowHardeningDialog = false;
+            bool ShowAppDataDialog = false;
             WorkspacePage Workspace = WorkspacePage::Home;
             bool ShowWipeDataDialog = false;
             bool ShowHealthCheckDialog = false;
@@ -452,6 +454,30 @@ namespace CoreDeck::Gui {
             bool HasNeut = false;
             Core::NeutralizeResult Neut;
         } HardeningWork;
+
+        struct AppDataWork {
+            char Package[256] = {};
+            std::string LoadedPackage; // package the listing/path belong to
+            std::string SubPath; // current dir relative to /data/data/<pkg>
+
+            std::atomic<bool> ListBusy{false};
+            std::future<std::vector<Core::DataEntry>> ListFuture;
+            std::vector<Core::DataEntry> Entries;
+            std::string PendingSubPath; // subPath the in-flight list is for
+            bool HasListing = false;
+            std::string ListError;
+
+            char GrepPattern[256] = {};
+            std::atomic<bool> GrepBusy{false};
+            std::future<std::vector<std::string>> GrepFuture;
+            std::vector<std::string> GrepHits;
+            bool HasGrep = false;
+
+            std::atomic<bool> PullBusy{false};
+            std::future<std::pair<bool, std::string>> PullFuture;
+            std::string PullOutcome;
+            bool PullOk = false;
+        } AppDataWork;
 
         ApkSignerState ApkSignerWork;
         JarSignerState JarSignerWork;

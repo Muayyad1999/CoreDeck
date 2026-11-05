@@ -4110,3 +4110,51 @@ msgstr "中和自终止 + 重新构建"
 #: src/gui/windows/hardening.cpp
 msgid "Rebuilt APK"
 msgstr "重新构建的 APK"
+
+msgid "App Data"
+msgstr "应用数据"
+
+msgid "Browse a package's private /data/data on your rooted AVD - for an app you installed to test. Needs su."
+msgstr "在已 root 的 AVD 上浏览应用的私有 /data/data 目录 — 仅限你为测试而安装的应用。需要 su。"
+
+msgid "Package"
+msgstr "软件包"
+
+msgid "e.g. com.example.app"
+msgstr "例如 com.example.app"
+
+msgid "Open"
+msgstr "打开"
+
+msgid ".. (up)"
+msgstr ".. (上级)"
+
+msgid "pull"
+msgstr "拉取"
+
+msgid "Save file"
+msgstr "保存文件"
+
+msgid "All files"
+msgstr "所有文件"
+
+msgid "Nothing listed. Needs a rooted AVD (su), and the app's data dir must exist."
+msgstr "无内容。需要已 root 的 AVD（su），且应用的数据目录必须存在。"
+
+msgid "Pulled."
+msgstr "已拉取。"
+
+msgid "Search (your own pattern, extended regex, case-insensitive)"
+msgstr "搜索（你自己的模式，扩展正则，忽略大小写）"
+
+msgid "grep -E pattern"
+msgstr "grep -E 模式"
+
+msgid "Searching..."
+msgstr "正在搜索..."
+
+msgid "No matches."
+msgstr "无匹配项。"
+
+msgid "Search"
+msgstr "搜索"

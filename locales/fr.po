@@ -4243,3 +4243,51 @@ msgstr "Neutraliser l'auto-arrêt + reconstruire"
 #: src/gui/windows/hardening.cpp
 msgid "Rebuilt APK"
 msgstr "APK reconstruit"
+
+msgid "App Data"
+msgstr "Données d'application"
+
+msgid "Browse a package's private /data/data on your rooted AVD - for an app you installed to test. Needs su."
+msgstr "Parcourez le dossier privé /data/data d'un paquet sur votre AVD rooté — pour une application que vous avez installée pour la tester. Nécessite su."
+
+msgid "Package"
+msgstr "Paquet"
+
+msgid "e.g. com.example.app"
+msgstr "p. ex. com.example.app"
+
+msgid "Open"
+msgstr "Ouvrir"
+
+msgid ".. (up)"
+msgstr ".. (remonter)"
+
+msgid "pull"
+msgstr "extraire"
+
+msgid "Save file"
+msgstr "Enregistrer le fichier"
+
+msgid "All files"
+msgstr "Tous les fichiers"
+
+msgid "Nothing listed. Needs a rooted AVD (su), and the app's data dir must exist."
+msgstr "Rien à afficher. Nécessite un AVD rooté (su), et le dossier de données de l'application doit exister."
+
+msgid "Pulled."
+msgstr "Extrait."
+
+msgid "Search (your own pattern, extended regex, case-insensitive)"
+msgstr "Recherche (votre propre motif, regex étendue, insensible à la casse)"
+
+msgid "grep -E pattern"
+msgstr "motif grep -E"
+
+msgid "Searching..."
+msgstr "Recherche..."
+
+msgid "No matches."
+msgstr "Aucune correspondance."
+
+msgid "Search"
+msgstr "Rechercher"

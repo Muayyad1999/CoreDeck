@@ -1,5 +1,6 @@
 add_library(coredeck_core STATIC
     adb.cpp
+    appdata.cpp
     apk_analyzer.cpp
     apk_signer.cpp
     avd_manager.cpp

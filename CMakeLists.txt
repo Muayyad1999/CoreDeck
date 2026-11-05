@@ -99,6 +99,7 @@ add_executable(${PROJECT_NAME}
     src/gui/windows/frida_hook.cpp
     src/gui/windows/flutter.cpp
     src/gui/windows/hardening.cpp
+    src/gui/windows/appdata.cpp
     src/gui/windows/onboarding.cpp
     src/gui/windows/preferences.cpp
     src/gui/windows/preferences_android_sdk.cpp

@@ -67,6 +67,7 @@
 #include "windows/frida_hook.h"
 #include "windows/flutter.h"
 #include "windows/hardening.h"
+#include "windows/appdata.h"
 #include "windows/storage.h"
 #include "windows/update.h"
 #include "app/version_check.h"
@@ -265,6 +266,7 @@ namespace CoreDeck::Gui {
         BuildFridaHookWindow(m_Context);
         BuildFlutterWindow(m_Context);
         BuildHardeningWindow(m_Context);
+        BuildAppDataWindow(m_Context);
 
         m_Context.Host.Manager.Update();
         m_ApplyNativeWindowTitle();

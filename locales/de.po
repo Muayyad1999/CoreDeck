@@ -4227,3 +4227,51 @@ msgstr "Selbst-Beenden neutralisieren + neu bauen"
 #: src/gui/windows/hardening.cpp
 msgid "Rebuilt APK"
 msgstr "Neu gebaute APK"
+
+msgid "App Data"
+msgstr "App-Daten"
+
+msgid "Browse a package's private /data/data on your rooted AVD - for an app you installed to test. Needs su."
+msgstr "Durchsuchen Sie das private /data/data-Verzeichnis eines Pakets auf Ihrem gerooteten AVD – für eine App, die Sie zum Testen installiert haben. Erfordert su."
+
+msgid "Package"
+msgstr "Paket"
+
+msgid "e.g. com.example.app"
+msgstr "z. B. com.example.app"
+
+msgid "Open"
+msgstr "Öffnen"
+
+msgid ".. (up)"
+msgstr ".. (nach oben)"
+
+msgid "pull"
+msgstr "abrufen"
+
+msgid "Save file"
+msgstr "Datei speichern"
+
+msgid "All files"
+msgstr "Alle Dateien"
+
+msgid "Nothing listed. Needs a rooted AVD (su), and the app's data dir must exist."
+msgstr "Nichts aufgelistet. Erfordert ein gerootetes AVD (su), und das Datenverzeichnis der App muss vorhanden sein."
+
+msgid "Pulled."
+msgstr "Abgerufen."
+
+msgid "Search (your own pattern, extended regex, case-insensitive)"
+msgstr "Suche (Ihr eigenes Muster, erweiterte Regex, Groß-/Kleinschreibung egal)"
+
+msgid "grep -E pattern"
+msgstr "grep -E-Muster"
+
+msgid "Searching..."
+msgstr "Suche läuft..."
+
+msgid "No matches."
+msgstr "Keine Treffer."
+
+msgid "Search"
+msgstr "Suchen"
