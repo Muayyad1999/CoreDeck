@@ -4295,3 +4295,15 @@ msgstr ""
 
 msgid "Auto (best method, falls back if a tool is missing)"
 msgstr ""
+
+msgid "reFlutter routes traffic to your proxy on :8083. Point the device at it:"
+msgstr ""
+
+msgid "Set proxy :8083"
+msgstr ""
+
+msgid "The gadget APK runs Frida with no root. Launch it, then attach a script:"
+msgstr ""
+
+msgid "Open Frida Hook"
+msgstr ""

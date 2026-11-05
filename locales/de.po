@@ -4431,3 +4431,15 @@ msgstr "network-security-config hinzufügen (Benutzer-CAs vertrauen)"
 
 msgid "Auto (best method, falls back if a tool is missing)"
 msgstr "Auto (beste Methode, wechselt bei fehlendem Tool)"
+
+msgid "reFlutter routes traffic to your proxy on :8083. Point the device at it:"
+msgstr "reFlutter leitet den Verkehr an Ihren Proxy auf :8083. Richten Sie das Gerät darauf aus:"
+
+msgid "Set proxy :8083"
+msgstr "Proxy :8083 festlegen"
+
+msgid "The gadget APK runs Frida with no root. Launch it, then attach a script:"
+msgstr "Das Gadget-APK führt Frida ohne Root aus. Starten Sie es und hängen Sie dann ein Skript an:"
+
+msgid "Open Frida Hook"
+msgstr "Frida Hook öffnen"

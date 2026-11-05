@@ -4313,3 +4313,15 @@ msgstr "新增 network-security-config（信任使用者 CA）"
 
 msgid "Auto (best method, falls back if a tool is missing)"
 msgstr "自動（最佳方法，缺少工具時自動回退）"
+
+msgid "reFlutter routes traffic to your proxy on :8083. Point the device at it:"
+msgstr "reFlutter 將流量路由到你的代理 :8083。將裝置指向它："
+
+msgid "Set proxy :8083"
+msgstr "設定代理 :8083"
+
+msgid "The gadget APK runs Frida with no root. Launch it, then attach a script:"
+msgstr "gadget APK 無需 root 即可執行 Frida。啟動它，然後附加指令碼："
+
+msgid "Open Frida Hook"
+msgstr "開啟 Frida Hook"

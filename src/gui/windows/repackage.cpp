@@ -283,6 +283,43 @@ namespace CoreDeck::Gui {
                 if (r.AllOk() && !r.FinalApk.empty()) {
                     PropertyText(Platform::Tr("Final APK"), r.FinalApk.c_str());
                 }
+
+                // ---- next step (QoL) --------------------------------------- //
+                if (r.AllOk()) {
+                    if (r.MethodUsed == "reflutter") {
+                        ImGui::Separator();
+                        ImGui::TextDisabled(
+                            "%s",
+                            Platform::Tr("reFlutter routes traffic to your proxy on :8083. Point the device at it:")
+                        );
+                        if (PositiveButton(Platform::Tr("Set proxy :8083"))) {
+                            std::snprintf(
+                                context.ProxyWork.Target,
+                                sizeof(context.ProxyWork.Target),
+                                "%s",
+                                "8083"
+                            );
+                            context.UI.ShowProxyDialog = true;
+                        }
+                    } else if (r.MethodUsed == "gadget") {
+                        ImGui::Separator();
+                        ImGui::TextDisabled(
+                            "%s",
+                            Platform::Tr("The gadget APK runs Frida with no root. Launch it, then attach a script:")
+                        );
+                        if (PositiveButton(Platform::Tr("Open Frida Hook"))) {
+                            if (work.Package[0] != '\0') {
+                                std::snprintf(
+                                    context.FridaHookWork.Package,
+                                    sizeof(context.FridaHookWork.Package),
+                                    "%s",
+                                    work.Package
+                                );
+                            }
+                            context.UI.ShowFridaHookDialog = true;
+                        }
+                    }
+                }
             }
         }
         ImGui::End();
