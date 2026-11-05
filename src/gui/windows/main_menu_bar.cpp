@@ -177,6 +177,10 @@ namespace CoreDeck::Gui {
                 if (RoundedMenuItem(IconWithLabel(Icons::FILE_LINES, Platform::Tr("App Data")).c_str(), nullptr, context.UI.ShowAppDataDialog)) {
                     context.UI.ShowAppDataDialog = !context.UI.ShowAppDataDialog;
                 }
+                ImGui::Separator();
+                if (RoundedMenuItem(IconWithLabel(Icons::SLIDERS, Platform::Tr("One-click MITM")).c_str(), nullptr, context.UI.ShowMitmDialog)) {
+                    context.UI.ShowMitmDialog = !context.UI.ShowMitmDialog;
+                }
                 ImGui::EndMenu();
             }
 

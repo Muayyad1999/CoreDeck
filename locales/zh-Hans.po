@@ -4158,3 +4158,45 @@ msgstr "无匹配项。"
 
 msgid "Search"
 msgstr "搜索"
+
+msgid "One-click MITM"
+msgstr "一键 MITM"
+
+msgid "Trust your CA, point the device at your proxy, and launch the app - in one step, on an emulator you control. For an app you own or are authorized to test."
+msgstr "信任你的 CA、将设备指向你的代理并启动应用 — 在你掌控的模拟器上一步完成。仅限你拥有或获授权测试的应用。"
+
+msgid "Trust CA certificate (system store, rooted AVD)"
+msgstr "信任 CA 证书（系统存储，已 root 的 AVD）"
+
+msgid "Path to a CA (PEM/DER), e.g. your Burp root"
+msgstr "CA 文件路径（PEM/DER），例如你的 Burp 根证书"
+
+msgid "Open CA certificate"
+msgstr "打开 CA 证书"
+
+msgid "Set proxy"
+msgstr "设置代理"
+
+msgid "Launch app"
+msgstr "启动应用"
+
+msgid "Does not disable certificate pinning. For a pinned app, also run the Frida SSL-pinning bypass or the Flutter TLS patch."
+msgstr "不会禁用证书固定。对于启用固定的应用，请同时运行 Frida SSL 固定绕过或 Flutter TLS 补丁。"
+
+msgid "Run MITM setup"
+msgstr "运行 MITM 设置"
+
+msgid "Remove CA on teardown"
+msgstr "拆除时移除 CA"
+
+msgid "Teardown (clear proxy)"
+msgstr "拆除（清除代理）"
+
+msgid "Teardown done."
+msgstr "拆除完成。"
+
+msgid "MITM ready. Watch requests in your proxy."
+msgstr "MITM 就绪。在你的代理中查看请求。"
+
+msgid "Stopped at a failing step."
+msgstr "在失败的步骤处停止。"

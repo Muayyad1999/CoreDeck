@@ -25,6 +25,7 @@
 #include "core/frida.h"
 #include "core/flutter.h"
 #include "core/checks.h"
+#include "core/mitm.h"
 #include "core/emulator.h"
 #include "core/health_check.h"
 #include "core/jdk.h"
@@ -188,6 +189,7 @@ namespace CoreDeck::Gui {
             bool ShowFlutterDialog = false;
             bool ShowHardeningDialog = false;
             bool ShowAppDataDialog = false;
+            bool ShowMitmDialog = false;
             WorkspacePage Workspace = WorkspacePage::Home;
             bool ShowWipeDataDialog = false;
             bool ShowHealthCheckDialog = false;
@@ -478,6 +480,25 @@ namespace CoreDeck::Gui {
             std::string PullOutcome;
             bool PullOk = false;
         } AppDataWork;
+
+        struct MitmWork {
+            char CertPath[1024] = {};
+            char ProxyTarget[128] = {};
+            char Package[256] = {};
+            bool TrustCert = true;
+            bool SetProxy = true;
+            bool Transparent = false;
+            bool Launch = true;
+            bool RemoveCertOnTeardown = false;
+
+            std::atomic<bool> Busy{false};
+            std::future<Core::MitmResult> Future;
+            bool HasResult = false;
+            Core::MitmResult Result;
+            bool WasTeardown = false;
+            std::string InstalledCertName; // remembered for teardown
+            std::string ValidationError;
+        } MitmWork;
 
         ApkSignerState ApkSignerWork;
         JarSignerState JarSignerWork;

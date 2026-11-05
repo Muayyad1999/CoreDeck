@@ -4139,3 +4139,45 @@ msgstr ""
 
 msgid "Search"
 msgstr ""
+
+msgid "One-click MITM"
+msgstr ""
+
+msgid "Trust your CA, point the device at your proxy, and launch the app - in one step, on an emulator you control. For an app you own or are authorized to test."
+msgstr ""
+
+msgid "Trust CA certificate (system store, rooted AVD)"
+msgstr ""
+
+msgid "Path to a CA (PEM/DER), e.g. your Burp root"
+msgstr ""
+
+msgid "Open CA certificate"
+msgstr ""
+
+msgid "Set proxy"
+msgstr ""
+
+msgid "Launch app"
+msgstr ""
+
+msgid "Does not disable certificate pinning. For a pinned app, also run the Frida SSL-pinning bypass or the Flutter TLS patch."
+msgstr ""
+
+msgid "Run MITM setup"
+msgstr ""
+
+msgid "Remove CA on teardown"
+msgstr ""
+
+msgid "Teardown (clear proxy)"
+msgstr ""
+
+msgid "Teardown done."
+msgstr ""
+
+msgid "MITM ready. Watch requests in your proxy."
+msgstr ""
+
+msgid "Stopped at a failing step."
+msgstr ""

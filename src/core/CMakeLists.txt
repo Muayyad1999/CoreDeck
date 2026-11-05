@@ -17,6 +17,7 @@ add_library(coredeck_core STATIC
     jdk.cpp
     jar_signer.cpp
     keytool.cpp
+    mitm.cpp
     options.cpp
     sdk.cpp
     sdk_bootstrap.cpp

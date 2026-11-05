@@ -4291,3 +4291,45 @@ msgstr "Aucune correspondance."
 
 msgid "Search"
 msgstr "Rechercher"
+
+msgid "One-click MITM"
+msgstr "MITM en un clic"
+
+msgid "Trust your CA, point the device at your proxy, and launch the app - in one step, on an emulator you control. For an app you own or are authorized to test."
+msgstr "Faites confiance à votre CA, dirigez l'appareil vers votre proxy et lancez l'application — en une étape, sur un émulateur que vous contrôlez. Pour une application que vous possédez ou êtes autorisé à tester."
+
+msgid "Trust CA certificate (system store, rooted AVD)"
+msgstr "Faire confiance au certificat CA (magasin système, AVD rooté)"
+
+msgid "Path to a CA (PEM/DER), e.g. your Burp root"
+msgstr "Chemin vers une CA (PEM/DER), p. ex. votre racine Burp"
+
+msgid "Open CA certificate"
+msgstr "Ouvrir un certificat CA"
+
+msgid "Set proxy"
+msgstr "Définir le proxy"
+
+msgid "Launch app"
+msgstr "Lancer l'application"
+
+msgid "Does not disable certificate pinning. For a pinned app, also run the Frida SSL-pinning bypass or the Flutter TLS patch."
+msgstr "Ne désactive pas l'épinglage de certificat. Pour une application avec épinglage, exécutez aussi le contournement SSL-pinning de Frida ou le correctif TLS Flutter."
+
+msgid "Run MITM setup"
+msgstr "Lancer la configuration MITM"
+
+msgid "Remove CA on teardown"
+msgstr "Retirer la CA lors du démontage"
+
+msgid "Teardown (clear proxy)"
+msgstr "Démonter (effacer le proxy)"
+
+msgid "Teardown done."
+msgstr "Démontage terminé."
+
+msgid "MITM ready. Watch requests in your proxy."
+msgstr "MITM prêt. Observez les requêtes dans votre proxy."
+
+msgid "Stopped at a failing step."
+msgstr "Arrêté à une étape en échec."
