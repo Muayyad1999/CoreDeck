@@ -181,6 +181,9 @@ namespace CoreDeck::Gui {
                 if (RoundedMenuItem(IconWithLabel(Icons::SLIDERS, Platform::Tr("One-click MITM")).c_str(), nullptr, context.UI.ShowMitmDialog)) {
                     context.UI.ShowMitmDialog = !context.UI.ShowMitmDialog;
                 }
+                if (RoundedMenuItem(IconWithLabel(Icons::SIGNATURE, Platform::Tr("Repackage")).c_str(), nullptr, context.UI.ShowRepackageDialog)) {
+                    context.UI.ShowRepackageDialog = !context.UI.ShowRepackageDialog;
+                }
                 if (RoundedMenuItem(IconWithLabel(Icons::GEAR, Platform::Tr("RE Tools")).c_str(), nullptr, context.UI.ShowReToolsDialog)) {
                     context.UI.ShowReToolsDialog = !context.UI.ShowReToolsDialog;
                 }

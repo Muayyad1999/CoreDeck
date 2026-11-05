@@ -19,6 +19,7 @@ add_library(coredeck_core STATIC
     keytool.cpp
     mitm.cpp
     options.cpp
+    repackage.cpp
     sdk.cpp
     sdk_bootstrap.cpp
     sdk_manager.cpp

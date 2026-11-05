@@ -4354,3 +4354,84 @@ msgstr "Chemin"
 
 msgid "How to install"
 msgstr "Comment installer"
+
+msgid "Repackage"
+msgstr "Reconditionner"
+
+msgid "Pull an app, merge its splits, strip certificate pinning statically, sign, and optionally install. For an app you own or are authorized to test."
+msgstr "Récupérez une application, fusionnez ses splits, supprimez l'épinglage de certificat de façon statique, signez et installez éventuellement. Pour une application que vous possédez ou êtes autorisé à tester."
+
+msgid "Device (by package)"
+msgstr "Appareil (par paquet)"
+
+msgid "Folder of splits"
+msgstr "Dossier de splits"
+
+msgid "Single APK"
+msgstr "APK unique"
+
+msgid "No device selected (Devices window)."
+msgstr "Aucun appareil sélectionné (fenêtre Appareils)."
+
+msgid "Folder with base.apk + split_*.apk"
+msgstr "Dossier avec base.apk + split_*.apk"
+
+msgid "Choose splits folder"
+msgstr "Choisir le dossier de splits"
+
+msgid "Pinning bypass"
+msgstr "Contournement de l'épinglage"
+
+msgid "Auto (Flutter -> libflutter patch, native -> apk-mitm)"
+msgstr "Auto (Flutter -> correctif libflutter, natif -> apk-mitm)"
+
+msgid "Flutter: static libflutter TLS patch"
+msgstr "Flutter : correctif TLS statique libflutter"
+
+msgid "Native: apk-mitm (strip pinning + trust user CAs)"
+msgstr "Natif : apk-mitm (supprime l'épinglage + fait confiance aux CA utilisateur)"
+
+msgid "None (merge + sign only)"
+msgstr "Aucun (fusion + signature uniquement)"
+
+msgid "Sign the result (managed debug keystore)"
+msgstr "Signer le résultat (keystore de débogage géré)"
+
+msgid "Install onto the selected device when done"
+msgstr "Installer sur l'appareil sélectionné une fois terminé"
+
+msgid "Grant permissions (-g)"
+msgstr "Accorder les permissions (-g)"
+
+msgid "APKEditor.jar (merges splits)"
+msgstr "APKEditor.jar (fusionne les splits)"
+
+msgid "Path to APKEditor.jar (or set $APKEDITOR_JAR)"
+msgstr "Chemin vers APKEditor.jar (ou définissez $APKEDITOR_JAR)"
+
+msgid "Open APKEditor.jar"
+msgstr "Ouvrir APKEditor.jar"
+
+msgid "JAR files"
+msgstr "Fichiers JAR"
+
+msgid "Needs APKEditor.jar + a JDK; apk-mitm (Node) for native apps. See RE Tools."
+msgstr "Nécessite APKEditor.jar + un JDK ; apk-mitm (Node) pour les applications natives. Voir Outils RE."
+
+msgid "Enter a package to pull."
+msgstr "Saisissez un paquet à récupérer."
+
+msgid "Choose an input folder or APK."
+msgstr "Choisissez un dossier ou un APK d'entrée."
+
+msgid "Install needs a device selected in the Devices window."
+msgstr "L'installation nécessite un appareil sélectionné dans la fenêtre Appareils."
+
+msgid "Done."
+msgstr "Terminé."
+
+msgid "app: {0}   method: {1}"
+msgstr "app : {0}   méthode : {1}"
+
+msgid "Final APK"
+msgstr "APK final"

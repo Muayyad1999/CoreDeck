@@ -69,6 +69,7 @@
 #include "windows/hardening.h"
 #include "windows/appdata.h"
 #include "windows/mitm.h"
+#include "windows/repackage.h"
 #include "windows/retools.h"
 #include "windows/storage.h"
 #include "windows/update.h"
@@ -270,6 +271,7 @@ namespace CoreDeck::Gui {
         BuildHardeningWindow(m_Context);
         BuildAppDataWindow(m_Context);
         BuildMitmWindow(m_Context);
+        BuildRepackageWindow(m_Context);
         BuildReToolsWindow(m_Context);
 
         m_Context.Host.Manager.Update();

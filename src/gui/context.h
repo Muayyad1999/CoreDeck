@@ -26,6 +26,7 @@
 #include "core/flutter.h"
 #include "core/checks.h"
 #include "core/mitm.h"
+#include "core/repackage.h"
 #include "core/tools.h"
 #include "core/emulator.h"
 #include "core/health_check.h"
@@ -191,6 +192,7 @@ namespace CoreDeck::Gui {
             bool ShowHardeningDialog = false;
             bool ShowAppDataDialog = false;
             bool ShowMitmDialog = false;
+            bool ShowRepackageDialog = false;
             bool ShowReToolsDialog = false;
             WorkspacePage Workspace = WorkspacePage::Home;
             bool ShowWipeDataDialog = false;
@@ -501,6 +503,24 @@ namespace CoreDeck::Gui {
             std::string InstalledCertName; // remembered for teardown
             std::string ValidationError;
         } MitmWork;
+
+        struct RepackageWork {
+            int SourceMode = 0; // 0 device, 1 directory, 2 single apk
+            char Package[256] = {};
+            char InputPath[1024] = {};
+            char ApkEditorJar[1024] = {};
+            int Method = 0; // 0 auto, 1 flutter static, 2 apk-mitm, 3 none
+            bool Sign = true;
+            bool Install = false;
+            bool Grant = true;
+
+            std::atomic<bool> Busy{false};
+            std::shared_ptr<Core::RepackageProgress> Progress;
+            std::future<Core::RepackageResult> Future;
+            bool HasResult = false;
+            Core::RepackageResult Result;
+            std::string ValidationError;
+        } RepackageWork;
 
         struct ReToolsWork {
             std::atomic<bool> Busy{false};

@@ -4220,3 +4220,84 @@ msgstr "路徑"
 
 msgid "How to install"
 msgstr "安裝方法"
+
+msgid "Repackage"
+msgstr "重新打包"
+
+msgid "Pull an app, merge its splits, strip certificate pinning statically, sign, and optionally install. For an app you own or are authorized to test."
+msgstr "拉取應用程式、合併其拆分包、靜態移除憑證固定、簽署並可選安裝。僅限你擁有或獲授權測試的應用程式。"
+
+msgid "Device (by package)"
+msgstr "裝置（依套件）"
+
+msgid "Folder of splits"
+msgstr "拆分包資料夾"
+
+msgid "Single APK"
+msgstr "單一 APK"
+
+msgid "No device selected (Devices window)."
+msgstr "未選擇裝置（裝置視窗）。"
+
+msgid "Folder with base.apk + split_*.apk"
+msgstr "包含 base.apk + split_*.apk 的資料夾"
+
+msgid "Choose splits folder"
+msgstr "選擇拆分包資料夾"
+
+msgid "Pinning bypass"
+msgstr "固定繞過"
+
+msgid "Auto (Flutter -> libflutter patch, native -> apk-mitm)"
+msgstr "自動（Flutter -> libflutter 修補，原生 -> apk-mitm）"
+
+msgid "Flutter: static libflutter TLS patch"
+msgstr "Flutter：靜態 libflutter TLS 修補"
+
+msgid "Native: apk-mitm (strip pinning + trust user CAs)"
+msgstr "原生：apk-mitm（移除固定 + 信任使用者 CA）"
+
+msgid "None (merge + sign only)"
+msgstr "無（僅合併 + 簽署）"
+
+msgid "Sign the result (managed debug keystore)"
+msgstr "簽署結果（受管調試金鑰庫）"
+
+msgid "Install onto the selected device when done"
+msgstr "完成後安裝到所選裝置"
+
+msgid "Grant permissions (-g)"
+msgstr "授予權限 (-g)"
+
+msgid "APKEditor.jar (merges splits)"
+msgstr "APKEditor.jar（合併拆分包）"
+
+msgid "Path to APKEditor.jar (or set $APKEDITOR_JAR)"
+msgstr "APKEditor.jar 路徑（或設定 $APKEDITOR_JAR）"
+
+msgid "Open APKEditor.jar"
+msgstr "開啟 APKEditor.jar"
+
+msgid "JAR files"
+msgstr "JAR 檔案"
+
+msgid "Needs APKEditor.jar + a JDK; apk-mitm (Node) for native apps. See RE Tools."
+msgstr "需要 APKEditor.jar + JDK；原生應用程式需要 apk-mitm（Node）。參見逆向工具。"
+
+msgid "Enter a package to pull."
+msgstr "輸入要拉取的套件。"
+
+msgid "Choose an input folder or APK."
+msgstr "選擇輸入資料夾或 APK。"
+
+msgid "Install needs a device selected in the Devices window."
+msgstr "安裝需要在裝置視窗中選擇一台裝置。"
+
+msgid "Done."
+msgstr "完成。"
+
+msgid "app: {0}   method: {1}"
+msgstr "應用：{0}   方法：{1}"
+
+msgid "Final APK"
+msgstr "最終 APK"

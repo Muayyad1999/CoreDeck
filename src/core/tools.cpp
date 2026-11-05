@@ -169,6 +169,19 @@ namespace CoreDeck::Core {
                 },
             },
             {
+                "apk-mitm",
+                "apk-mitm",
+                "Repackage (strip cert pinning on native apps)",
+                {"apk-mitm"},
+                ReToolSource::Path,
+                true,
+                {
+                    "apk-mitm rebuilds an APK with certificate pinning removed and user CAs trusted.",
+                    "Needs Node.js: https://nodejs.org",
+                    "Install: npm install -g apk-mitm  (CoreDeck can also run it via npx).",
+                },
+            },
+            {
                 "jadx",
                 "jadx",
                 "Decompile to readable Java (run externally)",

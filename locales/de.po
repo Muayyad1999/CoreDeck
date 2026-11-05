@@ -4338,3 +4338,84 @@ msgstr "Pfad"
 
 msgid "How to install"
 msgstr "Installationsanleitung"
+
+msgid "Repackage"
+msgstr "Neu verpacken"
+
+msgid "Pull an app, merge its splits, strip certificate pinning statically, sign, and optionally install. For an app you own or are authorized to test."
+msgstr "Eine App abrufen, ihre Splits zusammenführen, Certificate-Pinning statisch entfernen, signieren und optional installieren. Für eine App, die Sie besitzen oder testen dürfen."
+
+msgid "Device (by package)"
+msgstr "Gerät (nach Paket)"
+
+msgid "Folder of splits"
+msgstr "Split-Ordner"
+
+msgid "Single APK"
+msgstr "Einzelnes APK"
+
+msgid "No device selected (Devices window)."
+msgstr "Kein Gerät ausgewählt (Fenster „Geräte“)."
+
+msgid "Folder with base.apk + split_*.apk"
+msgstr "Ordner mit base.apk + split_*.apk"
+
+msgid "Choose splits folder"
+msgstr "Split-Ordner wählen"
+
+msgid "Pinning bypass"
+msgstr "Pinning-Umgehung"
+
+msgid "Auto (Flutter -> libflutter patch, native -> apk-mitm)"
+msgstr "Auto (Flutter -> libflutter-Patch, nativ -> apk-mitm)"
+
+msgid "Flutter: static libflutter TLS patch"
+msgstr "Flutter: statischer libflutter-TLS-Patch"
+
+msgid "Native: apk-mitm (strip pinning + trust user CAs)"
+msgstr "Nativ: apk-mitm (Pinning entfernen + Benutzer-CAs vertrauen)"
+
+msgid "None (merge + sign only)"
+msgstr "Keine (nur Zusammenführen + Signieren)"
+
+msgid "Sign the result (managed debug keystore)"
+msgstr "Ergebnis signieren (verwalteter Debug-Keystore)"
+
+msgid "Install onto the selected device when done"
+msgstr "Nach Abschluss auf dem ausgewählten Gerät installieren"
+
+msgid "Grant permissions (-g)"
+msgstr "Berechtigungen gewähren (-g)"
+
+msgid "APKEditor.jar (merges splits)"
+msgstr "APKEditor.jar (führt Splits zusammen)"
+
+msgid "Path to APKEditor.jar (or set $APKEDITOR_JAR)"
+msgstr "Pfad zu APKEditor.jar (oder $APKEDITOR_JAR setzen)"
+
+msgid "Open APKEditor.jar"
+msgstr "APKEditor.jar öffnen"
+
+msgid "JAR files"
+msgstr "JAR-Dateien"
+
+msgid "Needs APKEditor.jar + a JDK; apk-mitm (Node) for native apps. See RE Tools."
+msgstr "Benötigt APKEditor.jar + ein JDK; apk-mitm (Node) für native Apps. Siehe RE-Tools."
+
+msgid "Enter a package to pull."
+msgstr "Geben Sie ein abzurufendes Paket ein."
+
+msgid "Choose an input folder or APK."
+msgstr "Wählen Sie einen Eingabeordner oder ein APK."
+
+msgid "Install needs a device selected in the Devices window."
+msgstr "Die Installation erfordert ein im Fenster „Geräte“ ausgewähltes Gerät."
+
+msgid "Done."
+msgstr "Fertig."
+
+msgid "app: {0}   method: {1}"
+msgstr "App: {0}   Methode: {1}"
+
+msgid "Final APK"
+msgstr "Finales APK"

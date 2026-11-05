@@ -4202,3 +4202,84 @@ msgstr ""
 
 msgid "How to install"
 msgstr ""
+
+msgid "Repackage"
+msgstr ""
+
+msgid "Pull an app, merge its splits, strip certificate pinning statically, sign, and optionally install. For an app you own or are authorized to test."
+msgstr ""
+
+msgid "Device (by package)"
+msgstr ""
+
+msgid "Folder of splits"
+msgstr ""
+
+msgid "Single APK"
+msgstr ""
+
+msgid "No device selected (Devices window)."
+msgstr ""
+
+msgid "Folder with base.apk + split_*.apk"
+msgstr ""
+
+msgid "Choose splits folder"
+msgstr ""
+
+msgid "Pinning bypass"
+msgstr ""
+
+msgid "Auto (Flutter -> libflutter patch, native -> apk-mitm)"
+msgstr ""
+
+msgid "Flutter: static libflutter TLS patch"
+msgstr ""
+
+msgid "Native: apk-mitm (strip pinning + trust user CAs)"
+msgstr ""
+
+msgid "None (merge + sign only)"
+msgstr ""
+
+msgid "Sign the result (managed debug keystore)"
+msgstr ""
+
+msgid "Install onto the selected device when done"
+msgstr ""
+
+msgid "Grant permissions (-g)"
+msgstr ""
+
+msgid "APKEditor.jar (merges splits)"
+msgstr ""
+
+msgid "Path to APKEditor.jar (or set $APKEDITOR_JAR)"
+msgstr ""
+
+msgid "Open APKEditor.jar"
+msgstr ""
+
+msgid "JAR files"
+msgstr ""
+
+msgid "Needs APKEditor.jar + a JDK; apk-mitm (Node) for native apps. See RE Tools."
+msgstr ""
+
+msgid "Enter a package to pull."
+msgstr ""
+
+msgid "Choose an input folder or APK."
+msgstr ""
+
+msgid "Install needs a device selected in the Devices window."
+msgstr ""
+
+msgid "Done."
+msgstr ""
+
+msgid "app: {0}   method: {1}"
+msgstr ""
+
+msgid "Final APK"
+msgstr ""
