@@ -4183,3 +4183,23 @@ msgstr "La première exécution peut prendre plusieurs minutes (elle peut compil
 #: src/gui/windows/flutter.cpp
 msgid "Output"
 msgstr "Sortie"
+
+#: src/gui/windows/flutter.cpp
+msgid "TLS bypass (static patch, authorized testing only)"
+msgstr "Contournement TLS (patch statique, tests autorisés uniquement)"
+
+#: src/gui/windows/flutter.cpp
+msgid "NOP ssl_verify_peer_cert in libflutter.so (arm64) so the app trusts your proxy."
+msgstr "Désactive ssl_verify_peer_cert dans libflutter.so (arm64) pour que l'application fasse confiance à votre proxy."
+
+#: src/gui/windows/flutter.cpp
+msgid "Patching..."
+msgstr "Application du patch..."
+
+#: src/gui/windows/flutter.cpp
+msgid "Patch Flutter TLS"
+msgstr "Patcher le TLS Flutter"
+
+#: src/gui/windows/flutter.cpp
+msgid "Patched APK"
+msgstr "APK patché"

@@ -4050,3 +4050,23 @@ msgstr "首次运行可能需要几分钟 (它可能会构建匹配的 Dart VM)�
 #: src/gui/windows/flutter.cpp
 msgid "Output"
 msgstr "输出"
+
+#: src/gui/windows/flutter.cpp
+msgid "TLS bypass (static patch, authorized testing only)"
+msgstr "TLS 绕过 (静态补丁，仅限授权测试)"
+
+#: src/gui/windows/flutter.cpp
+msgid "NOP ssl_verify_peer_cert in libflutter.so (arm64) so the app trusts your proxy."
+msgstr "将 libflutter.so (arm64) 中的 ssl_verify_peer_cert 置为 NOP，使应用信任你的代理。"
+
+#: src/gui/windows/flutter.cpp
+msgid "Patching..."
+msgstr "正在修补..."
+
+#: src/gui/windows/flutter.cpp
+msgid "Patch Flutter TLS"
+msgstr "修补 Flutter TLS"
+
+#: src/gui/windows/flutter.cpp
+msgid "Patched APK"
+msgstr "已修补的 APK"

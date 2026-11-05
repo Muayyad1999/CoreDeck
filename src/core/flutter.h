@@ -12,6 +12,7 @@
 #include <cstdint>
 #include <optional>
 #include <string>
+#include <utility>
 #include <vector>
 
 namespace CoreDeck::Core {
@@ -52,6 +53,55 @@ namespace CoreDeck::Core {
     BlutterRun RunBlutter(
         const std::string &apkPath, const std::string &blutterPy, const std::string &workDir, bool noAnalysis
     );
+
+    // ----------------------------------------------------------------------- //
+    // Flutter TLS static patch [sensitive] (NOP ssl_verify_peer_cert in
+    // libflutter.so) - for intercepting your own/authorized app's traffic.
+    // ----------------------------------------------------------------------- //
+    struct MaskedPattern {
+        std::vector<std::uint8_t> Values;
+        std::vector<std::uint8_t> Masks;
+    };
+
+    // Parse a nibble-masked pattern like "F? 43 ?? D1".
+    MaskedPattern ParseMaskedPattern(const std::string &pattern);
+
+    // First offset in [begin, end) where (data[i] & mask) == value for the pattern.
+    std::optional<std::size_t> MaskedSearch(
+        const std::vector<std::uint8_t> &data, const MaskedPattern &pattern, std::size_t begin, std::size_t end
+    );
+
+    // File [start,end) ranges of executable PT_LOAD segments in an ELF64 (whole
+    // file when not an ELF).
+    std::vector<std::pair<std::size_t, std::size_t>> ElfExecRanges(const std::vector<std::uint8_t> &data);
+
+    // Locate ssl_verify_peer_cert in an arm64 libflutter.so (NVISO signatures).
+    std::optional<std::size_t> FindFlutterSslOffset(const std::vector<std::uint8_t> &libflutter);
+
+    // Replace 8 bytes at offset with "mov w0,#0 ; ret". Returns a patched copy.
+    std::vector<std::uint8_t> PatchFlutterSsl(const std::vector<std::uint8_t> &libflutter, std::size_t offset);
+
+    // Read one apk entry's bytes.
+    std::optional<std::vector<std::uint8_t>> ExtractApkEntry(
+        const std::vector<std::uint8_t> &apkBytes, const std::string &entryName
+    );
+
+    // Rewrite an apk replacing one entry, preserving each entry's store/deflate
+    // method (so resources.arsc stays STORED for Android R+).
+    std::optional<std::vector<std::uint8_t>> ReplaceApkEntry(
+        const std::vector<std::uint8_t> &apkBytes, const std::string &entryName, const std::vector<std::uint8_t> &newContent
+    );
+
+    struct FlutterPatchResult {
+        bool Ok = false;
+        std::string Message;
+        std::string OutPath;
+        std::size_t Offset = 0;
+    };
+
+    // Static Flutter TLS bypass: patch lib/arm64-v8a/libflutter.so and write a new
+    // (unsigned) apk to outPath. Sign it afterwards with APK Signer.
+    FlutterPatchResult PatchFlutterTls(const std::string &apkPath, const std::string &outPath);
 }
 
 #endif // COREDECK_FLUTTER_H

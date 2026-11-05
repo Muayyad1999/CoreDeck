@@ -428,6 +428,11 @@ namespace CoreDeck::Gui {
             std::future<Core::BlutterRun> Future;
             bool HasResult = false;
             Core::BlutterRun Result;
+
+            std::atomic<bool> TlsBusy{false};
+            std::future<Core::FlutterPatchResult> TlsFuture;
+            bool HasTlsResult = false;
+            Core::FlutterPatchResult TlsResult;
         } FlutterWork;
 
         ApkSignerState ApkSignerWork;

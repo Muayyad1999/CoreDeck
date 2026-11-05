@@ -4167,3 +4167,23 @@ msgstr "Der erste Lauf kann Minuten dauern (er baut ggf. eine passende Dart-VM).
 #: src/gui/windows/flutter.cpp
 msgid "Output"
 msgstr "Ausgabe"
+
+#: src/gui/windows/flutter.cpp
+msgid "TLS bypass (static patch, authorized testing only)"
+msgstr "TLS-Bypass (statischer Patch, nur für autorisierte Tests)"
+
+#: src/gui/windows/flutter.cpp
+msgid "NOP ssl_verify_peer_cert in libflutter.so (arm64) so the app trusts your proxy."
+msgstr "Setzt ssl_verify_peer_cert in libflutter.so (arm64) auf NOP, damit die App Ihrem Proxy vertraut."
+
+#: src/gui/windows/flutter.cpp
+msgid "Patching..."
+msgstr "Wird gepatcht..."
+
+#: src/gui/windows/flutter.cpp
+msgid "Patch Flutter TLS"
+msgstr "Flutter-TLS patchen"
+
+#: src/gui/windows/flutter.cpp
+msgid "Patched APK"
+msgstr "Gepatchte APK"

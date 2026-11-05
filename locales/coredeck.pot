@@ -4031,3 +4031,23 @@ msgstr ""
 #: src/gui/windows/flutter.cpp
 msgid "Output"
 msgstr ""
+
+#: src/gui/windows/flutter.cpp
+msgid "TLS bypass (static patch, authorized testing only)"
+msgstr ""
+
+#: src/gui/windows/flutter.cpp
+msgid "NOP ssl_verify_peer_cert in libflutter.so (arm64) so the app trusts your proxy."
+msgstr ""
+
+#: src/gui/windows/flutter.cpp
+msgid "Patching..."
+msgstr ""
+
+#: src/gui/windows/flutter.cpp
+msgid "Patch Flutter TLS"
+msgstr ""
+
+#: src/gui/windows/flutter.cpp
+msgid "Patched APK"
+msgstr ""
