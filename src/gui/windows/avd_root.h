@@ -5,7 +5,7 @@
 #ifndef COREDECK_WINDOW_AVD_ROOT_H
 #define COREDECK_WINDOW_AVD_ROOT_H
 
-#include "../context.h"
+#include "../context/context.h"
 
 namespace CoreDeck::Gui {
     void BuildAvdRootWindow(Context &context);

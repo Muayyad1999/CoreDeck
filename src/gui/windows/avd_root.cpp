@@ -12,9 +12,9 @@
 #include "imgui.h"
 
 #include "avd_root.h"
-#include "../widgets.h"
+#include "../widgets/widgets.h"
 #include "../theme.h"
-#include "gui/context.h"
+#include "gui/context/context.h"
 #include "core/avd_root.h"
 #include "platform/i18n.h"
 #include "platform/utilities.h"

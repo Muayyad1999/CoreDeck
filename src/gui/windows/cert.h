@@ -5,7 +5,7 @@
 #ifndef COREDECK_WINDOW_CERT_H
 #define COREDECK_WINDOW_CERT_H
 
-#include "../context.h"
+#include "../context/context.h"
 
 namespace CoreDeck::Gui {
     void BuildCertWindow(Context &context);

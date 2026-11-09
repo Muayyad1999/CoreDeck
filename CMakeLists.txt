@@ -7,8 +7,14 @@ project(CoreDeck VERSION ${PROJECT_VERSION})
 string(TIMESTAMP CURRENT_YEAR "%Y")
 
 set(APP_VENDOR "AbdulMuaz Aqeel")
-set(APP_DESCRIPTION "A native desktop application around your Android SDK’s official emulator, avdmanager, and sdkmanager binaries. Use it for everyday work without opening Android Studio. Built with C++20 and Dear ImGui.")
-set(APP_DESCRIPTION_SHORT "Official tools, polished workflow — in a friendly GUI.")
+string(CONCAT APP_DESCRIPTION
+    "Engineered for fast, low-overhead workflows, CoreDeck brings a sleek desktop "
+    "interface to official Android SDK tools. Create and launch emulators, "
+    "connect and control hardware devices, inspect and sign application builds, "
+    "configure environment health, and manage system resources without ever "
+    "touching Android Studio. Powered natively by C++20 and Dear ImGui."
+)
+set(APP_DESCRIPTION_SHORT "Native Desktop Interface for Official Android Command-Line Tools")
 set(APP_BUNDLE_ID "com.devmuaz.coredeck")
 set(APP_COPYRIGHT "Copyright © ${CURRENT_YEAR} ${PROJECT_NAME}")
 
@@ -75,22 +81,39 @@ add_subdirectory(src/core)
 add_executable(${PROJECT_NAME}
     ${IMGUI_SOURCES}
     src/main.cpp
-    src/gui/windows/about.cpp
-    src/gui/windows/apk_analyzer.cpp
-    src/gui/windows/apk_signer.cpp
-    src/gui/windows/jar_signer.cpp
-    src/gui/windows/keytool.cpp
-    src/gui/windows/avd_info.cpp
-    src/gui/windows/avd_list.cpp
-    src/gui/windows/avd_logs.cpp
-    src/gui/windows/avd_options.cpp
-    src/gui/windows/delete_avd.cpp
-    src/gui/windows/create_avd.cpp
-    src/gui/windows/device_profile.cpp
-    src/gui/windows/accept_licenses.cpp
-    src/gui/windows/health_check.cpp
-    src/gui/windows/install_image.cpp
-    src/gui/windows/main_menu_bar.cpp
+    src/gui/windows/adb/adb.cpp
+    src/gui/windows/adb/adb_session.cpp
+    src/gui/windows/adb/adb_logcat_tab.cpp
+    src/gui/windows/adb/adb_shell_tab.cpp
+    src/gui/windows/adb/adb_packages_tab.cpp
+    src/gui/windows/adb/adb_packages_list.cpp
+    src/gui/windows/adb/adb_connections_tab.cpp
+    src/gui/windows/adb/adb_devices.cpp
+    src/gui/windows/adb/adb_wifi_help.cpp
+    src/gui/windows/app/about.cpp
+    src/gui/windows/app/health_check.cpp
+    src/gui/windows/app/health_check_banner.cpp
+    src/gui/windows/app/main_menu_bar.cpp
+    src/gui/windows/app/onboarding.cpp
+    src/gui/windows/app/update.cpp
+    src/gui/windows/avd/accept_licenses.cpp
+    src/gui/windows/avd/avd_info.cpp
+    src/gui/windows/avd/avd_list.cpp
+    src/gui/windows/avd/avd_logs.cpp
+    src/gui/windows/avd/avd_options.cpp
+    src/gui/windows/avd/create_avd.cpp
+    src/gui/windows/avd/device_profile.cpp
+    src/gui/windows/avd/install_image.cpp
+    src/gui/windows/avd/skin.cpp
+    src/gui/windows/avd/storage.cpp
+    src/gui/windows/packages/apk_analyzer.cpp
+    src/gui/windows/packages/apk_signer.cpp
+    src/gui/windows/packages/jar_signer.cpp
+    src/gui/windows/packages/keytool.cpp
+    src/gui/windows/preferences/preferences.cpp
+    src/gui/windows/preferences/preferences_android_sdk.cpp
+    src/gui/windows/preferences/preferences_general.cpp
+    src/gui/windows/preferences/preferences_jdk.cpp
     src/gui/windows/device_panel.cpp
     src/gui/windows/avd_root.cpp
     src/gui/windows/cert.cpp
@@ -103,15 +126,6 @@ add_executable(${PROJECT_NAME}
     src/gui/windows/mitm.cpp
     src/gui/windows/repackage.cpp
     src/gui/windows/retools.cpp
-    src/gui/windows/onboarding.cpp
-    src/gui/windows/preferences.cpp
-    src/gui/windows/preferences_android_sdk.cpp
-    src/gui/windows/preferences_general.cpp
-    src/gui/windows/preferences_jdk.cpp
-    src/gui/windows/health_check_banner.cpp
-    src/gui/windows/skin.cpp
-    src/gui/windows/storage.cpp
-    src/gui/windows/update.cpp
     src/gui/application.cpp
     src/gui/theme.cpp
     src/gui/utilities.cpp
@@ -119,7 +133,8 @@ add_executable(${PROJECT_NAME}
     src/gui/widgets/buttons.cpp
     src/gui/widgets/feedback.cpp
     src/gui/widgets/form.cpp
-    src/gui/widgets/report.cpp
+    src/gui/widgets/log_viewer.cpp
+    src/gui/widgets/details.cpp
     src/gui/widgets/chrome.cpp
     src/gui/widgets/banner.cpp
 )

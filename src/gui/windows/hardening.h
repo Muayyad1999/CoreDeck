@@ -5,7 +5,7 @@
 #ifndef COREDECK_WINDOW_HARDENING_H
 #define COREDECK_WINDOW_HARDENING_H
 
-#include "../context.h"
+#include "../context/context.h"
 
 namespace CoreDeck::Gui {
     void BuildHardeningWindow(Context &context);

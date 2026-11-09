@@ -10,9 +10,9 @@
 #include "imgui.h"
 
 #include "proxy.h"
-#include "../widgets.h"
+#include "../widgets/widgets.h"
 #include "../theme.h"
-#include "gui/context.h"
+#include "gui/context/context.h"
 #include "core/proxy.h"
 #include "platform/i18n.h"
 

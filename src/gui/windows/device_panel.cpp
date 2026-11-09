@@ -12,9 +12,9 @@
 #include "imgui.h"
 
 #include "device_panel.h"
-#include "../widgets.h"
+#include "../widgets/widgets.h"
 #include "../theme.h"
-#include "gui/context.h"
+#include "gui/context/context.h"
 #include "core/adb.h"
 #include "platform/i18n.h"
 
@@ -35,7 +35,7 @@ namespace CoreDeck::Gui {
             }
             work.DevicesBusy = true;
             const Core::SdkInfo sdk = context.Host.Sdk;
-            work.DevicesFuture = std::async(std::launch::async, [sdk] { return Core::DescribeDevices(sdk); });
+            work.DevicesFuture = std::async(std::launch::async, [sdk] { return Core::Re::DescribeDevices(sdk); });
         }
 
         void StartPackageScan(Context &context, const std::string &serial) {
@@ -48,7 +48,7 @@ namespace CoreDeck::Gui {
             const Core::SdkInfo sdk = context.Host.Sdk;
             const bool includeVendor = work.IncludeVendor;
             work.PackagesFuture = std::async(std::launch::async, [sdk, serial, includeVendor] {
-                return Core::ListUserPackages(sdk, serial, includeVendor);
+                return Core::Re::ListUserPackages(sdk, serial, includeVendor);
             });
         }
 
@@ -64,7 +64,7 @@ namespace CoreDeck::Gui {
                 const bool stillPresent = std::any_of(
                     work.Devices.begin(),
                     work.Devices.end(),
-                    [&context](const Core::DeviceSummary &device) {
+                    [&context](const Core::Re::DeviceSummary &device) {
                         return device.Online() && device.Serial == context.Target.Serial;
                     }
                 );
@@ -95,7 +95,7 @@ namespace CoreDeck::Gui {
             StartPackageScan(context, serial);
         }
 
-        std::string DeviceSubtitle(const Core::DeviceSummary &device) {
+        std::string DeviceSubtitle(const Core::Re::DeviceSummary &device) {
             if (!device.Online()) {
                 return device.State.empty() ? std::string(Platform::Tr("offline")) : device.State;
             }
@@ -136,7 +136,7 @@ namespace CoreDeck::Gui {
                                        : Platform::Tr("Scanning for devices...")
                 );
             } else {
-                for (const Core::DeviceSummary &device: work.Devices) {
+                for (const Core::Re::DeviceSummary &device: work.Devices) {
                     const bool selected = device.Serial == context.Target.Serial;
                     const std::string subtitle = DeviceSubtitle(device);
                     const ImVec4 stateColor = HexColor(device.Online() ? Colors::TEXT_MUTED : Colors::WARNING);

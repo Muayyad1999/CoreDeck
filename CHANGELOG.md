@@ -16,6 +16,28 @@
 - Add a CA Trust window (Research, CA Trust) that installs a CA certificate (PEM or DER, e.g. your Burp/Fiddler root) into a rooted emulator's system trust store so its apps trust your proxy. It computes the OpenSSL `subject_hash_old` filename itself (no openssl needed) and is API-aware (classic remount, or the tmpfs overlay on Android 14+); Remove reverts it. For emulators you own
 - Root AVD can now run the host-side root end to end: it patches the system image's ramdisk with Magisk (replacing init with magiskinit, adding the overlay.d payloads, and optionally stripping dm-verity), keeps a once-only pristine backup, cold-boots the patched image, and verifies `su`. A Restore button reverts to the backup. This step is experimental and modifies the system image, so it is meant for a disposable AVD you own. gzip, lz4, and xz ramdisks are supported (via a vendored XZ Embedded decoder); concatenated ramdisks are not yet
 
+## [v0.16.0](https://github.com/devmuaz/CoreDeck/releases/tag/v0.16.0) — 2026-11-08
+
+- Replace the application icon on macOS, Windows, and Linux
+- Update the longer summary used by the installer and the README
+
+## [v0.15.1-beta.1](https://github.com/devmuaz/CoreDeck/releases/tag/v0.15.1-beta.1) — 2026-11-08
+
+- Replace the application icon on macOS, Windows, and Linux, including the Linux window icon
+- Ship a Linux desktop file and menu icons named `com.devmuaz.coredeck`, and set the window class to the same id so the running window groups with that menu entry
+- Update the short description shown in About CoreDeck
+
+## [v0.15.0](https://github.com/devmuaz/CoreDeck/releases/tag/v0.15.0) — 2026-11-05
+
+- Add Android Debug Bridge (Tools, Android Debug Bridge (ADB)) so a phone, tablet, or emulator can be used through the official `adb` in platform-tools, without Android Studio. A missing `adb` offers to install platform-tools, and Health Check reports the `adb` version
+- Watch USB, Wi-Fi, and emulator devices come and go. Each device keeps its own logcat, shell, packages, and connections. The label is the model name, or the AVD name for an emulator
+- Stream logcat with a priority and a buffer filter, search, and auto-scroll. Clear Device wipes Android's log buffers and leaves the lines already captured
+- Run one shell command at a time. Commands that exit 0 are saved for that device, newest first, up to 64, and loaded again when the workspace opens
+- Install an APK, with replace, downgrade, and grant-permissions options, uninstall a package with an option to keep its data, and push or pull a file
+- Forward and reverse ports. The list reloads when the workspace opens, the selected device changes, or a device connects or disconnects. Local is the computer and Remote is the device. The routes stay with `adb`
+- Manage Wireless Devices sits beside the device list and saves addresses for the whole app, so a phone can be reconnected after it has disconnected. Connect over Wi-Fi switches the selected USB phone to a wireless connection, and the port field starts at 5555. A command that is still running stays in the status bar when the window closes
+- Fix Create AVD so a landscape device profile, such as a TV, starts in landscape. The initial orientation follows the panel width and height (thanks [@hammadbawara](https://github.com/hammadbawara), [#67](https://github.com/devmuaz/CoreDeck/issues/67))
+
 ## [v0.14.2](https://github.com/devmuaz/CoreDeck/releases/tag/v0.14.2) — 2026-10-30
 
 - Add a Preferences, General option to include beta releases when checking for updates. It is off by default. When it is on, a newer beta is offered, and Download opens that release on GitHub. A stable release still opens coredeck.dev

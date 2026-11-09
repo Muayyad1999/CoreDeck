@@ -5,7 +5,7 @@
 #ifndef COREDECK_DEVICE_PANEL_H
 #define COREDECK_DEVICE_PANEL_H
 
-#include "../context.h"
+#include "../context/context.h"
 
 namespace CoreDeck::Gui {
     void BuildDevicePanelWindow(Context &context);

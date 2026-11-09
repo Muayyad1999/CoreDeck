@@ -12,9 +12,9 @@
 #include "imgui.h"
 
 #include "hardening.h"
-#include "../widgets.h"
+#include "../widgets/widgets.h"
 #include "../theme.h"
-#include "gui/context.h"
+#include "gui/context/context.h"
 #include "core/checks.h"
 #include "app/file_dialog.h"
 #include "platform/paths.h"

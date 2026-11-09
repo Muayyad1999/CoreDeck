@@ -5,7 +5,7 @@
 #ifndef COREDECK_WINDOW_FRIDA_HOOK_H
 #define COREDECK_WINDOW_FRIDA_HOOK_H
 
-#include "../context.h"
+#include "../context/context.h"
 
 namespace CoreDeck::Gui {
     void BuildFridaHookWindow(Context &context);

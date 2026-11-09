@@ -14,7 +14,7 @@
 #include "platform/paths.h"
 #include "platform/process.h"
 
-namespace CoreDeck::Core {
+namespace CoreDeck::Core::Re {
     namespace {
         constexpr std::array<std::string_view, 2> USER_APK_PREFIXES = {
             "/data/app/",

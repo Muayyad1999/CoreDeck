@@ -6,6 +6,7 @@
 #include "core/adb.h"
 
 using namespace CoreDeck::Core;
+using namespace CoreDeck::Core::Re;
 using namespace CoreDeck;
 
 TEST_CASE("ParseAdbDevices keeps serials with their state and drops the header", "[adb]") {

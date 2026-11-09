@@ -29,6 +29,8 @@
 #include <unistd.h>
 #endif
 
+using namespace CoreDeck::Core::Re;
+
 namespace CoreDeck::Core {
     namespace {
         std::string Trim(const std::string &value) {

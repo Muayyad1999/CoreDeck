@@ -10,6 +10,8 @@
 #include "core/cert.h"
 #include "core/proxy.h"
 
+using namespace CoreDeck::Core::Re;
+
 namespace CoreDeck::Core {
     std::vector<std::string> MonkeyLaunchArgs(const std::string &package) {
         return {"monkey", "-p", package, "-c", "android.intent.category.LAUNCHER", "1"};

@@ -11,6 +11,8 @@
 
 #include "core/adb.h"
 
+using namespace CoreDeck::Core::Re;
+
 namespace CoreDeck::Core {
     namespace {
         // Toybox `ls -la` columns before the name:

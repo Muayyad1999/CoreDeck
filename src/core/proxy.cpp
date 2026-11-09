@@ -10,6 +10,8 @@
 #include "core/proxy.h"
 #include "core/adb.h"
 
+using namespace CoreDeck::Core::Re;
+
 namespace CoreDeck::Core {
     namespace {
         std::string Trim(const std::string &value) {

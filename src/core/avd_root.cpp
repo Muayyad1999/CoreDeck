@@ -23,6 +23,8 @@
 #include "platform/process.h"
 #include "platform/sha256.h"
 
+using namespace CoreDeck::Core::Re;
+
 namespace CoreDeck::Core {
     namespace {
         constexpr const char *MAGISK_RELEASES_URL =

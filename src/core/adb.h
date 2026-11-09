@@ -10,7 +10,7 @@
 
 #include "core/sdk.h"
 
-namespace CoreDeck::Core {
+namespace CoreDeck::Core::Re {
     struct AdbDevice {
         std::string Serial;
         std::string State; // "device", "offline", "unauthorized", "no permissions", ...

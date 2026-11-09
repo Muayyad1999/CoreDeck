@@ -5,7 +5,7 @@
 #ifndef COREDECK_WINDOW_RETOOLS_H
 #define COREDECK_WINDOW_RETOOLS_H
 
-#include "../context.h"
+#include "../context/context.h"
 
 namespace CoreDeck::Gui {
     void BuildReToolsWindow(Context &context);

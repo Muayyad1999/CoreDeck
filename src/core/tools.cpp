@@ -10,6 +10,8 @@
 
 #include "core/adb.h"
 
+using namespace CoreDeck::Core::Re;
+
 namespace CoreDeck::Core {
     namespace {
 #if defined(_WIN32)

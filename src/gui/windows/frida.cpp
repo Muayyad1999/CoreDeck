@@ -15,9 +15,9 @@
 #include "imgui.h"
 
 #include "frida.h"
-#include "../widgets.h"
+#include "../widgets/widgets.h"
 #include "../theme.h"
-#include "gui/context.h"
+#include "gui/context/context.h"
 #include "core/frida.h"
 #include "core/adb.h"
 #include "platform/i18n.h"
@@ -71,7 +71,7 @@ namespace CoreDeck::Gui {
             const std::string devName = work.DevName;
             const int port = work.Port;
             work.Future = std::async(std::launch::async, [sdk, serial, version, devName, port] {
-                std::string abi = Core::GetDeviceProp(sdk, serial, "ro.product.cpu.abi");
+                std::string abi = Core::Re::GetDeviceProp(sdk, serial, "ro.product.cpu.abi");
                 if (abi.empty()) {
                     abi = "arm64-v8a";
                 }

@@ -31,8 +31,12 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 #include <GLFW/glfw3.h>
-#if defined(_WIN32) || defined(__APPLE__)
+#if defined(_WIN32) || (defined(__APPLE__) && defined(__clang__))
 #include <GLFW/glfw3native.h>
+#elif defined(__APPLE__)
+// glfw3native.h pulls in Apple headers that use blocks, which GCC cannot parse.
+#include <objc/objc.h>
+extern "C" id glfwGetCocoaWindow(GLFWwindow *window);
 #endif
 
 #include "application.h"
@@ -41,24 +45,30 @@
 #include "app/app_settings.h"
 #include "platform/i18n.h"
 #include "platform/paths.h"
+#ifdef __linux__
+#include "platform/log.h"
+#include "platform/png.h"
+#endif
 #include "app/paths.h"
-#include "windows/about.h"
-#include "windows/apk_analyzer.h"
-#include "windows/apk_signer.h"
-#include "windows/jar_signer.h"
-#include "windows/keytool.h"
-#include "windows/avd_info.h"
-#include "windows/avd_list.h"
-#include "windows/avd_logs.h"
-#include "windows/avd_options.h"
-#include "windows/create_avd.h"
-#include "windows/delete_avd.h"
-#include "windows/health_check.h"
-#include "windows/health_check_banner.h"
-#include "windows/install_image.h"
-#include "windows/main_menu_bar.h"
-#include "windows/onboarding.h"
-#include "windows/preferences.h"
+#include "windows/adb/adb.h"
+#include "windows/app/about.h"
+#include "windows/app/health_check.h"
+#include "windows/app/health_check_banner.h"
+#include "windows/app/main_menu_bar.h"
+#include "windows/app/onboarding.h"
+#include "windows/app/update.h"
+#include "windows/avd/avd_info.h"
+#include "windows/avd/avd_list.h"
+#include "windows/avd/avd_logs.h"
+#include "windows/avd/avd_options.h"
+#include "windows/avd/create_avd.h"
+#include "windows/avd/install_image.h"
+#include "windows/avd/storage.h"
+#include "windows/packages/apk_analyzer.h"
+#include "windows/packages/apk_signer.h"
+#include "windows/packages/jar_signer.h"
+#include "windows/packages/keytool.h"
+#include "windows/preferences/preferences.h"
 #include "windows/device_panel.h"
 #include "windows/avd_root.h"
 #include "windows/cert.h"
@@ -71,8 +81,6 @@
 #include "windows/mitm.h"
 #include "windows/repackage.h"
 #include "windows/retools.h"
-#include "windows/storage.h"
-#include "windows/update.h"
 #include "app/version_check.h"
 
 namespace CoreDeck::Gui {
@@ -101,6 +109,7 @@ namespace CoreDeck::Gui {
 
         m_Context.Host.Jdk = Core::DetectJdk(App::LoadAppSettings().JdkPath);
         Core::ApplyJdkToSdk(m_Context.Host.Sdk, m_Context.Host.Jdk);
+        m_Context.Host.SyncSdk();
 
         if (!App::LoadAppSettings().FirstRunComplete || !m_Context.Host.Sdk.IsFound) {
             m_Context.Flow.CurrentScreen = Screen::Onboarding;
@@ -166,13 +175,12 @@ namespace CoreDeck::Gui {
             const auto toolEnv = m_Context.Host.Sdk.ToolEnv;
             m_Context.Host.Sdk = Core::DetectAndroidSdk(App::LoadAppSettings().SdkPath);
             m_Context.Host.Sdk.ToolEnv = toolEnv;
+            m_Context.Host.SyncSdk();
         } else {
-            if (m_Context.Host.Sdk.SdkPath.empty()) {
-                const auto toolEnv = m_Context.Host.Sdk.ToolEnv;
-                m_Context.Host.Sdk = Core::DetectAndroidSdk(App::LoadAppSettings().SdkPath);
-                m_Context.Host.Sdk.ToolEnv = toolEnv;
-            } else {
-                Core::RefreshAndroidSdk(m_Context.Host.Sdk);
+            const std::string previousAdbPath = m_Context.Host.Sdk.AdbPath;
+            Core::RefreshAndroidSdk(m_Context.Host.Sdk);
+            if (m_Context.Host.Sdk.AdbPath != previousAdbPath) {
+                m_Context.Host.SyncSdk();
             }
         }
 
@@ -256,6 +264,7 @@ namespace CoreDeck::Gui {
             BuildInstallImageWindow(m_Context);
         }
         BuildHealthCheckWindow(m_Context);
+        BuildAdbWindow(m_Context);
         BuildApkAnalyzerWindow(m_Context);
         BuildKeytoolWindow(m_Context);
         BuildApkSignerWindow(m_Context);
@@ -293,6 +302,11 @@ namespace CoreDeck::Gui {
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
+#ifdef __linux__
+        glfwWindowHintString(GLFW_X11_CLASS_NAME, COREDECK_APP_ID);
+        glfwWindowHintString(GLFW_X11_INSTANCE_NAME, COREDECK_APP_ID);
+#endif
+
         glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
 #ifdef GLFW_SCALE_FRAMEBUFFER
         glfwWindowHint(GLFW_SCALE_FRAMEBUFFER, GLFW_TRUE);
@@ -310,6 +324,19 @@ namespace CoreDeck::Gui {
 
         glfwMakeContextCurrent(m_Window);
         glfwSwapInterval(1);
+
+#ifdef __linux__
+        const std::string iconPath = Platform::JoinPaths({App::GetAssetsDirectory(), "icons", "icon.png"});
+        if (auto icon = Platform::DecodePngFile(iconPath)) {
+            GLFWimage image{};
+            image.width = icon->Width;
+            image.height = icon->Height;
+            image.pixels = icon->Rgba.data();
+            glfwSetWindowIcon(m_Window, 1, &image);
+        } else {
+            Platform::Log::Warn("Window icon was not loaded: ", iconPath);
+        }
+#endif
 
 #ifdef _WIN32
         HWND hwnd = glfwGetWin32Window(m_Window);

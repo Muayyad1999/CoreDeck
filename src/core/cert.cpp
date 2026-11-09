@@ -17,6 +17,8 @@
 #include "core/adb.h"
 #include "platform/paths.h"
 
+using namespace CoreDeck::Core::Re;
+
 namespace CoreDeck::Core {
     namespace {
         // ------------------------------------------------------------------ MD5 //

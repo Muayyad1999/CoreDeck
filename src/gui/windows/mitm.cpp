@@ -10,9 +10,9 @@
 #include "imgui.h"
 
 #include "mitm.h"
-#include "../widgets.h"
+#include "../widgets/widgets.h"
 #include "../theme.h"
-#include "gui/context.h"
+#include "gui/context/context.h"
 #include "core/mitm.h"
 #include "app/file_dialog.h"
 #include "platform/i18n.h"

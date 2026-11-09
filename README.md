@@ -16,7 +16,7 @@
 ![C++20](https://img.shields.io/badge/C%2B%2B-20-blue)
 [![License](https://img.shields.io/github/license/devmuaz/CoreDeck)](LICENSE)
 
-[CoreDeck](https://coredeck.dev) is a native desktop command center for the Android SDK. Create virtual devices, launch them, install system images, inspect and sign APKs, create keystores, and see whether your tools are actually ready, all in one fast app. It drives Google's official `emulator`, `avdmanager`, `sdkmanager`, `apkanalyzer`, `apksigner`, and `zipalign` itself, and the JDK's `keytool` and `jarsigner`. Android Studio does not need to be installed. Built with C++20 and Dear ImGui.
+[CoreDeck](https://coredeck.dev) is engineered for fast, low-overhead workflows, it brings a sleek desktop interface to official Android SDK tools. Create and launch emulators, connect and control hardware devices, inspect and sign application builds, configure environment health, and manage system resources without ever touching Android Studio. Powered natively by C++20 and Dear ImGui.
 
 > Bring an SDK you already have, or let CoreDeck download Google's tools and set them up for you.
 
@@ -33,6 +33,7 @@
 - **Live Log Viewer** — Stream emulator output in real time with search and auto-scroll
 - **Storage Overview** — Inspect per-AVD disk usage and clear heavy or unused data
 - **Health Check** — Reviews the SDK, emulator, platform-tools, build-tools, command-line tools, JDK, licenses, system images, and free disk space, and offers a fix for each problem
+- **ADB** — Tracks connected devices and provides isolated logcat, one-shot shell commands, APK installation, file transfers, wireless connections, and port forwarding through the official `adb`
 - **APK Analyzer** — Opens an APK with the official `apkanalyzer` and shows package info, download size, compression, and alignment
 - **APK Signer** — Verifies an APK and signs a new copy with the official `apksigner` and `zipalign`. The original APK is left unchanged, and the report shows which of the v1, v2, v3, v3.1, and v4 schemes verified
 - **Java Keytool** — Creates and inspects keystores with the JDK's `keytool`. Templates fill the Flutter upload, Android release, and Android debug recipes, and a private-key entry can be opened in APK Signer or Java Jar Signer
@@ -152,85 +153,7 @@ Each release artifact ships with a matching `.sha256` checksum for download veri
 
 ## Build from source
 
-CoreDeck builds with **CMake + Ninja** on all platforms. Output is single-config: `build-debug/` and `build-release/` contain the binary directly, with a `compile_commands.json` for editor tooling.
-
-### Source layout
-
-The code under `src/` is four layers. Each layer is its own `static library`, and it can only include the layer below it.
-
-| Layer        | Folder         | Responsibility                                                                                 |
-| ------------ | -------------- | ---------------------------------------------------------------------------------------------- |
-| **Platform** | `src/platform` | Processes, HTTP, archives, hashing, logging, translation, and generic paths and strings        |
-| **Core**     | `src/core`     | The Android toolchain: the SDK, AVDs, the emulator, system images, skins, the JDK, and signing |
-| **App**      | `src/app`      | Settings, the saved language, update checks, crash reporting, file dialogs, and app paths      |
-| **GUI**      | `src/gui`      | Windows, widgets, and the running screen session                                               |
-
-The GUI may call all three. Core and App may call Platform, and they stay independent of each other. A call from the `GUI` names the layer: `Platform::JoinPaths`, `Core::SignApk`, `App::LoadAppSettings`. A new Android feature is another pair of files in `Core`. A new operating-system helper goes in `Platform`. A new preference or app service goes in `App`.
-
-### Prerequisites
-
-All platforms need **CMake 3.23+**, **Ninja**, and **Git** (with submodule support). Per-platform compiler:
-
-| Platform | Compiler              | Install                                                                                                                                                                           |
-| -------- | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| macOS    | Apple Clang           | `xcode-select --install`, then `brew install cmake ninja`                                                                                                                         |
-| Windows  | MSVC 19.30+ (VS 2022) | [Build Tools for VS 2022](https://visualstudio.microsoft.com/downloads/), then the _Desktop development with C++_ workload. Then `winget install Kitware.CMake Ninja-build.Ninja` |
-| Linux    | GCC 11+ / Clang 14+   | `sudo apt-get install build-essential cmake ninja-build libcurl4-openssl-dev libgl1-mesa-dev libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libxext-dev`       |
-
-### Clone and build
-
-```bash
-git clone --recursive https://github.com/devmuaz/CoreDeck.git
-cd CoreDeck
-cmake -S . -B build-release -G Ninja -DCMAKE_BUILD_TYPE=Release
-cmake --build build-release --parallel
-```
-
-If you already cloned without `--recursive`:
-
-```bash
-git submodule update --init --recursive
-```
-
-> **Windows note:** Ninja + MSVC needs `cl.exe` on PATH. Run the commands from the **Developer Command Prompt for VS 2022** (Start Menu), or launch VS Code / Cursor from it so the bundled tasks pick up the environment. The provided VS Code tasks handle this automatically via `vswhere` + `Enter-VsDevShell`.
-
-### Run
-
-```bash
-# macOS
-open build-release/CoreDeck.app
-
-# Linux
-./build-release/CoreDeck
-
-# Windows
-.\build-release\CoreDeck.exe
-```
-
-### Develop in VS Code or Cursor
-
-The repo ships pre-configured `.vscode/` settings (build tasks, launch configs, IntelliSense). Open the project, accept the recommended extensions when prompted, then press **F5** to build and debug.
-
-**Per-editor extensions** — the two editors use different language servers and debuggers:
-
-| Editor                      | Install                                                        | Purpose                                                                           |
-| --------------------------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| **VS Code**                 | `ms-vscode.cpptools`, `ms-vscode.cmake-tools`                  | IntelliSense + CMake integration + `cppvsdbg` (Microsoft MSVC debugger)           |
-| **VS Code** _(optional)_    | `vadimcn.vscode-lldb`                                          | Adds LLDB debugger as an alternative to MSVC                                      |
-| **Cursor**                  | `llvm-vs-code-extensions.vscode-clangd`, `vadimcn.vscode-lldb` | clangd IntelliSense + LLDB debugger (Microsoft's `cppvsdbg` is locked to VS Code) |
-| **Cursor** _(Windows only)_ | LLVM toolchain — `winget install LLVM.LLVM`                    | Provides the `clangd.exe` binary for the extension                                |
-
-**Launch configurations** in the Run & Debug panel:
-
-| Name                                | Editors           | Debugger        |
-| ----------------------------------- | ----------------- | --------------- |
-| `CoreDeck (Debug) [macOS]`          | VS Code or Cursor | `cppdbg` + LLDB |
-| `CoreDeck (Debug) [Windows · MSVC]` | VS Code only      | `cppvsdbg`      |
-| `CoreDeck (Debug) [Windows · LLDB]` | VS Code or Cursor | CodeLLDB        |
-
-Each has a matching Release entry and `CoreDeck Tests (...)` variant for the Catch2 test suite. Cursor on Windows should pick the `LLDB` entries; VS Code on Windows can pick either (MSVC is the better PDB-aware option when available).
-
-The first build is a full from-scratch compile of all bundled dependencies (sentry-native, Dear ImGui, GLFW, reflect-cpp, etc.). Subsequent builds are incremental and fast.
+See [Building](docs/building.md) for prerequisites, the CMake and Ninja setup, build directories, compilers, and the Run and Debug launches.
 
 ## FAQ
 
