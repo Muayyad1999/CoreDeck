@@ -49,6 +49,8 @@ namespace CoreDeck::Gui::AdbWindow {
                     return Platform::Tr("Push failed.");
                 case AdbTask::Pull:
                     return Platform::Tr("Pull failed.");
+                case AdbTask::FixNetwork:
+                    return Platform::Tr("Could not fix the network. Wait a moment and retry.");
                 case AdbTask::Shell:
                 case AdbTask::Connect:
                 case AdbTask::Disconnect:
@@ -82,6 +84,8 @@ namespace CoreDeck::Gui::AdbWindow {
                 case AdbTask::Connect:
                 case AdbTask::ConnectOverWifi:
                     return Platform::Tr("Device connected.");
+                case AdbTask::FixNetwork:
+                    return Platform::Tr("Network validated - \"no internet\" cleared.");
                 case AdbTask::Disconnect:
                     return Platform::Tr("Device disconnected.");
                 case AdbTask::AddForward:
@@ -558,6 +562,8 @@ namespace CoreDeck::Gui::AdbWindow {
                 return Platform::Tr("Connecting...");
             case AdbTask::ConnectOverWifi:
                 return Platform::Tr("Connecting over Wi-Fi...");
+            case AdbTask::FixNetwork:
+                return Platform::Tr("Fixing \"no internet\"...");
             case AdbTask::Disconnect:
                 return Platform::Tr("Disconnecting...");
             case AdbTask::AddForward:

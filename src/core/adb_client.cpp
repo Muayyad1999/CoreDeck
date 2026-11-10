@@ -518,4 +518,49 @@ namespace CoreDeck::Core {
         }
         return connect;
     }
+
+    AdbCommandResult FixCaptivePortal(
+        const SdkInfo &sdk,
+        const std::string &serial,
+        const std::atomic<bool> *cancel
+    ) {
+        if (serial.empty()) {
+            return {.Error = AdbError::InvalidRequest};
+        }
+        if (cancel != nullptr && cancel->load()) {
+            return {.Error = AdbError::Cancelled};
+        }
+        const std::vector<std::string> settings = {
+            "settings put global captive_portal_mode 0",
+            "settings put global captive_portal_detection_enabled 0",
+            "settings put global captive_portal_http_url http://connectivitycheck.gstatic.com/generate_204",
+        };
+        for (const std::string &command: settings) {
+            const AdbCommandResult put = RunAdbShell(sdk, serial, command, cancel);
+            if (put.Error == AdbError::Cancelled || put.Error == AdbError::ToolMissing) {
+                return put;
+            }
+        }
+        RunAdbShell(sdk, serial, "svc wifi disable", cancel);
+        if (WaitForAdbRestart(cancel, 2000)) {
+            return {.Error = AdbError::Cancelled, .Started = true};
+        }
+        RunAdbShell(sdk, serial, "svc wifi enable", cancel);
+        if (WaitForAdbRestart(cancel, 5000)) {
+            return {.Error = AdbError::Cancelled, .Started = true};
+        }
+        const AdbCommandResult check = RunAdbShell(sdk, serial, "dumpsys connectivity", cancel);
+        if (check.Error == AdbError::Cancelled || check.Error == AdbError::ToolMissing) {
+            return check;
+        }
+        AdbCommandResult result;
+        result.Started = true;
+        if (check.Output().find("IS_VALIDATED") != std::string::npos) {
+            result.ExitCode = 0;
+        } else {
+            result.ExitCode = 1;
+            result.Error = AdbError::CommandFailed;
+        }
+        return result;
+    }
 }

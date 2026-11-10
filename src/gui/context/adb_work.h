@@ -42,6 +42,7 @@ namespace CoreDeck::Gui {
         Pull,
         Connect,
         ConnectOverWifi,
+        FixNetwork,
         Disconnect,
         AddForward,
         RemoveForward,

@@ -113,6 +113,15 @@ namespace CoreDeck::Gui {
             );
         }
 
+        void QueueFixNetwork(Context &context, const std::string &serial) {
+            AdbWindow::StartTask(
+                context, context.AdbWork.Session(serial), AdbTask::FixNetwork,
+                [](const Core::SdkInfo &sdk, const std::string &deviceSerial, const std::atomic<bool> *cancel) {
+                    return Core::FixCaptivePortal(sdk, deviceSerial, cancel);
+                }
+            );
+        }
+
         void MutedWrapped(const char *text) {
             StyleColor sc;
             sc.Push(ImGuiCol_Text, HexColor(Colors::TEXT_MUTED));
@@ -263,6 +272,21 @@ namespace CoreDeck::Gui {
             }
             if (IconCircleButton("##WifiConnectHelp", Icons::QUESTION, true, IconCircleButtonStyle(), Platform::Tr("How this works"))) {
                 workspace.ShowWifiConnectHelp = true;
+            }
+
+            ImGui::Spacing();
+            MutedWrapped(Platform::Tr("Clears Android's captive-portal check when connectivity works but shows \"no internet\"."));
+            const std::string fixLabel = Platform::Tr("Fix \"No Internet\"");
+            const float fixW = AdbWindow::ActionWidth(fixLabel.c_str());
+            const bool fixEnabled = selected != nullptr && AdbWindow::DeviceUsable(selected) && !busy;
+            if (PrimaryButton(fixLabel.c_str(), fixEnabled, ImVec2(fixW, 0.0F)) && selected != nullptr) {
+                QueueFixNetwork(context, selected->Serial);
+            }
+            if (!fixEnabled && ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled)) {
+                const char *reason = busy
+                                         ? Platform::Tr("Wait for the current command to finish.")
+                                         : Platform::Tr("Select a device that is online and authorized.");
+                ImGui::SetTooltip("%s", reason);
             }
         }
 
