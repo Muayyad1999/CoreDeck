@@ -51,6 +51,8 @@ namespace CoreDeck::Gui::AdbWindow {
                     return Platform::Tr("Pull failed.");
                 case AdbTask::FixNetwork:
                     return Platform::Tr("Could not fix the network. Wait a moment and retry.");
+                case AdbTask::OutboundHosts:
+                    return Platform::Tr("Could not read connections (ss needs root).");
                 case AdbTask::Shell:
                 case AdbTask::Connect:
                 case AdbTask::Disconnect:
@@ -86,6 +88,8 @@ namespace CoreDeck::Gui::AdbWindow {
                     return Platform::Tr("Device connected.");
                 case AdbTask::FixNetwork:
                     return Platform::Tr("Network validated - \"no internet\" cleared.");
+                case AdbTask::OutboundHosts:
+                    return Platform::Tr("Backend hosts enumerated.");
                 case AdbTask::Disconnect:
                     return Platform::Tr("Device disconnected.");
                 case AdbTask::AddForward:
@@ -371,6 +375,14 @@ namespace CoreDeck::Gui::AdbWindow {
                 SetTabStatus(session, tab, StatusBarTone::Error, std::move(line));
                 return;
             }
+            if (task == AdbTask::OutboundHosts && result.Ok()) {
+                std::string summary = result.Output();
+                if (summary.empty()) {
+                    summary = SuccessText(task);
+                }
+                SetTabStatus(session, tab, StatusBarTone::Success, std::move(summary));
+                return;
+            }
             if (result.Ok()) {
                 SetTabStatus(session, tab, StatusBarTone::Success, SuccessText(task));
                 return;
@@ -564,6 +576,8 @@ namespace CoreDeck::Gui::AdbWindow {
                 return Platform::Tr("Connecting over Wi-Fi...");
             case AdbTask::FixNetwork:
                 return Platform::Tr("Fixing \"no internet\"...");
+            case AdbTask::OutboundHosts:
+                return Platform::Tr("Enumerating backend hosts...");
             case AdbTask::Disconnect:
                 return Platform::Tr("Disconnecting...");
             case AdbTask::AddForward:

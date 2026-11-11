@@ -122,6 +122,15 @@ namespace CoreDeck::Gui {
             );
         }
 
+        void QueueOutboundHosts(Context &context, const std::string &serial) {
+            AdbWindow::StartTask(
+                context, context.AdbWork.Session(serial), AdbTask::OutboundHosts,
+                [](const Core::SdkInfo &sdk, const std::string &deviceSerial, const std::atomic<bool> *cancel) {
+                    return Core::EnumerateOutboundHosts(sdk, deviceSerial, cancel);
+                }
+            );
+        }
+
         void MutedWrapped(const char *text) {
             StyleColor sc;
             sc.Push(ImGuiCol_Text, HexColor(Colors::TEXT_MUTED));
@@ -281,6 +290,19 @@ namespace CoreDeck::Gui {
             const bool fixEnabled = selected != nullptr && AdbWindow::DeviceUsable(selected) && !busy;
             if (PrimaryButton(fixLabel.c_str(), fixEnabled, ImVec2(fixW, 0.0F)) && selected != nullptr) {
                 QueueFixNetwork(context, selected->Serial);
+            }
+            if (!fixEnabled && ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled)) {
+                const char *reason = busy
+                                         ? Platform::Tr("Wait for the current command to finish.")
+                                         : Platform::Tr("Select a device that is online and authorized.");
+                ImGui::SetTooltip("%s", reason);
+            }
+
+            ImGui::SameLine(0.0F, spacing);
+            const std::string hostsLabel = Platform::Tr("Backend Hosts");
+            const float hostsW = AdbWindow::ActionWidth(hostsLabel.c_str());
+            if (PrimaryButton(hostsLabel.c_str(), fixEnabled, ImVec2(hostsW, 0.0F)) && selected != nullptr) {
+                QueueOutboundHosts(context, selected->Serial);
             }
             if (!fixEnabled && ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled)) {
                 const char *reason = busy

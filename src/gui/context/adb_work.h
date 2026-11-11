@@ -43,6 +43,7 @@ namespace CoreDeck::Gui {
         Connect,
         ConnectOverWifi,
         FixNetwork,
+        OutboundHosts,
         Disconnect,
         AddForward,
         RemoveForward,

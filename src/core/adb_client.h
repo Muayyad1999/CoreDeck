@@ -85,6 +85,12 @@ namespace CoreDeck::Core {
         const std::atomic<bool> *cancel = nullptr
     );
 
+    AdbCommandResult EnumerateOutboundHosts(
+        const SdkInfo &sdk,
+        const std::string &serial,
+        const std::atomic<bool> *cancel = nullptr
+    );
+
     AdbCommandResult RunAdb(
         const SdkInfo &sdk,
         const std::vector<std::string> &command,

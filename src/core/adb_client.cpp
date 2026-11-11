@@ -9,9 +9,11 @@
 #include <cctype>
 #include <charconv>
 #include <chrono>
+#include <map>
 #include <sstream>
 #include <string_view>
 #include <thread>
+#include <utility>
 
 #include "platform/process.h"
 #include "platform/utilities.h"
@@ -561,6 +563,130 @@ namespace CoreDeck::Core {
             result.ExitCode = 1;
             result.Error = AdbError::CommandFailed;
         }
+        return result;
+    }
+
+    AdbCommandResult EnumerateOutboundHosts(
+        const SdkInfo &sdk,
+        const std::string &serial,
+        const std::atomic<bool> *cancel
+    ) {
+        if (serial.empty()) {
+            return {.Error = AdbError::InvalidRequest};
+        }
+        if (cancel != nullptr && cancel->load()) {
+            return {.Error = AdbError::Cancelled};
+        }
+
+        const auto isIpv4 = [](const std::string &text) {
+            int groups = 0;
+            std::size_t index = 0;
+            while (index < text.size()) {
+                const std::size_t start = index;
+                while (index < text.size() && std::isdigit(static_cast<unsigned char>(text[index])) != 0) {
+                    ++index;
+                }
+                if (index == start || index - start > 3) {
+                    return false;
+                }
+                ++groups;
+                if (index < text.size()) {
+                    if (text[index] != '.') {
+                        return false;
+                    }
+                    ++index;
+                    if (index == text.size()) {
+                        return false;
+                    }
+                }
+            }
+            return groups == 4;
+        };
+
+        std::map<std::string, int> counts;
+        const auto accumulate = [&counts, &isIpv4](const std::string &output) {
+            bool found = false;
+            std::istringstream lines(output);
+            std::string line;
+            while (std::getline(lines, line)) {
+                std::istringstream columns(line);
+                std::string token;
+                while (columns >> token) {
+                    const std::size_t colon = token.rfind(':');
+                    if (colon == std::string::npos) {
+                        continue;
+                    }
+                    if (token.substr(colon + 1) != "443") {
+                        continue;
+                    }
+                    const std::string ip = token.substr(0, colon);
+                    if (!isIpv4(ip)) {
+                        continue;
+                    }
+                    if (ip.starts_with("10.0.2.") || ip.starts_with("127.") || ip.starts_with("0.")) {
+                        continue;
+                    }
+                    counts[ip] += 1;
+                    found = true;
+                }
+            }
+            return found;
+        };
+
+        bool ssRan = false;
+        for (int iteration = 0; iteration < 5; ++iteration) {
+            if (cancel != nullptr && cancel->load()) {
+                return {.Error = AdbError::Cancelled, .Started = true};
+            }
+            AdbCommandResult probe = RunAdbShell(sdk, serial, "su -c 'ss -tn'", cancel);
+            if (probe.Error == AdbError::Cancelled || probe.Error == AdbError::ToolMissing) {
+                return probe;
+            }
+            if (probe.Ok()) {
+                ssRan = true;
+            }
+            if (!accumulate(probe.Output())) {
+                AdbCommandResult fallback = RunAdbShell(sdk, serial, "ss -tn", cancel);
+                if (fallback.Error == AdbError::Cancelled || fallback.Error == AdbError::ToolMissing) {
+                    return fallback;
+                }
+                if (fallback.Ok()) {
+                    ssRan = true;
+                }
+                accumulate(fallback.Output());
+            }
+            if (iteration + 1 < 5 && WaitForAdbRestart(cancel, 400)) {
+                return {.Error = AdbError::Cancelled, .Started = true};
+            }
+        }
+
+        AdbCommandResult result;
+        result.Started = true;
+        if (!ssRan && counts.empty()) {
+            result.ExitCode = 1;
+            result.Error = AdbError::CommandFailed;
+            return result;
+        }
+
+        std::vector<std::pair<std::string, int>> hosts(counts.begin(), counts.end());
+        std::ranges::sort(hosts, [](const auto &left, const auto &right) {
+            if (left.second != right.second) {
+                return left.second > right.second;
+            }
+            return left.first < right.first;
+        });
+
+        std::ostringstream summary;
+        summary << "Outbound :443 connections (" << hosts.size() << " host(s))\n";
+        if (hosts.empty()) {
+            summary << "no outbound :443 connections (device idle, or ss needs root)\n";
+        } else {
+            for (const auto &[ip, count]: hosts) {
+                summary << "  " << ip << "   x" << count << "\n";
+            }
+        }
+        result.ExitCode = 0;
+        result.Stdout = summary.str();
         return result;
     }
 }
