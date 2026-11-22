@@ -1,14 +1,31 @@
 #!/usr/bin/env bash
 # Sign CoreDeck.app, package a DMG, then notarize and staple it.
+# CERTIFICATE_NAME=- (no Developer ID configured) ad-hoc signs the app and
+# skips the hardened runtime, DMG signing, notarization, and stapling.
 
 set -euo pipefail
 
 : "${CERTIFICATE_NAME:?}"
 : "${EXPECTED_ARCH:?}"
 : "${ASSET_NAME:?}"
-: "${APPLE_ID:?}"
-: "${APPLE_PASSWORD:?}"
-: "${APPLE_TEAM_ID:?}"
+
+ADHOC=false
+if [[ "$CERTIFICATE_NAME" == "-" ]]; then
+  ADHOC=true
+  echo "::warning::Ad-hoc signing ${ASSET_NAME}; it will not be notarized."
+else
+  : "${APPLE_ID:?}"
+  : "${APPLE_PASSWORD:?}"
+  : "${APPLE_TEAM_ID:?}"
+fi
+
+sign_code() {
+  if [[ "$ADHOC" == true ]]; then
+    codesign --force --sign - "$1"
+  else
+    codesign --force --options runtime --sign "$CERTIFICATE_NAME" "$1"
+  fi
+}
 
 APP_PATH="build/CoreDeck.app"
 BIN="$APP_PATH/Contents/MacOS/CoreDeck"
@@ -27,7 +44,7 @@ fi
 while IFS= read -r -d '' f; do
   [[ "$f" == "$BIN" ]] && continue
   if file -b "$f" 2>/dev/null | grep -q "Mach-O"; then
-    codesign --force --options runtime --sign "$CERTIFICATE_NAME" "$f"
+    sign_code "$f"
   fi
 done < <(find "$APP_PATH" -type f -print0)
 
@@ -35,17 +52,17 @@ done < <(find "$APP_PATH" -type f -print0)
 if [ -d "$APP_PATH/Contents/Frameworks" ]; then
   while IFS= read -r f; do
     [ -z "$f" ] && continue
-    codesign --force --options runtime --sign "$CERTIFICATE_NAME" "$f"
+    sign_code "$f"
   done < <(find "$APP_PATH/Contents/Frameworks" -maxdepth 1 -type d -name "*.framework")
 fi
 
 # Sign the helper last among nested code, then seal the bundle.
 if [[ -f "$APP_PATH/Contents/MacOS/crashpad_handler" ]]; then
-  codesign --force --options runtime --sign "$CERTIFICATE_NAME" "$APP_PATH/Contents/MacOS/crashpad_handler"
+  sign_code "$APP_PATH/Contents/MacOS/crashpad_handler"
 fi
 
 # Then sign the outer bundle, which signs the main executable.
-codesign --force --options runtime --sign "$CERTIFICATE_NAME" "$APP_PATH"
+sign_code "$APP_PATH"
 
 # Sanity-check the signature before packaging.
 codesign --verify --strict --verbose=2 "$APP_PATH"
@@ -90,6 +107,11 @@ cd ..
 # grab whichever .dmg it created and rename to our stable asset name.
 DMG_BUILT=$(ls build/*.dmg | head -n 1)
 mv "$DMG_BUILT" "release/${ASSET_NAME}"
+
+if [[ "$ADHOC" == true ]]; then
+  echo "Packaged ad-hoc signed release/${ASSET_NAME}; skipping DMG signing and notarization."
+  exit 0
+fi
 
 # Sign the .dmg itself, then notarize and staple it.
 codesign --force --sign "$CERTIFICATE_NAME" "release/${ASSET_NAME}"

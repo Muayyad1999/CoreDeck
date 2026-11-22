@@ -54,7 +54,20 @@ jobs:
         id: checksums
         run: bash ./.github/scripts/release-read-checksums.sh
 
+      # Forks without the tap token skip the dispatch instead of failing the release.
+      - name: Check Homebrew tap token
+        id: tap
+        env:
+          TAP_GITHUB_TOKEN: ${{ secrets.TAP_GITHUB_TOKEN }}
+        run: |
+          if [ -n "$TAP_GITHUB_TOKEN" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::TAP_GITHUB_TOKEN is not set; skipping the Homebrew tap update."
+          fi
+
       - name: Trigger Homebrew Tap Update
+        if: steps.tap.outputs.enabled == 'true'
         uses: peter-evans/repository-dispatch@v4
         with:
           token: ${{ secrets.TAP_GITHUB_TOKEN }}
