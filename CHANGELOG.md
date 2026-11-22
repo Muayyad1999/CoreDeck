@@ -1,3 +1,7 @@
+## [v0.18.0-beta.2](https://github.com/Muayyad1999/CoreDeck/releases/tag/v0.18.0-beta.2) — 2026-11-23
+
+- Update Dear ImGui to the latest docking-branch commit (v1.93.0-docking-94, which fixes a crash when toggling the visibility of windows in a dock hierarchy), reflect-cpp to 0.27.1, and sentry-native to 0.17.6
+
 ## [v0.18.0-beta.1](https://github.com/Muayyad1999/CoreDeck/releases/tag/v0.18.0-beta.1) — 2026-11-22
 
 - Add a [sensitive] Repackage window (Research, Repackage): the full static repackage / pinning-disable pipeline. Pull a package's split APKs off a device (or point at a folder of splits or a single APK), merge them with APKEditor, strip certificate pinning — apk-mitm for native apps or the libflutter TLS patch for Flutter, inject the Frida gadget with objection (no root, with an optional network-security-config), rebuild with reFlutter for Flutter traffic, or none. Auto picks the best method for the app type and falls back through the rest when a tool is missing or a step does not apply (Flutter: libflutter → reFlutter → gadget; native: apk-mitm → gadget), reporting which method won — then sign the result with a managed debug keystore (created once under the config dir), and optionally install it onto the selected device. Each step streams into a live log and is reported, stopping at the first failure. Needs APKEditor.jar + a JDK, plus apk-mitm (Node) / objection / reFlutter depending on the method; RE Tools shows what is present. For an app you own or are authorized to test
