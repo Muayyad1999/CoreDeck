@@ -21,6 +21,8 @@
 #include "core/avd_root.h"
 #include "core/cert.h"
 #include "core/checks.h"
+#include "core/device_root.h"
+#include "core/fastboot.h"
 #include "core/flutter.h"
 #include "core/frida.h"
 #include "core/mitm.h"
@@ -69,6 +71,50 @@ namespace CoreDeck::Gui {
         std::atomic<bool> RestoreBusy{false};
         std::future<std::pair<bool, std::string>> RestoreFuture;
         std::string RestoreOutcome;
+    };
+
+    struct DeviceRootWork {
+        // Magisk resolution (shared shape with AvdRootWork).
+        bool IncludePrerelease = false;
+        char MagiskOverride[512] = {};
+        std::atomic<bool> ResolveBusy{false};
+        std::future<std::pair<std::optional<Core::ResolvedMagisk>, std::string>> ResolveFuture;
+        bool HasResolved = false;
+        Core::ResolvedMagisk Resolved;
+        std::string ResolveError;
+
+        // Boot image acquisition (factory zip or a direct boot/init_boot.img).
+        char BootImageInput[1024] = {};
+        std::atomic<bool> AcquireBusy{false};
+        std::future<std::pair<std::optional<Core::ExtractedBootImage>, std::string>> AcquireFuture;
+        bool HasBootImage = false;
+        std::string BootImagePath;
+        Core::BootTarget BootTarget = Core::BootTarget::Boot;
+        std::string AcquireError;
+
+        // Bootloader / fastboot.
+        std::atomic<bool> BootloaderBusy{false};
+        std::future<Core::Re::BootloaderVars> BootloaderFuture;
+        bool HasBootloader = false;
+        Core::Re::BootloaderVars Bootloader;
+        bool ConfirmUnlock = false;
+        std::atomic<bool> ActionBusy{false};
+        std::future<std::pair<bool, std::string>> ActionFuture;
+        std::string ActionOutcome;
+        bool ActionOk = false;
+
+        // Root status.
+        std::atomic<bool> RootCheckBusy{false};
+        std::future<Core::RootStatus> RootCheckFuture;
+        Core::RootStatus LastRootStatus = Core::RootStatus::Unknown;
+        std::string RootCheckedSerial;
+
+        // Guided pipeline.
+        bool StripVerity = true;
+        std::atomic<bool> RootBusy{false};
+        std::shared_ptr<Core::DeviceRootProgress> Progress;
+        std::future<bool> RootFuture;
+        std::string RootOutcome;
     };
 
     struct CertWork {

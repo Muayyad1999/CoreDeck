@@ -59,6 +59,7 @@ namespace CoreDeck::Gui {
     using KeytoolWorkType = KeytoolWork;
     using DevicePanelWorkType = DevicePanelWork;
     using AvdRootWorkType = AvdRootWork;
+    using DeviceRootWorkType = DeviceRootWork;
     using CertWorkType = CertWork;
     using ProxyWorkType = ProxyWork;
     using FridaWorkType = FridaWork;
@@ -121,6 +122,7 @@ namespace CoreDeck::Gui {
             bool ShowStorageDialog = false;
             bool ShowDevicePanel = false;
             bool ShowAvdRootDialog = false;
+            bool ShowDeviceRootDialog = false;
             bool ShowCertDialog = false;
             bool ShowProxyDialog = false;
             bool ShowFridaDialog = false;
@@ -160,6 +162,7 @@ namespace CoreDeck::Gui {
         KeytoolWorkType KeytoolWork;
         DevicePanelWorkType DevicePanelWork;
         AvdRootWorkType AvdRootWork;
+        DeviceRootWorkType DeviceRootWork;
         CertWorkType CertWork;
         ProxyWorkType ProxyWork;
         FridaWorkType FridaWork;

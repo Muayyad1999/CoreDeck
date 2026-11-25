@@ -5,6 +5,8 @@ add_executable(coredeck_process_fixture process_fixture.cpp)
 add_executable(coredeck_tests
         test_adb.cpp
         test_avd_root.cpp
+        test_device_root.cpp
+        test_fastboot.cpp
         test_cert.cpp
         test_xz.cpp
         test_frida.cpp
