@@ -71,6 +71,7 @@ extern "C" id glfwGetCocoaWindow(GLFWwindow *window);
 #include "windows/preferences/preferences.h"
 #include "windows/device_panel.h"
 #include "windows/avd_root.h"
+#include "windows/device_root.h"
 #include "windows/cert.h"
 #include "windows/proxy.h"
 #include "windows/frida.h"
@@ -272,6 +273,7 @@ namespace CoreDeck::Gui {
         BuildStorageWindow(m_Context);
         BuildDevicePanelWindow(m_Context);
         BuildAvdRootWindow(m_Context);
+        BuildDeviceRootWindow(m_Context);
         BuildCertWindow(m_Context);
         BuildProxyWindow(m_Context);
         BuildFridaWindow(m_Context);

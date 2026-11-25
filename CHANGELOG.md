@@ -1,3 +1,8 @@
+## [Unreleased]
+
+- Add a Root Device window (Research, Root Device) for rooting a physical device you own with Magisk, the hardware counterpart to Root AVD. It resolves and caches the newest Magisk release (stable or canary), locates `boot.img` / `init_boot.img` (point it at the build's factory image zip and it extracts the image from the inner `image-*.zip`, preferring `init_boot` on modern Pixels, or give it a `.img` directly), and verifies whether the selected device already has `su`. The guided one-click flow patches the boot image **on the device** by driving Magisk's own `boot_patch.sh` + `magiskboot` over `adb` (the binaries are pulled from the Magisk apk; no root and no desktop `magiskboot` needed), then reboots to the bootloader, flashes the patched image to the matching partition with `fastboot`, reboots, and checks `su`. For a device you own and are authorized to test
+- Add a fastboot integration layer (the bootloader-mode counterpart to the adb module): detect the platform-tools `fastboot`, parse `fastboot devices` and `getvar` (lock state, product, current slot), reboot to the bootloader, `fastboot flashing unlock` (gated behind an explicit "this wipes the device" confirmation), `fastboot flash <partition> <img>`, and reboot. It drives the official `fastboot`; nothing is reimplemented
+
 ## [v0.18.0-beta.2](https://github.com/Muayyad1999/CoreDeck/releases/tag/v0.18.0-beta.2) — 2026-11-23
 
 - Update Dear ImGui to the latest docking-branch commit (v1.93.0-docking-94, which fixes a crash when toggling the visibility of windows in a dock hierarchy), reflect-cpp to 0.27.1, and sentry-native to 0.17.6

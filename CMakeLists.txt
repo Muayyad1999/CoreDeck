@@ -116,6 +116,7 @@ add_executable(${PROJECT_NAME}
     src/gui/windows/preferences/preferences_jdk.cpp
     src/gui/windows/device_panel.cpp
     src/gui/windows/avd_root.cpp
+    src/gui/windows/device_root.cpp
     src/gui/windows/cert.cpp
     src/gui/windows/proxy.cpp
     src/gui/windows/frida.cpp

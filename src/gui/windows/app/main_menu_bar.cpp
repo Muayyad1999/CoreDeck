@@ -155,6 +155,9 @@ namespace CoreDeck::Gui {
                 if (RoundedMenuItem(IconWithLabel(Icons::HARD_DRIVE, Platform::Tr("Root AVD")).c_str(), nullptr, context.UI.ShowAvdRootDialog)) {
                     context.UI.ShowAvdRootDialog = !context.UI.ShowAvdRootDialog;
                 }
+                if (RoundedMenuItem(IconWithLabel(Icons::MOBILE, Platform::Tr("Root Device")).c_str(), nullptr, context.UI.ShowDeviceRootDialog)) {
+                    context.UI.ShowDeviceRootDialog = !context.UI.ShowDeviceRootDialog;
+                }
                 if (RoundedMenuItem(IconWithLabel(Icons::KEY, Platform::Tr("CA Trust")).c_str(), nullptr, context.UI.ShowCertDialog)) {
                     context.UI.ShowCertDialog = !context.UI.ShowCertDialog;
                 }

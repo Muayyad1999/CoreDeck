@@ -9,6 +9,8 @@ add_library(coredeck_core STATIC
     apk_signer.cpp
     avd_manager.cpp
     avd_root.cpp
+    device_root.cpp
+    fastboot.cpp
     cert.cpp
     xz.cpp
     frida.cpp
