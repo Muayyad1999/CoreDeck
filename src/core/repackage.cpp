@@ -106,7 +106,7 @@ namespace CoreDeck::Core {
                     name = name.substr(0, name.size() - 4);
                 }
             }
-            return (p.parent_path() / name).string();
+            return (p.parent_path() / name).generic_string();
         }
     }
 
